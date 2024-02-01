@@ -1,0 +1,4 @@
+Are you sure To delete this Product?
+
+<a href="{% url 'products' pk=return_id %}" class="btn btn-primary">Go Back</a>
+<a class="btn btn-outline-danger" href="{% url 'delete_product' pk=product_id pk2=return_id %}">Delete this</a>

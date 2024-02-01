@@ -1,0 +1,212 @@
+from django.db import models
+from django.contrib.auth.models import User
+from django.utils.timezone import now
+from django.utils import timezone
+import uuid
+from taggit.managers import TaggableManager
+# Create your models here.
+
+class AnonymousUser(models.Model):
+    session_key = models.CharField(max_length=40, unique=True)
+
+    def __str__(self) -> str:
+        st = self.session_key
+        new_string = st.replace('.', '')
+        return new_string
+
+
+class CollectionSet(models.Model):
+    name=models.CharField(max_length=100)
+    hero=models.BooleanField(default=False)
+    image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
+    @property
+    def imageURL(self):
+        try:
+            url=self.image.url
+        except:
+            url=''
+        return url
+    def __str__(self):
+        return str(f'{self.name}')
+
+
+
+class ProductCategory(models.Model):
+    name=models.CharField(max_length=100)
+    collection=models.ManyToManyField(CollectionSet)
+    image=models.ImageField(upload_to='category/',blank=True,null=True)
+
+    @property
+    def imageURL(self):
+        try:
+            url=self.image.url
+        except:
+            url=''
+        return url
+    def __str__(self):
+        return str(f'{self.name} ')
+
+class UserProfile(models.Model):
+    
+    user=models.OneToOneField(User,on_delete=models.SET_NULL,null=True)
+    join_at=models.DateTimeField(default=now,blank=True)
+
+    def __str__(self):
+        return str(self.user)
+
+
+class Product(models.Model):
+    name=models.CharField(max_length=100)
+    product_code=models.CharField(max_length=100,null=True,blank=True)
+    description=models.TextField(null=True,blank=True)
+    price = models.IntegerField(default=0)
+    productCategory = models.ManyToManyField(ProductCategory)
+    image=models.ImageField(upload_to='product-image/',blank=True,null=True)
+    image2=models.ImageField(upload_to='product-image/',blank=True,null=True)
+    image3=models.ImageField(upload_to='product-image/',blank=True,null=True)
+    image4=models.ImageField(upload_to='product-image/',blank=True,null=True)
+    arrive_at=models.DateTimeField(default=now,blank=True)
+    new_arrival=models.BooleanField(default=False,blank=True)
+    tags = TaggableManager()
+    def __str__(self):
+        return str(f'{self.name} ')
+
+    @property
+    def imageURL(self):
+        try:
+            url=self.image.url
+        except:
+            url=''
+        return url
+    @property
+    def imageURL2(self):
+        try:
+            url=self.image2.url
+        except:
+            url=''
+        return url
+    @property
+    def imageURL3(self):
+        try:
+            url=self.image3.url
+        except:
+            url=''
+        return url
+    @property
+    def imageURL4(self):
+        try:
+            url=self.image4.url
+        except:
+            url=''
+        return url
+    
+    def average_rating(self):
+        reviews = Review.objects.filter(product=self)
+        if reviews.exists():
+            s= sum([review.ratting for review in reviews]) / len(reviews)
+            return round(s, 1)
+        return 0
+    def total_reviews(self):
+        reviews = Review.objects.filter(product=self)
+        if reviews.exists():
+            return len(reviews)
+        return 0
+
+
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('not_confirm','not_confirm'),
+        ('Pending', 'Pending'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Delivered', 'Delivered'),
+        ('Cancelled', 'Cancelled'),
+    ]
+    user=models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    items = models.ManyToManyField('Product', through='OrderItem')
+    created_at=models.DateTimeField(default=now,blank=True)
+    complete=models.BooleanField(default=False,blank=True)
+    order_id=models.CharField(max_length=20,null=True,blank=True)
+    coupon=models.BooleanField(default=False,null=True,blank=True)
+    coupon_percentange=models.PositiveIntegerField(default=0,null=True,blank=True)
+
+
+    def __str__(self):
+        return str(f'{self.user} order')
+    @property
+    def get_total(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total = sum(item.item_total for item in order_items)
+        if self.coupon:
+            total-=total*(self.coupon_percentange/100)
+        return int(total)
+    @property
+    def total(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total = sum(item.item_total for item in order_items)
+
+        return int(total)
+
+    @property
+    def total_items(self):
+        order_items = OrderItem.objects.filter(order=self)
+        total = sum(item.quantity for item in order_items)
+        return total 
+
+
+
+class OrderItem(models.Model):
+    product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+    quantity=models.IntegerField(default=0)
+    order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
+    size=models.CharField(max_length=10,blank=True,null=True)
+    @property
+    def item_total(self):
+        total=self.product.price*self.quantity
+        return total
+
+class ShippingAddress(models.Model):
+    order=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
+    first_name=models.CharField(max_length=20)
+    last_name=models.CharField(max_length=20)
+    address=models.TextField()
+    address_note=models.CharField(max_length=100)
+    phon=models.CharField(max_length=20)
+    email=models.CharField(max_length=20)
+    timestamp=models.DateTimeField(default=now,blank=True)
+
+
+    def __str__(self):
+        return str(f'{self.phon}  ')
+
+
+class Review(models.Model):
+    user=models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    content= models.TextField()
+    image=models.ImageField(upload_to='product-review/',blank=True,null=True)
+
+    ratting = models.IntegerField(
+        choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    )
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    at_time = models.DateTimeField(default=now, blank=True)
+
+    @property
+    def imageURL(self):
+        try:
+            url=self.image.url
+        except:
+            url=''
+        return url
+    
+    def __str__(self):
+        return str(f'{self.user} {self.product.name}' )
+    
+
+
+class Cuppon(models.Model):
+    cuppon_name=models.CharField(max_length=10)
+    percent=models.PositiveIntegerField(default=0)

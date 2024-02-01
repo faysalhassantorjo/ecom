@@ -1,0 +1,100 @@
+{% extends 'shop/main.html' %}
+{% load static %}
+
+{% block body %}
+
+<style>
+
+
+    .orderinfo {
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #4f4f4f;
+        margin-bottom: 10px;
+    }
+
+    p, h3, h4 {
+        color: #fff;
+    }
+
+    .order-details {
+        margin-top: 10px;
+    }
+
+    .product-info {
+        margin-top: 10px;
+    }
+
+    .btn-order-complete {
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="mt-4 text-center">Orders</h3>
+            <div class="list-group mt-2">
+                {% for shippingaddress in shippingAddress %}
+
+                <div class="orderinfo mt-2">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <table class="table table-bordered"  >
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Address Details</th>
+                                        <th>Phone </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{shippingaddress.first_name}} {{shippingaddress.last_name}}</td>
+                                        <td>{{shippingaddress.address}}</td>
+                                        <td>{{shippingaddress.phon}}</td>
+                                            
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product Image</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Size</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for orderItem in shippingaddress.order.order_items.all %}
+                                    <tr>    
+                                        <td>  <img src="{{orderItem.product.imageURL}}" style="height: auto;width: 50px;"> </td>
+                                        <td>{{orderItem.product.name}}</td>
+                                        <td>{{orderItem.quantity}}</td>
+                                        <td>{{orderItem.size}}</td>
+                                        <td>{{orderItem.item_total}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            
+                            <p><strong style="color: #4f4f4f;">Total Tk: </strong> <span style="color: #f74f06;">{{shippingaddress.order.get_total}} </span></p>
+                            <p style="color: #4f4f4f;">Date: {{shippingaddress.timestamp}}</p>
+                            <p></p>
+                            
+                        </div>
+                        <div class="col-md-2 text-right">
+                            <a href="{% url 'order_status' pk=shippingaddress.order.id %}" class="btn btn-outline-primary btn-order-complete">{{shippingaddress.order.status}}</a>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>Male-Fashion | Template</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="{% static 'shop/css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/elegant-icons.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/nice-select.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}" type="text/css">
+
+
+</head>
+
+<style>
+
+</style>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Offcanvas Menu Begin -->
+    <div class="offcanvas-menu-overlay"></div>
+    <div class="offcanvas-menu-wrapper">
+        <div class="offcanvas__option">
+            <!-- <div class="offcanvas__links">
+                <a href="#">Sign in</a>
+                <a href="#">FAQs</a>
+            </div>
+     -->
+        </div>
+        <div class="offcanvas__nav__option">
+            <!-- <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a> -->
+            <!-- <a href="#"><img src="img/icon/heart.png" alt=""></a> -->
+            <a href="#"><img src="{% static 'shop/img/icon/cart.png' %}" alt=""> <span>0</span></a>
+            <div class="price">$0.00</div>
+        </div>
+        <div id="mobile-menu-wrap"></div>
+        <!-- <div class="offcanvas__text">
+            <p>Free shipping, 30-day return or refund guarantee.</p>
+        </div> -->
+    </div>
+    <!-- Offcanvas Menu End -->
+
+    <!-- Header Section Begin -->
+    <header class="header">
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__logo">
+                        <a href="./inex.html"><img src="img/logo.png" alt=""></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li class="active"><a href="">Shop</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="">About Us</a></li>
+                                    <li><a href="3">Shop Details</a></li>
+                                    <li><a href="{% url 'cart' %}">Shopping Cart</a></li>
+                                    <li><a href="{% url 'checkout' %}">Check Out</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./contact.html">Contacts</a></li>
+                            <li><a href="{% url 'viewOrder' %}">viewOrder</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
+                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
+                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                        <a href="{% url 'cart' %}"><img src="{% static 'shop/img/icon/cart.png' %}" alt=""> <span>{{order.total_items}}</span></a>
+                        <div class="price">${{order.get_total}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
+    </header>
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb__text">
+                        <h4>Shopping Cart</h4>
+                        <div class="breadcrumb__links">
+                            <a href="/">Home</a>
+                            <a>
+                            <button style="border: none; background:none;" onclick="goBack()">Go Back</button></a>
+                            <span>Shopping Cart</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="shopping__cart__table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                               
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for item in items %}
+
+                                <tr>
+                                    <td class="product__cart__item">
+                                        <div class="product__cart__item__pic">
+                                            <img src="{{item.product.imageURL}}" height="90" width="auto" alt="">
+                                        </div>
+                                        <div class="product__cart__item__text">
+                                            <h5>{{item.product.name}}</h5>
+                                            <span>Size: {{item.size}}</span>
+<br>
+                                            <span>${{item.product.price}}</span>
+                                        </div>
+                                    </td>
+                                    <td class="quantity__item">
+                                        <div class="quantity">
+                                            <div class="pro-qty-2">
+                                                <input type="text" value="{{item.quantity}}">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="cart__price">$ {{item.item_total}}</td>
+                                    <td class="cart__close">
+                                       
+                                        <button type="button" class="btn-number update-cart"  style="border: none;background: none;"
+                                        data-action="delete" data-size={{item.size}} data-product={{item.product.id}}>
+                                        <i class="fa fa-close"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="continue__btn">
+                                <a href="/">Continue Shopping</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6">
+                            <div class="continue__btn update__btn">
+                                <!-- <a href="#"><i class="fa fa-spinner"></i> Update cart</a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="cart__discount">
+                        <h6>Discount codes</h6>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="text" name="q" placeholder="Coupon code">
+                            <button type="submit">Apply</button>
+                        </form>
+                    </div>
+                    <div class="cart__total">
+                        <h6>Cart total</h6>
+                        <ul>
+                            <li>Total Items <span>{{order.total_items}}</span></li>
+                            <li>Saves <span>{{saves}}</span></li>
+                            <li>Total <span>$ {{order.get_total}}</span></li>
+                        </ul>
+                        <a href="{% url 'checkout' %}" class="primary-btn">Proceed to checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center bg-body-tertiary">
+        <!-- Grid container -->
+        <div class="container pt-4">
+          <!-- Section: Social media -->
+          <section class="mb-4">
+            <!-- Facebook -->
+            <a
+              data-mdb-ripple-init
+              class="btn btn-link btn-floating btn-lg text-body m-1"
+              href="#!"
+              role="button"
+              data-mdb-ripple-color="dark"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+      
+            <!-- Twitter -->
+            <a
+              data-mdb-ripple-init
+              class="btn btn-link btn-floating btn-lg text-body m-1"
+              href="#!"
+              role="button"
+              data-mdb-ripple-color="dark"
+              ><i class="fab fa-twitter"></i
+            ></a>
+      
+            <!-- Google -->
+            <a
+              data-mdb-ripple-init
+              class="btn btn-link btn-floating btn-lg text-body m-1"
+              href="#!"
+              role="button"
+              data-mdb-ripple-color="dark"
+              ><i class="fab fa-google"></i
+            ></a>
+      
+            <!-- Instagram -->
+            <a
+              data-mdb-ripple-init
+              class="btn btn-link btn-floating btn-lg text-body m-1"
+              href="#!"
+              role="button"
+              data-mdb-ripple-color="dark"
+              ><i class="fab fa-instagram"></i
+            ></a>
+      
+
+
+          </section>
+          <!-- Section: Social media -->
+        </div>
+        <!-- Grid container -->
+      
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+          © 2020 Copyright:
+          <a class="text-body" href="https://mdbootstrap.com/">longg.com</a>
+        </div>
+        <!-- Copyright -->
+      </footer>
+
+    <!-- Search Begin -->
+    <!-- <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div> -->
+    <!-- Search End -->
+
+    <!-- Js Plugins -->
+    <script src="{% static 'shop/js/jquery-3.3.1.min.js'%}"></script>
+    <script src="{% static 'shop/js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'shop/js/jquery.nice-select.min.js'%}"></script>
+    <script src="{% static 'shop/js/jquery.nicescroll.min.js'%}"></script>
+    <script src="{% static 'shop/js/jquery.magnific-popup.min.js'%}"></script>
+    <script src="{% static 'shop/js/jquery.countdown.min.js'%}"></script>
+    <script src="{% static 'shop/js/jquery.slicknav.js'%}"></script>
+    <script src="{% static 'shop/js/mixitup.min.js'%}"></script>
+    <script src="{% static 'shop/js/owl.carousel.min.js'%}"></script>
+    <script src="{% static 'shop/js/main.js'%}"></script>
+
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    <script>
+        
+          
+        var selectedSize=null
+        document.querySelectorAll('input[type=radio][name=size]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                    console.log(radio.value)
+                        selectedSize=radio.value
+                    });
+                });
+
+        var updateBtns = document.getElementsByClassName('update-cart');
+
+        for (var i = 0; i < updateBtns.length; i++) {
+            updateBtns[i].addEventListener('click', function () {
+                var productId = this.dataset.product;
+                var action = this.dataset.action;
+
+
+                console.log("ProductId: ", productId, "Action: ", action);
+
+                var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                updateUserOrder(productId, action, csrfToken,selectedSize);
+            });
+        }
+
+        function updateUserOrder(productId, action, csrfToken,selectedSize) {
+            var url = '/update_item/';
+            console.log('URL:', url);
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({'productID': productId, 'action': action,'selectedSize':selectedSize})
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('data: ', data);
+                location.reload();
+            });
+        }
+    </script>
+
+
+</body>
+
+</html>

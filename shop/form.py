@@ -1,0 +1,66 @@
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+
+class LoginForm(AuthenticationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+class PriceSortForm(forms.Form):
+    PRICE_CHOICES = [
+        ('', 'Low To High'),
+        ('0-10', '$0 - $10'),
+        ('10-20', '$10 - $20'),
+    ]
+
+    sort_by_price = forms.ChoiceField(choices=PRICE_CHOICES, required=False)
+
+from django import forms
+from .models import ShippingAddress,Review,Order,Product,ProductCategory,CollectionSet
+
+class ShippingAddressForm(forms.ModelForm):
+    class Meta:
+        model = ShippingAddress
+        fields = ['first_name', 'last_name', 'address', 'address_note', 'phon', 'email']
+
+    def __init__(self, *args, **kwargs):
+        super(ShippingAddressForm, self).__init__(*args, **kwargs)
+
+        self.fields['address'].widget = forms.Textarea(attrs={'rows': 4}) 
+
+
+class WriteReview(forms.ModelForm):
+    class Meta:
+        model=Review
+        fields=['ratting','content','image']
+
+class OrderStatus(forms.ModelForm):
+    class Meta:
+        model=Order
+        fields = ['status']
+
+class AddProduct(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = [
+            'name',
+            'description',
+            'price',
+            'productCategory',
+            'image',
+            'tags',          
+        ]
+
+class AddCategory(forms.ModelForm):
+    class Meta:
+        model = ProductCategory
+        fields = [
+            'name',
+            'collection',
+            'image',          
+        ]
+class AddCollection(forms.ModelForm):
+    class Meta:
+        model = CollectionSet
+        fields = ['name', 'hero', 'image']

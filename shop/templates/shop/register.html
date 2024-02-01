@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row"><div class="col-12 text-center"><p style="font-size: 1.5rem;">Register</p></div></div>
+</div>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col=lg-3"></div>
+            <div class="col-lg-7">
+                
+    <form method="post" class="register-form">
+        {% csrf_token %}
+    
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+    
+        <button type="submit" class="register-btn btn btn-outline-success">Register</button>
+    </form>
+
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

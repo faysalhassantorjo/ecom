@@ -1,0 +1,44 @@
+
+{% extends 'shop/main.html' %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="shopping__cart__table">
+        <table>
+            <thead>
+                <tr>
+                  <th>Order Id</th>
+                  <th>Order status</th>
+                  <th>Order items</th>
+                  <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              {% if order.status != 'not_confirm' %}
+                  <tr>
+                      <td>{{ order.order_id }}</td>
+                      <td>{{ order.status }}</td>
+                      <td>
+                          {% for item in order.order_items.all %}
+                              {{ item.product.name }}
+                              
+                          {% endfor %}
+                      </td>
+                      <td>{{ order.get_total }}TK</td>
+                  </tr>
+              {% endif %}
+          {% endfor %}
+          
+
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
