@@ -271,23 +271,33 @@
             });
         }
 
-        function updateUserOrder(productId, action, csrfToken,selectedSize) {
-            var url = '/update_item/';
-            console.log('URL:', url);
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,
-                },
-                body: JSON.stringify({'productID': productId, 'action': action,'selectedSize':selectedSize})
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log('data: ', data);
-                location.reload();
-            });
-        }
+        function updateUserOrder(productId, action, csrfToken, selectedSize) {
+    var url = '/update_item/';
+    console.log('URL:', url);
+
+    // Check if the request method is POST
+    if (window.fetch) {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({'productID': productId, 'action': action, 'selectedSize': selectedSize})
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('data: ', data);
+            location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    } else {
+        console.error('Fetch API is not supported in this browser.');
+    }
+}
+
     </script>
 
 
