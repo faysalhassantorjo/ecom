@@ -144,42 +144,48 @@ def home(request):
 
     return render(request,'shop/home.html',context)
 
+import json
+from django.http import JsonResponse
+
 def create_order_item(request):
-    data = json.loads(request.body)
-    print('data',data)
-    productId = int(data['productID'])
-    action = data['action']
-    size = data['selectedSize']
-    print(productId)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            print('data', data)
+            productId = int(data['productID'])
+            action = data['action']
+            size = data['selectedSize']
+            print(productId)
 
-    userprofile=get_user(request)
+            userprofile = get_user(request)
 
+            product = Product.objects.get(id=productId)
+            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
-    product=Product.objects.get(id=productId)
-    order,c=Order.objects.get_or_create(user=userprofile,complete=False)
+            orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
 
-    orderItem,created=OrderItem.objects.get_or_create(product=product,order=order,size=size)
+            if action == 'add':
+                orderItem.quantity += 1
+            elif action == 'remove':
+                orderItem.quantity -= 1
+            elif action == 'delete':
+                orderItem.quantity = 0
 
+            orderItem.size = size
+            orderItem.save()
+            order.status = 'not_confirm'
+            order.save()
+            
+            if orderItem.quantity == 0:
+                orderItem.delete()
 
+            return JsonResponse("Item was added", safe=False)
 
-    if action=='add':
-        orderItem.quantity+=1
-    elif action=='remove':
-        orderItem.quantity-=1
-    elif action =='delete':
-    
-        orderItem.quantity=0
+        except json.JSONDecodeError as e:
+            return JsonResponse({'error': 'Invalid JSON data'})
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'})
 
-
-  
-
-    orderItem.size=size
-    orderItem.save()
-    order.status='not_confirm'
-    order.save()
-    if orderItem.quantity == 0:
-        orderItem.delete()
-    return JsonResponse("Item was added", safe=False)
 from .form import ShippingAddressForm
 def createOrder(request):
 
