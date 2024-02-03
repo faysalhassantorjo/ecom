@@ -114,10 +114,13 @@
                        
                             
                             <div class="product__details__cart__option">
-                            
+                                {% if product.in_stock %}
                                 <button class="primary-btn update-cart" type="submit" data-product="{{ product.id }}" data-action="add">
                                     Add to cart
                                 </button>
+                                {% else %}
+                                <h3>Out of stock</h3>
+                                {% endif %}
                             </div>                               
                 
 
@@ -285,7 +288,7 @@
                                 
                                                         {% csrf_token %}
                                                         {{ form.as_p }}
-                                                        <button class="primary-btn" type="submit">Done</button>
+                                                        <button type="submit">Done</button>
                                                     </form>
         
                                                 </div>

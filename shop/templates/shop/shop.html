@@ -112,6 +112,9 @@
                             <div class="product__item">
                                 <a href="{% url 'shop_details' pk=product.id %}">    
                                      <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
+                                        {% if product.in_stock != True %}
+                                        <span class="label">out of stock</span>
+                                        {% endif %}
                                     <ul class="product__hover">
                                         <!-- <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
                                         <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a>

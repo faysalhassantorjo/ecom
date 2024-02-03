@@ -156,9 +156,15 @@
                                     </td>
                                     <td class="quantity__item">
                                         <div class="quantity">
-                                            <div class="pro-qty-2">
-                                                <input type="text" value="{{item.quantity}}">
-                                            </div>
+                                            <button type="button" class="btn-number update-cart"  style="border: none;background: none;"
+                                            data-action="remove" data-size={{item.size}} data-product={{item.product.id}}>
+                                            <i class="fa fa-minus"></i>
+                                            </button>
+                                            <span>{{item.quantity}}</span>
+                                            <button type="button" class="btn-number update-cart"  style="border: none;background: none;"
+                                            data-action="add" data-size={{item.size}} data-product={{item.product.id}}>
+                                            <i class="fa fa-plus"></i>
+                                            </button>
                                         </div>
                                     </td>
                                     <td class="cart__price">$ {{item.item_total}}</td>
@@ -201,10 +207,14 @@
                         <h6>Cart total</h6>
                         <ul>
                             <li>Total Items <span>{{order.total_items}}</span></li>
-                            <li>Saves <span>{{saves}}</span></li>
-                            <li>Total <span>$ {{order.get_total}}</span></li>
+                            <li>Saves <span>{{saves}} TK.</span></li>
+                            <li>Total <span>{{order.get_total}} TK. </span></li>
                         </ul>
-                        <a href="{% url 'checkout' %}" class="primary-btn">Proceed to checkout</a>
+                        {% if order.total_items %}
+                        <a href="{% url 'checkout' %}" class="primary-btn" >Proceed to checkout</a>
+                        {% else %}
+                        <a href="#" class="primary-btn" style="opacity: .7; cursor:none">Proceed to checkout</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -303,13 +313,13 @@
     <script>
         
           
-        var selectedSize=null
-        document.querySelectorAll('input[type=radio][name=size]').forEach(radio => {
-                    radio.addEventListener('change', () => {
-                    console.log(radio.value)
-                        selectedSize=radio.value
-                    });
-                });
+        // var selectedSize=null
+        // document.querySelectorAll('input[type=radio][name=size]').forEach(radio => {
+        //             radio.addEventListener('change', () => {
+        //             console.log(radio.value)
+        //                 selectedSize=radio.value
+        //             });
+        //         });
 
         var updateBtns = document.getElementsByClassName('update-cart');
 
@@ -317,6 +327,7 @@
             updateBtns[i].addEventListener('click', function () {
                 var productId = this.dataset.product;
                 var action = this.dataset.action;
+                var selectedSize = this.dataset.size;
 
 
                 console.log("ProductId: ", productId, "Action: ", action);

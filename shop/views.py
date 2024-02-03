@@ -7,7 +7,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
-from .form import PriceSortForm,WriteReview,OrderStatus,AddProduct,AddCategory,AddCollection,LoginForm
+from .form import PriceSortForm,WriteReview,OrderStatus,AddProduct,AddCategory,AddCollection,LoginForm,OrderCancel
 
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout,authenticate
@@ -166,16 +166,19 @@ def create_order_item(request):
         orderItem.quantity+=1
     elif action=='remove':
         orderItem.quantity-=1
-    elif action=='delete':
+    elif action =='delete':
+    
         orderItem.quantity=0
+
+
+  
 
     orderItem.size=size
     orderItem.save()
     order.status='not_confirm'
     order.save()
-    if orderItem.quantity <= 0:
+    if orderItem.quantity == 0:
         orderItem.delete()
-
     return JsonResponse("Item was added", safe=False)
 from .form import ShippingAddressForm
 def createOrder(request):
@@ -231,6 +234,25 @@ def profile(request,pk):
     }
     return render(request,'shop/profile.html',context)
 
+def order_cancel(request,pk):
+    # order=Order.objects.get(id=pk)
+    # order.status='Cancelled'
+    # order.save()
+    order=Order.objects.get(id=pk)
+    if request.method == 'POST':
+        form = OrderCancel(request.POST,instance=order)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.status='Cancelled' 
+            order.save()          
+            return redirect('/')
+    else:
+        form = OrderCancel(instance=order)
+    context={
+        'form':form
+    }
+    return render(request,'shop/orderStatus.html',context)
+
 def checkout(request):
     userProfile=get_user(request)
     print(userProfile)
@@ -250,14 +272,12 @@ def checkout(request):
             order_id = int(datetime.datetime.now().timestamp())
             order.order_id=order_id
             order.complete=True
-            order.status="Processing"
-            order.save()
-            print('dome')      
+            order.status="Pending"
+            order.save()     
             return redirect('order_success',pk=shipping_address.id)
 
     else:
         form = ShippingAddressForm()
-        print('dal me kuch kala hay')
 
     context={
         'total':total,

@@ -17,6 +17,7 @@ urlpatterns = [
     path('logout/',logoutV, name="logout"),
     path('register/',register, name="register"),
     path('order-success/<int:pk>',order_success, name="order_success"),
+    path('order-cancel/<int:pk>',order_cancel, name="order_cancel"),
     path('order-status/<int:pk>',order_status, name="order_status"),
     path('products/<int:pk>',products, name="products"),
     path('add-products/',product_add, name="product_add"),

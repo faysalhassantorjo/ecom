@@ -39,6 +39,10 @@ class OrderStatus(forms.ModelForm):
     class Meta:
         model=Order
         fields = ['status']
+class OrderCancel(forms.ModelForm):
+    class Meta:
+        model=Order
+        fields = ['cancel_reason']
 
 class AddProduct(forms.ModelForm):
     class Meta:
@@ -49,7 +53,8 @@ class AddProduct(forms.ModelForm):
             'price',
             'productCategory',
             'image',
-            'tags',          
+            'tags',
+            'in_stock'         
         ]
 
 class AddCategory(forms.ModelForm):

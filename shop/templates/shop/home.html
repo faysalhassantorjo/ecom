@@ -51,7 +51,7 @@
                     <div class="banner__item">
                         <div class="banner__item__pic" >
                             <a href="{% url 'shop_grid' pk=collection.id %}" style="text-decoration: none;">
-                                  <img src="{{collection.imageURL}}" style="height: 440px; width: 440px; object-fit:contain;" alt="">
+                                  <img src="{{collection.imageURL}}" style="height: auto; max-width: 440px; object-fit: cover;" alt="">
                                 </a>
                         </div>
                         <div class="banner__item__text">
@@ -67,8 +67,8 @@
                          <div class="banner__item">
                             <div class="banner__item__pic">
                                 <a href="{% url 'shop_grid' pk=collection.id %}" style="text-decoration: none;">
-                                      <img src="{{collection.imageURL}}"  style="height: 440px; width: 440px;  object-fit: contain;"alt=""></a>
-
+                                    <img src="{{collection.imageURL}}" style="height: auto; max-width: 440px; object-fit: cover;" alt="">
+</a>
                             </div>
                             <div class="banner__item__text">
                                 <h2>{{collection.name}}</h2>
@@ -93,7 +93,7 @@
                     <ul class="filter__controls">
                         <li class="active" data-filter="*">Best Sellers</li>
                         <li data-filter=".new-arrivals">New Arrivals</li>
-                        <li data-filter=".hot-sales">Hot Sales</li>
+                        <li data-filter=".hot-sales">Hot Review</li>
                     </ul>
                 </div>
             </div>
@@ -102,23 +102,27 @@
                 {% for product in top_rated_product %}
                 <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
                     <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
-                            <!-- <ul class="product__hover">
-                                <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a>
-                                </li>
-                                <li><a href="#"><img src="img/icon/search.png" alt=""></a></li>
-                            </ul> -->
+                        <a href="{% url 'shop_details' pk=product.id %}">    
+                             <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
+                                {% if product.in_stock != True %}
+                                <span class="label">out of stock</span>
+                                {% endif %}
+                            <ul class="product__hover">
+                    
+                            </ul>
                         </div>
+                    </a>
                         <div class="product__item__text">
                             <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
+
                             <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">+ Add To Cart</a>
                             <div class="rating">
                                 <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                             </div>
-                            <h5 style="opacity: .8;">${{product.price}}</h5>
+                            <h5 style="opacity: .8;">TK. {{product.price}}</h5>
                           
                         </div>
+                       
                     </div>
                 </div>
                 {% endfor %}
@@ -126,11 +130,17 @@
                 {% for product in new_arrival_products %}
 
                 <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+       
                     <div class="product__item">
+                        <a href="{% url 'shop_details' pk=product.id %}">   
                         <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
+                            {% if product.in_stock != True %}
+                            <span class="label">out of stock</span>
+                            {% endif %}
                             <ul class="product__hover">
                             </ul>
                         </div>
+                    </a>
                         <div class="product__item__text">
                             <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
                             <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">+ Add To Cart</a>
@@ -141,6 +151,7 @@
                           
                         </div>
                     </div>
+                   
                 </div>
 
                 {% endfor %}
