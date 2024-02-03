@@ -83,7 +83,7 @@ DATABASES = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-'*'
+    'https://web-production-6e54.up.railway.app',
 ]
 
 # Password validation
