@@ -87,41 +87,50 @@
                             
                             <h3>{{product.price}} TK.<span></span></h3>
 
+<!-- product_template.html -->
+<form method="post" action="{% url 'update_item' %}" id="add-to-cart-form" onsubmit="return validateForm()">
+    {% csrf_token %}
+    
+    <div class="product__details__option">
+        <div class="product__details__option__size">
+            <span>Select Size</span>
+            <label for="size_xxl">xxl
+                <input type="radio" id="size_xxl" value="xxl" name="size">
+            </label>
+            <label for="size_xl">xl
+                <input type="radio" id="size_xl" value="xl" name="size">
+            </label>
+            <label for="size_l">l
+                <input type="radio" id="size_l" value="l" name="size">
+            </label>
+            <label for="size_sm">sm
+                <input type="radio" id="size_sm" value="sm" name="size">
+            </label>
+        </div>
+    </div>
+    
+    <div class="product__details__cart__option">
+        {% if product.in_stock %}
+            <input type="text" name="action" value="add {{ product.id }}" hidden>
+            <button class="primary-btn " type="submit">
+                Add to cart
+            </button>
+        {% else %}
+            <h3>Out of stock</h3>
+        {% endif %}
+    </div>
+</form>
 
-                            
-                            <div class="product__details__option">
-                             
-                                <div class="product__details__option__size">
-                                    <span>Select Size</span>
-                                    <form>
-                                    <label >xxl
-                                        <input type="radio" value="xxl" name="size" aria-selected="" checked>
-                                    </label>
-                                    <label >xl
-                                        <input type="radio" value="xl" name="size" >
-                                    </label>
-                                    <label >l
-                                        <input type="radio" value="l" name="size" >
-                                    </label>
-                                    <label >sm
-                                        <input type="radio" value="sm" name="size" >
-                                    </label>
-                                    </form>
-
-                                </div>
-                             
-                            </div>
-                       
-                            
-                            <div class="product__details__cart__option">
-                                {% if product.in_stock %}
-                                <button class="primary-btn update-cart" type="submit" data-product="{{ product.id }}" data-action="add">
-                                    Add to cart
-                                </button>
-                                {% else %}
-                                <h3>Out of stock</h3>
-                                {% endif %}
-                            </div>                               
+<script>
+function validateForm() {
+    var selectedSize = document.querySelector('input[name="size"]:checked');
+    if (!selectedSize) {
+        alert("Please select a size before adding to cart.");
+        return false;
+    }
+    return true;
+}
+</script>
                 
 
                             <!-- <div class="product__details__btns__option">

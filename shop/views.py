@@ -148,43 +148,86 @@ import json
 from django.http import JsonResponse
 
 def create_order_item(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            print('data', data)
-            productId = int(data['productID'])
-            action = data['action']
-            size = data['selectedSize']
-            print(productId)
+    # if request.method == 'POST':
+    #     try:
+    #         data = json.loads(request.body)
+    #         print('data', data)
+    #         productId = int(data['productID'])
+    #         action = data['action']
+    #         size = data['selectedSize']
+    #         print(productId)
 
-            userprofile = get_user(request)
+    #         userprofile = get_user(request)
 
-            product = Product.objects.get(id=productId)
-            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
+    #         product = Product.objects.get(id=productId)
+    #         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
-            orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
+    #         orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
 
-            if action == 'add':
-                orderItem.quantity += 1
-            elif action == 'remove':
-                orderItem.quantity -= 1
-            elif action == 'delete':
-                orderItem.quantity = 0
+    #         if action == 'add':
+    #             orderItem.quantity += 1
+    #         elif action == 'remove':
+    #             orderItem.quantity -= 1
+    #         elif action == 'delete':
+    #             orderItem.quantity = 0
 
-            orderItem.size = size
-            orderItem.save()
-            order.status = 'not_confirm'
-            order.save()
+    #         orderItem.size = size
+    #         orderItem.save()
+    #         order.status = 'not_confirm'
+    #         order.save()
             
-            if orderItem.quantity == 0:
-                orderItem.delete()
+    #         if orderItem.quantity == 0:
+    #             orderItem.delete()
 
-            return JsonResponse("Item was added", safe=False)
+    #         return JsonResponse("Item was added", safe=False)
 
-        except json.JSONDecodeError as e:
-            return JsonResponse({'error': 'Invalid JSON data'})
-    else:
-        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'})
+    #     except json.JSONDecodeError as e:
+    #         return JsonResponse({'error': 'Invalid JSON data'})
+    # else:
+    #     return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'})
+
+    if request.method == 'POST':
+        size = request.POST.get('size', None)
+        actionanddata = request.POST.get('action', None)
+        cart = request.POST.get('from', None)
+
+        print('cart: ',cart)
+        print('cart: ',size)
+        print('cart: ',actionanddata)
+
+        userprofile = get_user(request)
+
+        splited_data=actionanddata.split()
+        productId=int(splited_data[1])
+        action=splited_data[0]
+
+        product = Product.objects.get(id=productId)
+        order, c = Order.objects.get_or_create(user=userprofile, complete=False)
+
+        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
+
+        if action == 'add':
+            orderItem.quantity += 1
+        elif action == 'remove':
+            orderItem.quantity -= 1
+        elif action == 'delete':
+            orderItem.quantity = 0
+
+        orderItem.size = size
+        orderItem.save()
+        order.status = 'not_confirm'
+        order.save()
+            
+        if orderItem.quantity == 0:
+            orderItem.delete()
+
+        print('selected size: ',size)
+        print('selected action: ',action)
+
+        if cart:
+            return redirect('cart')
+
+        return redirect('shop_details',pk=productId)
 
 from .form import ShippingAddressForm
 def createOrder(request):
