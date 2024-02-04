@@ -53,17 +53,16 @@
                 {% if user.is_authenticated %}
                 <a href="{% url 'logout' %}">logout</a>
                 {% else %}
-                <a href="#">login</a>
+                <a href="{% url 'login' %}">login</a>
                 {% endif %}
 
             </div>
     
         </div>
         <div class="offcanvas__nav__option">
-            <a href="#" class="search-switch"><img src="{% static 'shop/img/icon/search.png' %}" alt=""></a>
-            <a href="#"><img src="img/icon/heart.png" alt=""></a>
-            <a href="#"><img src="{% static 'shop/img/icon/cart.png' %}" width="25" alt=""> <span>{{order.total_items}}</span></a>
-            <div class="price">${{order.get_total}}</div>
+  
+            <a href="{% url 'cart' %}"><img src="{% static 'shop/img/icon/cart.png' %}" width="25" alt=""> <span>{{order.total_items}}</span></a>
+            <div class="price">Tk. {{order.get_total}}</div>
 
         </div>
         <div id="mobile-menu-wrap"></div>
@@ -112,7 +111,7 @@
                     <nav class="header__menu mobile-menu">
                         <ul>
                             <li class="active"><a href="/">Home</a></li>
-                            <li ><a href="">Shop</a></li>
+                            <!-- <li ><a href="/">Shop</a></li> -->
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
                                     <li><a href="">About Us</a></li>
@@ -134,8 +133,7 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
+                   
                         <a href="{% url 'cart' %}"><img src="{% static 'shop/img/icon/cart.png' %}" width="25" alt=""> <span>{{order.total_items}}</span></a>
                         <div class="price">{{order.get_total}}Tk.</div>
                     </div>
