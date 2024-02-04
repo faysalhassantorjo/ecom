@@ -21,7 +21,7 @@ def get_ip(request):
     return ip
 
 def create_anonymous_user(request):
-    # request.session.save()
+    request.session.save()
     # session_key = get_ip(request)
     session_key = request.session.session_key
     print(session_key)
