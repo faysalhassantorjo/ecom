@@ -346,14 +346,18 @@ def shop_details(request,pk):
     reviews=Review.objects.filter(product=product)
 
     star_count = product.average_rating
+    print('Products tags: ',product.tags)
 
     lis=product.tags.all()
+    print(lis)
     relatePro=[]
-    for p in lis:
-        a=Product.objects.filter(Q(tags__name__icontains=p.name))
-        relatePro.append(a)
+    # for p in lis:
+    #     print('p is ',p.name)
+    #     a=Product.objects.filter(Q(tags__name__icontains=p.name))
+    #     relatePro.append(a)
+    relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()
 
-    print(relatePro)
+
 
     context={
         'product':product,

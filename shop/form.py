@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
+from taggit.forms import TagField
+
 
 class LoginForm(AuthenticationForm):
     class Meta:
@@ -47,12 +49,16 @@ class OrderCancel(forms.ModelForm):
 class AddProduct(forms.ModelForm):
     class Meta:
         model = Product
+        tags = TagField()
         fields = [
             'name',
             'description',
             'price',
             'productCategory',
             'image',
+            'image2',
+            'image3',
+            'image4',
             'tags',
             'in_stock'         
         ]

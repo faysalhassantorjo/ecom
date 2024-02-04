@@ -51,7 +51,7 @@
                     <div class="banner__item">
                         <div class="banner__item__pic" >
                             <a href="{% url 'shop_grid' pk=collection.id %}" style="text-decoration: none;">
-                                  <img src="{{collection.imageURL}}" style="height: auto; max-width: 440px; object-fit: cover;" alt="">
+                                  <img src="{{collection.imageURL}}" style="height: 440px; max-width: 440px; object-fit: cover;" alt="">
                                 </a>
                         </div>
                         <div class="banner__item__text">
@@ -67,7 +67,7 @@
                          <div class="banner__item">
                             <div class="banner__item__pic">
                                 <a href="{% url 'shop_grid' pk=collection.id %}" style="text-decoration: none;">
-                                    <img src="{{collection.imageURL}}" style="height: auto; max-width: 440px; object-fit: cover;" alt="">
+                                    <img src="{{collection.imageURL}}" style="height: 440px; max-width: 440px; object-fit: cover;" alt="">
 </a>
                             </div>
                             <div class="banner__item__text">
@@ -100,7 +100,7 @@
             <div class="row product__filter">
           
                 {% for product in top_rated_product %}
-                <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
                     <div class="product__item">
                         <a href="{% url 'shop_details' pk=product.id %}">    
                              <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
@@ -129,7 +129,7 @@
 
                 {% for product in new_arrival_products %}
 
-                <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
        
                     <div class="product__item">
                         <a href="{% url 'shop_details' pk=product.id %}">   

@@ -127,6 +127,7 @@
                             {% if userProfile.user.is_staff %}
                             <li><a href="{% url 'viewOrder' %}">viewOrder</a></li>
                             <li><a href="{% url 'product_add' %}">Add Product</a></li>
+                            <li><a href="/admin">Admin Panel</a></li>
                             {% endif %}
                         </ul>
                     </nav>
@@ -136,7 +137,7 @@
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                         <a href="#"><img src="img/icon/heart.png" alt=""></a>
                         <a href="{% url 'cart' %}"><img src="{% static 'shop/img/icon/cart.png' %}" width="25" alt=""> <span>{{order.total_items}}</span></a>
-                        <div class="price">${{order.get_total}}</div>
+                        <div class="price">{{order.get_total}}Tk.</div>
                     </div>
                 </div>
             </div>
