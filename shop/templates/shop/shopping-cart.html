@@ -238,7 +238,7 @@
                             <li>Total <span>{{order.get_total}} TK. </span></li>
                         </ul>
                         {% if order.total_items %}
-                        <a href="{% url 'checkout' %}" class="primary-btn" >Proceed to checkout</a>
+                        <a href="{% url 'location_choice' pk=order.id %}" class="primary-btn" >Proceed to checkout</a>
                         {% else %}
                         <a href="#" class="primary-btn" style="opacity: .7; cursor:none">Proceed to checkout</a>
                         {% endif %}

@@ -55,6 +55,7 @@
                                 <p>Address Note<span>*</span></p>
 
                                {{form.address_note}}
+
                             </div>
                             <!-- <div class="checkout__input">
                                 <p>Town/City<span>*</span></p>
@@ -115,13 +116,18 @@
                                 <div class="checkout__order__products">Product<span>Total</span></div>
                                 <ul class="checkout__total__products">
                                     {% for item in items %}
-                                    <li>{{forloop.counter}}. {{item.product.name}}<span>$ {{item.item_total}}</span></li>
+                                    <li>{{forloop.counter}}. {{item.product.name}}<span>TK. {{item.item_total}}</span></li>
 
                                     {% endfor %}
                                 </ul>
                                 <ul class="checkout__total__all">
                                     <li>Total Items <span>{{order.total_items}}</span></li>
-                                    <li>Total <span>${{order.get_total}}</span></li>
+                                    {% if order.location == "inside_dhaka" %}
+                                    <li>Total Items <span>TK. 80</span></li>
+                                    {% else %}
+                                    <li>Delivery <span>TK. 120</span></li>
+                                    {% endif %}
+                                    <li>Total <span>TK. {{order.get_total}}</span></li>
                                 </ul>
                                 <!-- <div class="checkout__input__checkbox">
                                     <label for="acc-or">

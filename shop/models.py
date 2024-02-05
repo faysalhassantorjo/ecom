@@ -125,6 +125,11 @@ class Order(models.Model):
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled'),
     ]
+    LOCATION_CHOICES = [
+        ('inside_dhaka', 'Inside Dhaka'),
+        ('outside_dhaka', 'Outside Dhaka'),
+    ]
+
     user=models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     items = models.ManyToManyField('Product', through='OrderItem')
@@ -134,6 +139,7 @@ class Order(models.Model):
     coupon=models.BooleanField(default=False,null=True,blank=True)
     coupon_percentange=models.PositiveIntegerField(default=0,null=True,blank=True)
     cancel_reason=models.TextField(null=True,blank=True)
+    location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
 
 
     def __str__(self):
@@ -144,6 +150,12 @@ class Order(models.Model):
         total = sum(item.item_total for item in order_items)
         if self.coupon:
             total-=total*(self.coupon_percentange/100)
+        
+        if self.location == 'outside_dhaka':
+            total += 120
+        elif self.location == 'inside_dhaka':
+            total += 80
+
         return int(total)
     @property
     def total(self):

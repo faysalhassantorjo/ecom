@@ -269,6 +269,20 @@ def cart(request):
     }
     return render(request,'shop/shopping-cart.html',context)
 
+def location_choice(request,pk):
+    order=Order.objects.get(id=pk)
+    location = request.POST.get('location')
+    
+    if location:
+        order.location=location
+        order.save()
+        return redirect('checkout')
+
+    context={
+        'order':order
+    }
+    return render(request,'shop/location_choice.html',context)
+
 def profile(request,pk):
     user=UserProfile.objects.get(id=pk)
     orders=Order.objects.filter(user=user).order_by('-created_at')
