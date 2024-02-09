@@ -54,12 +54,26 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
+class AddOnProduct(models.Model):
+    name=models.CharField(max_length=100)
+    price=models.PositiveIntegerField(default=0)
+    size = models.CharField(max_length=10,null=True,blank=True)
+
+
+    def __str__(self) -> str:
+        return self.name
 
 class Product(models.Model):
     name=models.CharField(max_length=100)
     product_code=models.CharField(max_length=100,null=True,blank=True)
+    add_on_product=models.ManyToManyField(AddOnProduct)
+    add_on_product2=models.ManyToManyField(AddOnProduct,related_name='ad_on_2')
+    add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3")
     description=models.TextField(null=True,blank=True)
     price = models.IntegerField(default=0)
+    discount_percent=models.IntegerField(default=0)
+    main_price = models.IntegerField(default=0)
+    discount=models.BooleanField(default=True,null=True,blank=False)
     productCategory = models.ManyToManyField(ProductCategory)
     image=models.ImageField(upload_to='product-image/',blank=True,null=True)
     image2=models.ImageField(upload_to='product-image/',blank=True,null=True)
@@ -71,6 +85,27 @@ class Product(models.Model):
     in_stock=models.BooleanField(default=True,blank=True)
     def __str__(self):
         return str(f'{self.name} ')
+    
+    def update_price(self):
+        if self.discount:
+            discount = float(self.price * (self.discount_percent / 100))
+            discounted_price = float(self.price - discount)
+            self.main_price=self.price
+
+            self.discount=False
+            self.price = discounted_price
+            return discounted_price
+        else:
+            discount = float(self.main_price * (self.discount_percent / 100))
+            discounted_price = self.price - discount
+
+            return discount+self.price
+
+
+    def save(self, *args, **kwargs):
+        calculated_price = self.update_price()  
+        super().save(*args, **kwargs)
+
 
     @property
     def imageURL(self):
@@ -175,12 +210,15 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
     quantity=models.IntegerField(default=0)
+    add_on_product= models.ManyToManyField(AddOnProduct)
     order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
     size=models.CharField(max_length=10,blank=True,null=True)
     @property
     def item_total(self):
+        add_on = self.add_on_product.all()
+        total_add_on = sum(add_pro.price for add_pro in add_on)
         total=self.product.price*self.quantity
-        return total
+        return total+(total_add_on*self.quantity)
 
 class ShippingAddress(models.Model):
     order=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)

@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon
+from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,AddOnProduct
 import json
 from django.http import JsonResponse
 from django.contrib.sessions.models import Session
@@ -99,6 +99,10 @@ def home(request):
 
     collectionsets=CollectionSet.objects.filter(hero=False)
 
+    discount_product = Product.objects.filter(
+        discount_percent__gt=5
+    )
+
 
 
     for product in products:
@@ -127,7 +131,8 @@ def home(request):
         'top_rated_product':top_rated_product,
         'new_arrival_products':new_arrival_products,
         'heroCollections':heroCollections,
-        'collectionsets':collectionsets
+        'collectionsets':collectionsets,
+        'discount_product':discount_product
     }
 
     
@@ -147,55 +152,24 @@ def home(request):
 
 import json
 from django.http import JsonResponse
+from django.contrib import messages
 
 def create_order_item(request):
-    # if request.method == 'POST':
-    #     try:
-    #         data = json.loads(request.body)
-    #         print('data', data)
-    #         productId = int(data['productID'])
-    #         action = data['action']
-    #         size = data['selectedSize']
-    #         print(productId)
-
-    #         userprofile = get_user(request)
-
-    #         product = Product.objects.get(id=productId)
-    #         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
-
-    #         orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
-
-    #         if action == 'add':
-    #             orderItem.quantity += 1
-    #         elif action == 'remove':
-    #             orderItem.quantity -= 1
-    #         elif action == 'delete':
-    #             orderItem.quantity = 0
-
-    #         orderItem.size = size
-    #         orderItem.save()
-    #         order.status = 'not_confirm'
-    #         order.save()
-            
-    #         if orderItem.quantity == 0:
-    #             orderItem.delete()
-
-    #         return JsonResponse("Item was added", safe=False)
-
-    #     except json.JSONDecodeError as e:
-    #         return JsonResponse({'error': 'Invalid JSON data'})
-    # else:
-    #     return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'})
 
     if request.method == 'POST':
         size = request.POST.get('size', None)
         actionanddata = request.POST.get('action', None)
         cart = request.POST.get('from', None)
-
-        print('cart: ',cart)
-        print('cart: ',size)
-        print('cart: ',actionanddata)
-
+        add_product=request.POST.get('add_on_product',None)
+        add_product2=request.POST.get('add_on_product2',None)
+        add_product3=request.POST.get('add_on_product3',None)
+        print(add_product)
+        try: 
+            add_on_product = AddOnProduct.objects.get(id=int(add_product))
+            add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
+            add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
+        except:
+            print('No add on selected')
         userprofile = get_user(request)
 
         splited_data=actionanddata.split()
@@ -206,9 +180,16 @@ def create_order_item(request):
         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
         orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
+        try: 
+            orderItem.add_on_product.add(add_on_product)
+            orderItem.add_on_product.add(add_on_product2)
+            orderItem.add_on_product.add(add_on_product3)
+        except:
+            print("No add on selected")
 
         if action == 'add':
             orderItem.quantity += 1
+            messages.success(request, 'Product added to cart successfully.')
         elif action == 'remove':
             orderItem.quantity -= 1
         elif action == 'delete':
@@ -245,6 +226,10 @@ def cart(request):
     order,c=Order.objects.get_or_create(user=userProfile,complete=False)
 
     items=OrderItem.objects.filter(order=order)
+
+    for i in items:
+        print(i.add_on_product.name)
+
     total=items.count()
     coupons=Cuppon.objects.all()
 
@@ -257,9 +242,11 @@ def cart(request):
                 order.coupon=True
                 order.coupon_percentange=c.percent
                 order.save()
-
-    saves=order.total - order.get_total
-
+    if order.coupon:
+        saves=order.total - order.get_total
+    else:
+        saves = 0
+    print('get_order')
     context={
         'total':total,
         'items':items,
@@ -403,6 +390,12 @@ def shop_details(request,pk):
 
     reviews=Review.objects.filter(product=product)
 
+    add_on_product = product.add_on_product.all()
+    add_on_product2 = product.add_on_product2.all()
+    add_on_product3 = product.add_on_product3.all()
+
+    print(add_on_product)
+
     star_count = product.average_rating
     print('Products tags: ',product.tags)
 
@@ -424,7 +417,10 @@ def shop_details(request,pk):
         'form':form,
         'reviews':reviews,
         'star_count':star_count,
-        'relatedProduct':relatePro
+        'relatedProduct':relatePro,
+        'add_on_product':add_on_product,
+        'add_on_product2':add_on_product2,
+        'add_on_product3':add_on_product3
     }
     return render(request,'shop/shop-details.html',context)
 from .decorator import admin_only

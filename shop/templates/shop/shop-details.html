@@ -1,6 +1,39 @@
 {% extends 'shop/main.html' %}
 
 {% block body %}
+{% if messages %}
+<style>
+    .messages .message {
+    background-color: #f74f06; /* Dark green background */
+    color: #ffffff; /* Light text */
+    border: 1px solid #4caf50; /* Green border */
+    padding: 15px; /* Padding around the message */
+    margin-bottom: 20px; /* Spacing between messages */
+    border-radius: 4px; /* Rounded corners */
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05); /* Shadow for depth */
+    position: fixed;
+    z-index: 10;
+}
+
+</style>
+<div class="messages d-flex justify-content-center " style="margin-top:-10px;">
+    {% for message in messages %}
+    <div class="message" id="success-message">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<script>
+
+    var messageElement = document.getElementById("success-message");
+
+    messageElement.style.display = "block";
+
+    setTimeout(function() {
+        messageElement.style.display = "none";
+    }, 2000);
+</script>
+
     <!-- Shop Details Section Begin -->
     <section class="shop-details">
         <div class="product__details__pic">
@@ -108,7 +141,68 @@
             </label>
         </div>
     </div>
-    
+  <!-- HTML with added classes for styling -->
+  <style>
+    /* CSS to style the card */
+    .card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #f74f06; /* Dark green */
+    color: #ffffff; /* Light text */
+    padding: 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-control {
+    width: calc(33.33% - 10px); /* Adjust the width as needed */
+    margin-right: 10px; /* Spacing between select dropdowns */
+}
+
+/* Style the options in the select dropdowns */
+.form-control option {
+    font-size: 1.1rem;
+}
+
+
+  </style>
+        <div class="card">
+            <div class="card-header">
+                Addons
+            </div>
+            <div class="card-body d-flex">
+                <select name="add_on_product" id="" class="form-control">
+                    <option value="none" style="font-size: 1.1rem;">Select a addon</option>
+
+                    {% for add_product in add_on_product %}
+                        <option value="{{add_product.id}}" style="font-size: 1.1rem;">{{add_product.name}} - {{add_product.price}}Tk.</option>
+                    {% endfor %}
+                </select>
+                <select name="add_on_product2" id="" class="form-control">
+                    <option value="none" style="font-size: 1.1rem;">Select a addon</option>
+
+                    {% for add_product in add_on_product2 %}
+                        <option value="{{add_product.id}}" style="font-size: 1.1rem;">{{add_product.name}} - {{add_product.price}}Tk.</option>
+                    {% endfor %}
+                </select>
+                <select name="add_on_product3" id="" class="form-control">
+                    <option value="none" style="font-size: 1.1rem;">Select a addon</option>
+
+                    {% for add_product in add_on_product3 %}
+                        <option value="{{add_product.id}}" style="font-size: 1.1rem;">{{add_product.name}} - {{add_product.price}}Tk.</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
     <div class="product__details__cart__option">
         {% if product.in_stock %}
             <input type="text" name="action" value="add {{ product.id }}" hidden>
@@ -162,87 +256,62 @@ function validateForm() {
                                     Previews({{product.total_reviews}})</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">Additional
-                                    information</a>
+                                    <a class="nav-link" data-toggle="tab" href="#tabs-7" role="tab">
+                                    Size Chart</a>
                                 </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane active" id="tabs-5" role="tabpanel">
                                     <div class="product__details__tab__content">
-                                        <p class="note"><pre>{{product.description}}</pre></p>
-                                        <!-- <div class="product__details__tab__content__item">
-                                            <h5>Products Infomation</h5>
-                                            <p>A Pocket PC is a handheld computer, which features many of the same
-                                                capabilities as a modern PC. These handy little devices allow
-                                                individuals to retrieve and store e-mail messages, create a contact
-                                                file, coordinate appointments, surf the internet, exchange text messages
-                                                and more. Every product that is labeled as a Pocket PC must be
-                                                accompanied with specific software to operate the unit and must feature
-                                            a touchscreen and touchpad.</p>
-                                            <p>As is the case with any new technology product, the cost of a Pocket PC
-                                                was substantial during it’s early release. For approximately $700.00,
-                                                consumers could purchase one of top-of-the-line Pocket PCs in 2003.
-                                                These days, customers are finding that prices have become much more
-                                                reasonable now that the newness is wearing off. For approximately
-                                            $350.00, a new Pocket PC can now be purchased.</p>
-                                        </div>
-                                        <div class="product__details__tab__content__item">
-                                            <h5>Material used</h5>
-                                            <p>Polyester is deemed lower quality due to its none natural quality’s. Made
-                                                from synthetic materials, not natural like wool. Polyester suits become
-                                                creased easily and are known for not being breathable. Polyester suits
-                                                tend to have a shine to them compared to wool and cotton suits, this can
-                                                make the suit look cheap. The texture of velvet is luxurious and
-                                                breathable. Velvet is a great choice for dinner party jacket and can be
-                                            worn all year round.</p>
-                                        </div> -->
+                                        <p class="note"><pre style="font-family: 'Mukti', sans-serif;">{{product.description|safe}}</pre></p>
+                                    
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="tabs-6" role="tabpanel">
                                     <div class="product__details__tab__content">
 <!-- Add this to the head of your HTML file -->
-<style>
-    /* The Modal (background) */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        padding-top: 50px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgb(0,0,0);
-        background-color: rgba(0,0,0,0.9);
-    }
+                                            <style>
+                                                /* The Modal (background) */
+                                                .modal {
+                                                    display: none;
+                                                    position: fixed;
+                                                    z-index: 1;
+                                                    padding-top: 50px;
+                                                    left: 0;
+                                                    top: 0;
+                                                    width: 100%;
+                                                    height: 100%;
+                                                    overflow: auto;
+                                                    background-color: rgb(0,0,0);
+                                                    background-color: rgba(0,0,0,0.9);
+                                                }
 
-    /* Modal Content */
-    .modal-content {
-        margin: auto;
-        display: block;
-   
-    
-    }
+                                                /* Modal Content */
+                                                .modal-content {
+                                                    margin: auto;
+                                                    display: block;
+                                            
+                                                
+                                                }
 
-    /* The Close Button */
-    .close {
-        position: absolute;
-        top: 15px;
-        right: 35px;
-        color: #f1f1f1;
-        font-size: 40px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
+                                                /* The Close Button */
+                                                .close {
+                                                    position: absolute;
+                                                    top: 15px;
+                                                    right: 35px;
+                                                    color: #f1f1f1;
+                                                    font-size: 40px;
+                                                    font-weight: bold;
+                                                    transition: 0.3s;
+                                                }
 
-    .close:hover,
-    .close:focus {
-        color: #bbb;
-        text-decoration: none;
-        cursor: pointer;
-    }
-</style>
+                                                .close:hover,
+                                                .close:focus {
+                                                    color: #bbb;
+                                                    text-decoration: none;
+                                                    cursor: pointer;
+                                                }
+                                            </style>
 
 <!-- Add this to the end of your HTML body -->
 
@@ -292,6 +361,8 @@ function validateForm() {
                                                 </div>
 
                                             <div class="col-lg-6">
+                                                <h6 style="font-size: 1.2rem; font-weight: bold; opacity: .8;">Give a Review</h6>
+
                                                 <div class="product__details__tab__content__item mt-4">
                                                     <form method="POST" action="{% url 'writeReview' pk=product.id %}" enctype="multipart/form-data" >
                                 
@@ -350,6 +421,7 @@ function validateForm() {
         </div>
     </section>
     <!-- Shop Details Section End -->
+
 
     <!-- Related Section Begin -->
     <section class="related spad">

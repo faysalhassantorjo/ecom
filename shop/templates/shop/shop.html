@@ -114,6 +114,10 @@
                                      <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
                                         {% if product.in_stock != True %}
                                         <span class="label">out of stock</span>
+                                        {% else %}
+                                        {% if product.discount_percent %}
+                                        <span class="label" style="background-color: #f74f06;">{{product.discount_percent}}% off</span>
+                                        {% endif %}
                                         {% endif %}
                                     <ul class="product__hover">
                                         <!-- <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
@@ -130,7 +134,12 @@
                                     <div class="rating">
                                         <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                                     </div>
-                                    <h5 style="opacity: .8;">TK. {{product.price}}</h5>
+                                    <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
+                                        {% if product.discount_percent %}
+                                        <del style="font-size: small;"> 
+                                         TK. {{product.update_price}}
+                                        </del></h5>
+                                        {% endif %}
                                   
                                 </div>
                                 {% if userProfile.user.is_staff %}

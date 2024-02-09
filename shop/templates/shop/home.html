@@ -1,6 +1,46 @@
 {% extends 'shop/main.html' %}
 {% load static %}
 {% block body %}
+<style>
+    /* Style the anchor tag */
+    .messenger-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0084FF; /* Messenger blue color */
+            color: #fff; /* White text color */
+            text-decoration: none; /* Remove underline */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Hover effect */
+        .messenger-link:hover {
+            background-color: #0056b3; /* Darker shade of Messenger blue */
+        }
+
+        /* Style the icon */
+        .messenger-icon {
+            margin-right: 10px; /* Spacing between icon and text */
+        }
+    .contact{
+        position: fixed;
+        bottom: 30px;
+        right: 0;
+        z-index: 9;
+        opacity: .5;
+    }
+</style>
+<div class="contact" >
+
+    
+    <a href="https://m.me/your_facebook_username_or_page_id" class="messenger-link">
+        <i class="fab fa-facebook-messenger messenger-icon"></i>
+        Send message on Messenger
+    </a>
+    
+</div>
 
     <!-- Hero Section Begin -->
     <section class="hero">
@@ -91,9 +131,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <ul class="filter__controls">
-                        <li class="active" data-filter="*">Best Sellers</li>
+                        <li  class="active" data-filter="*">Best Sellers</li>
                         <li data-filter=".new-arrivals">New Arrivals</li>
                         <li data-filter=".hot-sales">Hot Review</li>
+                        <li data-filter=".hot-discount">Hot Discount</li>
                     </ul>
                 </div>
             </div>
@@ -156,6 +197,34 @@
 
                 {% endfor %}
                 
+                {% for product in discount_product %}
+                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-discount">
+       
+                    <div class="product__item">
+                        <a href="{% url 'shop_details' pk=product.id %}">   
+                        <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
+                            {% if product.in_stock != True %}
+                            <span class="label">out of stock</span>
+                            {% else %}
+                            <span class="label">{{product.discount_percent}}%</span>
+                            {% endif %}
+                            <ul class="product__hover">
+                            </ul>
+                        </div>
+                    </a>
+                        <div class="product__item__text">
+                            <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
+                            <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">See Details</a>
+                            <div class="rating">
+                                <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
+                            </div>
+                            <h5 style="opacity: .7;">TK. {{product.price}}</h5>
+                          
+                        </div>
+                    </div>
+                   
+                </div>
+                {% endfor %}
                 
             </div>
         </div>

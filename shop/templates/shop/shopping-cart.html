@@ -132,8 +132,8 @@
                             <thead>
                                 <tr>
                                     <th>Product</th>
-                               
-                                    <th>Quantity</th>
+                                    <th>AddOn</th>
+                                    <th>Qty</th>
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
@@ -152,6 +152,13 @@
 <br>
                                             <span>${{item.product.price}}</span>
                                         </div>
+                                    </td>
+                                    <td class="product__cart__item">
+                                        {% for add_on in item.add_on_product.all %}
+                                        {{ add_on.name }}<br>
+                                        {{add_on.price}} TK.<br>
+                                
+                                    {% endfor %}
                                     </td>
 
                                     <style>
@@ -175,7 +182,6 @@
                                             </form>
 
                                             <span>{{item.quantity}}</span>
-
                                             <form method="post" action="{% url 'update_item' %}">
                                                 {% csrf_token %}
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
@@ -186,6 +192,7 @@
                                             <i class="fa fa-plus"></i>
                                             </button>
                                             </form>
+
                                         </div>
                                     </td>
                                     <td class="cart__price">Tk. {{item.item_total}}</td>
