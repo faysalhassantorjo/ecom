@@ -116,9 +116,18 @@
                                 <div class="checkout__order__products">Product<span>Total</span></div>
                                 <ul class="checkout__total__products">
                                     {% for item in items %}
-                                    <li>{{forloop.counter}}. {{item.product.name}}<span>TK. {{item.item_total}}</span></li>
-
+                                    <li>{{forloop.counter}}. {{item.product.name}}<span>TK. {{item.item_total}}</span><br>
+                                    {% for add_on in item.add_on_product.all %}
+                                    &nbsp;&nbsp;&nbsp;&nbsp; {{ add_on.name }} <br>
                                     {% endfor %}
+                                </li>
+                                    {% endfor %}
+
+                                    
+
+
+
+
                                 </ul>
                                 <ul class="checkout__total__all">
                                     <li>Total Items <span>{{order.total_items}}</span></li>

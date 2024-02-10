@@ -43,6 +43,11 @@
                             <table class="table table-bordered"  >
                                 <thead>
                                     <tr>
+                                        <th>
+                                         Order ID:    {{shippingaddress.order.order_id}}
+                                        </th>
+                                    </tr>
+                                    <tr>
                                         <th>Name</th>
                                         <th>Address Details</th>
                                         <th>Address Note</th>
@@ -79,6 +84,44 @@
                                         <td>{{orderItem.size}}</td>
                                         <td>{{orderItem.item_total}}</td>
                                     </tr>
+                                    <tr>
+                                        <td>Add On Product</td>
+                                                    
+                                        <td>
+                                                                    
+                                            <table>
+                                                <thead>
+                                                    <th>Add On </th>
+                                                    <th>Size</th>
+                                                    <th>price</th>
+                                                </thead>
+                                                <tbody>
+                                                    {% for add_on in orderItem.add_on_product.all %}
+    
+                                                    <tr>
+                                                        
+                                                    <td>
+                                                    {{ add_on.name }}<br>
+                                                    </td>
+                                                    <td>
+                                                        {{add_on.size}} <br>                             
+    
+                                                    </td>
+                                                    <td>
+                                                    {{add_on.price}} TK.<br>                             
+    
+                                                    </td>
+                
+                                                    </tr>
+                                                    {% endfor %}
+    
+                                                </tbody>
+                                            </table>
+                                            
+                                        </td>
+    
+                                    </tr>
+                                    
                                     {% endfor %}
                                 </tbody>
                             </table>

@@ -132,87 +132,116 @@
                             <thead>
                                 <tr>
                                     <th>Product</th>
-                                    <th>AddOn</th>
                                     <th>Qty</th>
                                     <th>Total</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                            {% for item in items %}
-
-                                <tr>
-                                    <td class="product__cart__item">
-                                        <div class="product__cart__item__pic">
-                                            <img src="{{item.product.imageURL}}" height="90" width="auto" alt="">
-                                        </div>
-                                        <div class="product__cart__item__text">
-                                            <h5>{{item.product.name}}</h5>
-                                            <span>Size: {{item.size}}</span>
-<br>
-                                            <span>${{item.product.price}}</span>
-                                        </div>
-                                    </td>
-                                    <td class="product__cart__item">
-                                        {% for add_on in item.add_on_product.all %}
-                                        {{ add_on.name }}<br>
-                                        {{add_on.price}} TK.<br>
-                                
-                                    {% endfor %}
-                                    </td>
-
-                                    <style>
-                                        .quantity {
-                                            display: flex;
-                                            align-items: center;
-                                        }
-
-                                    </style>
-                                    <td class="quantity__item">
-                                        <div class="quantity">
-
-                                            <form method="post" action="{% url 'update_item' %}">
-                                                {% csrf_token %}
-                                            <input type="text" name="size" value="{{item.size}}" hidden>
-                                            <input type="text" name="action" value="remove {{ item.product.id }}" hidden>
-                                            <input type="text" name="from" value="cart" hidden>
-                                            <button type="submit" class="btn-number"  style="border: none;background: none;" >
-                                            <i class="fa fa-minus"></i>
-                                            </button>
-                                            </form>
-
-                                            <span>{{item.quantity}}</span>
+                                {% for item in items %}
+    
+                                    <tr>
+                                        <td class="product__cart__item">
+                                            <div class="product__cart__item__pic">
+                                                <img src="{{item.product.imageURL}}" height="90" width="auto" alt="">
+                                            </div>
+                                            <div class="product__cart__item__text">
+                                                <h5>{{item.product.name}}</h5>
+                                                <span>Size: {{item.size}}</span>
+    <br>
+                                                <span>${{item.product.price}}</span>
+                                            </div>
+                                        </td>
+                  
+                                        <style>
+                                            .quantity {
+                                                display: flex;
+                                                align-items: center;
+                                            }
+    
+                                        </style>
+                                        <td class="quantity__item">
+                                            <div class="quantity">
+    
+                                                <form method="post" action="{% url 'update_item' %}">
+                                                    {% csrf_token %}
+                                                <input type="text" name="size" value="{{item.size}}" hidden>
+                                                <input type="text" name="action" value="remove {{ item.product.id }}" hidden>
+                                                <input type="text" name="from" value="cart" hidden>
+                                                <button type="submit" class="btn-number"  style="border: none;background: none;" >
+                                                <i class="fa fa-minus"></i>
+                                                </button>
+                                                </form>
+    
+                                                <span>{{item.quantity}}</span>
+                                                <form method="post" action="{% url 'update_item' %}">
+                                                    {% csrf_token %}
+                                                    <input type="text" name="size" value="{{item.size}}" hidden>
+                                                    <input type="text" name="action" value="add {{ item.product.id }}" hidden>
+                                                    <input type="text" name="from" value="cart" hidden>
+    
+                                                <button type="submit" class="btn-number"  style="border: none;background: none;">
+                                                <i class="fa fa-plus"></i>
+                                                </button>
+                                                </form>
+    
+                                            </div>
+                                        </td>
+                                        <td class="cart__price">Tk. {{item.item_total}}</td>
+                                        <td class="cart__close">
+                                           
                                             <form method="post" action="{% url 'update_item' %}">
                                                 {% csrf_token %}
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
-                                                <input type="text" name="action" value="add {{ item.product.id }}" hidden>
+                                                <input type="text" name="action" value="delete {{ item.product.id }}" hidden>
                                                 <input type="text" name="from" value="cart" hidden>
-
+    
                                             <button type="submit" class="btn-number"  style="border: none;background: none;">
-                                            <i class="fa fa-plus"></i>
+                                            <i class="fa fa-close"></i>
                                             </button>
                                             </form>
+                                        </td>
+                                    </tr>
+                                    <tr>
 
-                                        </div>
-                                    </td>
-                                    <td class="cart__price">Tk. {{item.item_total}}</td>
-                                    <td class="cart__close">
-                                       
-                                        <form method="post" action="{% url 'update_item' %}">
-                                            {% csrf_token %}
-                                            <input type="text" name="size" value="{{item.size}}" hidden>
-                                            <input type="text" name="action" value="delete {{ item.product.id }}" hidden>
-                                            <input type="text" name="from" value="cart" hidden>
+                                                    
+                                    <td>
+                                                                
+                                        <table>
+                                            <thead>
+                                                <th>Add On </th>
+                                                <th>Size</th>
+                                                <th>price</th>
+                                            </thead>
+                                            <tbody>
+                                                {% for add_on in item.add_on_product.all %}
 
-                                        <button type="submit" class="btn-number"  style="border: none;background: none;">
-                                        <i class="fa fa-close"></i>
-                                        </button>
-                                        </form>
+                                                <tr>
+                                                    
+                                                <td>
+                                                {{ add_on.name }}<br>
+                                                </td>
+                                                <td>
+                                                    {{add_on.size}} <br>                             
+
+                                                </td>
+                                                <td>
+                                                {{add_on.price}} TK.<br>                             
+
+                                                </td>
+            
+                                                </tr>
+                                                {% endfor %}
+
+                                            </tbody>
+                                        </table>
+                                        
                                     </td>
-                                </tr>
-                            
-                            {% endfor %}
-                            </tbody>
+
+                                    </tr>
+                                
+                                {% endfor %}
+                                </tbody>
                         </table>
                     </div>
                     <div class="row">

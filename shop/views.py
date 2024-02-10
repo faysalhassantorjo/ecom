@@ -166,10 +166,24 @@ def create_order_item(request):
         print(add_product)
         try: 
             add_on_product = AddOnProduct.objects.get(id=int(add_product))
+           
+        except:
+            print('No add on selected')
+
+        try: 
+
             add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
+
+        except:
+            print('No add on selected')
+        try: 
+
+
             add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
         except:
             print('No add on selected')
+
+
         userprofile = get_user(request)
 
         splited_data=actionanddata.split()
@@ -182,7 +196,16 @@ def create_order_item(request):
         orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
         try: 
             orderItem.add_on_product.add(add_on_product)
+
+        except:
+            print("No add on selected")
+        
+        try:
             orderItem.add_on_product.add(add_on_product2)
+        except:
+            print("No add on selected")
+        
+        try: 
             orderItem.add_on_product.add(add_on_product3)
         except:
             print("No add on selected")
