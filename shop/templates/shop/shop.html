@@ -12,7 +12,10 @@
                         <div class="breadcrumb__links">
                             <a href="/">Home</a>
                             <span>Shop</span>
+                    
                         </div>
+                    <strong> {{total_products}} Products</strong>
+
                     </div>
                 </div>
             </div>
@@ -29,6 +32,9 @@
                         {% if x %}
                         {% for categorie in categories %}
                         <div class="col-lg-4 col-12 mt-5">
+                            <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
                                 <style>
                                  
@@ -77,13 +83,26 @@
                                         color: #666;
                                         margin-top: 10px;
                                     }
+                                    .t{
+
+                        font-family: "Playfair Display", serif;
+                        font-optical-sizing: auto;
+                        font-weight: weight;
+                        font-style: normal;
+
+                                    }
+                                    .s{
+                                        /* -webkit-mask-image: linear-gradient(to bottom, black,transparent);
+                                        mask-image: linear-gradient(to bottom, black,transparent); */
+
+                                    }
                                 </style>
                        
                                 <a href="{% url 'products' pk=categorie.id %}">
                                     <div class="category-cardx">
-                                        <img src="{{categorie.imageURL}}" alt="Category Image">
+                                        <img class="s" src="{{categorie.imageURL}}" alt="Category Image">
                                         <div class="category-card-contentx">
-                                            <h2 class="text-center" style="font-family: 'Anton', sans-serif; font-size: 3rem;">{{categorie.name}}</h2>
+                                            <h2 class="text-center t">{{categorie.name}}</h2>
                                         </div>
                                     </div>
                        
@@ -110,7 +129,7 @@
                         </style>
                         <div class="col-lg-3 col-md-6 col-sm-6">
                             <div class="product__item">
-                                <a href="{% url 'shop_details' pk=product.id %}">    
+                                <a href="{% url 'shop_details' slug=product.slug %}">    
                                      <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
                                         {% if product.in_stock != True %}
                                         <span class="label">out of stock</span>
@@ -130,7 +149,7 @@
                                 <div class="product__item__text">
                                     <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
 
-                                    <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">See Details</a>
+                                    <a href="{% url 'shop_details' slug=product.slug %}" class="add-cart">See Details</a>
                                     <div class="rating">
                                         <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                                     </div>

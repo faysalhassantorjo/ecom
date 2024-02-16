@@ -979,8 +979,8 @@ ol {
 }
 
 .product__item__pic {
-	height: 350px;
-	width: 300px;
+	height: 400px;
+	width: 320px;
 	position: relative;
 	background-position: center top;
 	background-size: cover;
@@ -1600,6 +1600,7 @@ ol {
 
 .product__details__pic__item {
 	position: relative;
+
 }
 
 .product__details__pic__item a {

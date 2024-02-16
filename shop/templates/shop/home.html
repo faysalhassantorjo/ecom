@@ -5,14 +5,16 @@
     /* Style the anchor tag */
     .messenger-link {
             display: inline-block;
-            padding: 10px 20px;
+            padding: 10px;
             background-color: #0084FF; /* Messenger blue color */
             color: #fff; /* White text color */
             text-decoration: none; /* Remove underline */
-            border-radius: 5px; /* Rounded corners */
-            font-size: 16px;
+            border-radius: 50%; /* Rounded corners */
+            font-size: 2rem;
             font-weight: bold;
             text-align: center;
+            height: 60px;
+            width: 60px;
         }
 
         /* Hover effect */
@@ -22,22 +24,22 @@
 
         /* Style the icon */
         .messenger-icon {
-            margin-right: 10px; /* Spacing between icon and text */
+            /* margin-right: 10px; Spacing between icon and text */
         }
     .contact{
         position: fixed;
         bottom: 30px;
         right: 0;
         z-index: 9;
-        opacity: .5;
+        /* opacity: .5; */
     }
 </style>
 <div class="contact" >
 
     
-    <a href="https://m.me/your_facebook_username_or_page_id" class="messenger-link">
+    <a href="https://m.me/" target="_blank" class="messenger-link">
         <i class="fab fa-facebook-messenger messenger-icon"></i>
-        Send message on Messenger
+     
     </a>
     
 </div>
@@ -143,7 +145,7 @@
                 {% for product in top_rated_product %}
                 <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-sales">
                     <div class="product__item">
-                        <a href="{% url 'shop_details' pk=product.id %}">    
+                        <a href="{% url 'shop_details' slug=product.slug %}">    
                              <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
                                 {% if product.in_stock != True %}
                                 <span class="label">out of stock</span>
@@ -156,11 +158,16 @@
                         <div class="product__item__text">
                             <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
 
-                            <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">See Details</a>
+                            <a href="{% url 'shop_details' slug=product.slug %}" class="add-cart">See Details</a>
                             <div class="rating">
                                 <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                             </div>
-                            <h5 style="opacity: .8;">TK. {{product.price}}</h5>
+                            <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
+                                {% if product.discount_percent %}
+                                <del style="font-size: small;"> 
+                                 TK. {{product.update_price}}
+                                </del></h5>
+                                {% endif %}
                           
                         </div>
                        
@@ -173,7 +180,7 @@
                 <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
        
                     <div class="product__item">
-                        <a href="{% url 'shop_details' pk=product.id %}">   
+                        <a href="{% url 'shop_details' slug=product.slug %}">   
                         <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
                             {% if product.in_stock != True %}
                             <span class="label">out of stock</span>
@@ -184,11 +191,16 @@
                     </a>
                         <div class="product__item__text">
                             <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
-                            <a href="{% url 'shop_details' pk=product.id %}" class="add-cart">See Details</a>
+                            <a href="{% url 'shop_details' slug=product.slug %}" class="add-cart">See Details</a>
                             <div class="rating">
                                 <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                             </div>
-                            <h5 style="opacity: .7;">TK. {{product.price}}</h5>
+                            <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
+                                {% if product.discount_percent %}
+                                <del style="font-size: small;"> 
+                                 TK. {{product.update_price}}
+                                </del></h5>
+                                {% endif %}
                           
                         </div>
                     </div>
@@ -201,12 +213,12 @@
                 <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix hot-discount">
        
                     <div class="product__item">
-                        <a href="{% url 'shop_details' pk=product.id %}">   
+                        <a href="{% url 'shop_details' slug=product.slug %}">   
                         <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
                             {% if product.in_stock != True %}
                             <span class="label">out of stock</span>
                             {% else %}
-                            <span class="label">{{product.discount_percent}}%</span>
+                            <span class="label">{{product.discount_percent}}% off</span>
                             {% endif %}
                             <ul class="product__hover">
                             </ul>
@@ -218,7 +230,13 @@
                             <div class="rating">
                                 <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                             </div>
-                            <h5 style="opacity: .7;">TK. {{product.price}}</h5>
+                            <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
+                                {% if product.discount_percent %}
+                                <del style="font-size: small;"> 
+                                 TK. {{product.update_price}}
+                                </del></h5>
+                                {% endif %}
+                          
                           
                         </div>
                     </div>

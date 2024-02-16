@@ -10,7 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token }}">
 
-    <title>Male-Fashion | Template</title>
+    <title>longg</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -56,9 +56,9 @@
             <div class="price">$0.00</div>
         </div>
         <div id="mobile-menu-wrap"></div>
-        <!-- <div class="offcanvas__text">
-            <p>Free shipping, 30-day return or refund guarantee.</p>
-        </div> -->
+        <div class="offcanvas__text">
+            <!-- <p>Cash On Delivary, 30-day return or refund guarantee.</p> -->
+        </div>
     </div>
     <!-- Offcanvas Menu End -->
 
@@ -149,7 +149,7 @@
                                                 <h5>{{item.product.name}}</h5>
                                                 <span>Size: {{item.size}}</span>
     <br>
-                                                <span>${{item.product.price}}</span>
+                                                <span>TK. {{item.product.price}}</span>
                                             </div>
                                         </td>
                   
@@ -166,7 +166,7 @@
                                                 <form method="post" action="{% url 'update_item' %}">
                                                     {% csrf_token %}
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
-                                                <input type="text" name="action" value="remove {{ item.product.id }}" hidden>
+                                                <input type="text" name="action" value="remove {{ item.product.slug }}" hidden>
                                                 <input type="text" name="from" value="cart" hidden>
                                                 <button type="submit" class="btn-number"  style="border: none;background: none;" >
                                                 <i class="fa fa-minus"></i>
@@ -177,7 +177,7 @@
                                                 <form method="post" action="{% url 'update_item' %}">
                                                     {% csrf_token %}
                                                     <input type="text" name="size" value="{{item.size}}" hidden>
-                                                    <input type="text" name="action" value="add {{ item.product.id }}" hidden>
+                                                    <input type="text" name="action" value="add {{ item.product.slug }}" hidden>
                                                     <input type="text" name="from" value="cart" hidden>
     
                                                 <button type="submit" class="btn-number"  style="border: none;background: none;">
@@ -193,7 +193,7 @@
                                             <form method="post" action="{% url 'update_item' %}">
                                                 {% csrf_token %}
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
-                                                <input type="text" name="action" value="delete {{ item.product.id }}" hidden>
+                                                <input type="text" name="action" value="delete {{ item.product.slug }}" hidden>
                                                 <input type="text" name="from" value="cart" hidden>
     
                                             <button type="submit" class="btn-number"  style="border: none;background: none;">
@@ -209,7 +209,7 @@
                                                                 
                                         <table>
                                             <thead>
-                                                <th>Add On </th>
+                                                <th>Add On</th>
                                                 <th>Size</th>
                                                 <th>price</th>
                                             </thead>
@@ -219,7 +219,7 @@
                                                 <tr>
                                                     
                                                 <td>
-                                                {{ add_on.name }}<br>
+                                                {{ add_on.name }}  - <span style="opacity: .8; text-transform: capitalize;">qty({{item.quantity}}) </span><br>
                                                 </td>
                                                 <td>
                                                     {{add_on.size}} <br>                             

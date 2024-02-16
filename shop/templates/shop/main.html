@@ -126,7 +126,7 @@
                             {% if userProfile.user.is_staff %}
                             <li><a href="{% url 'viewOrder' %}">viewOrder</a></li>
                             <li><a href="{% url 'product_add' %}">Add Product</a></li>
-                            <li><a href="/admin">Admin Panel</a></li>
+                            <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
                             {% endif %}
                         </ul>
                     </nav>

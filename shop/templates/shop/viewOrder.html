@@ -28,6 +28,9 @@
     .btn-order-complete {
         margin-top: 10px;
     }
+
+</style>
+
 </style>
 
 <div class="container">
@@ -37,7 +40,7 @@
             <div class="list-group mt-2">
                 {% for shippingaddress in shippingAddress %}
 
-                <div class="orderinfo mt-2">
+                <div class="orderinfo mt-2" id="orderinfo_{{ shippingaddress.order.order_id }}" >
                     <div class="row">
                         <div class="col-md-10">
                             <table class="table table-bordered"  >
@@ -126,19 +129,60 @@
                                 </tbody>
                             </table>
                             
-                            <p><strong style="color: #4f4f4f;">Total Tk: </strong> <span style="color: #f74f06;">{{shippingaddress.order.get_total}} </span></p>
-                            <p style="color: #4f4f4f;">Date: {{shippingaddress.timestamp}}</p>
+                            <p><strong style="color: #4f4f4f;">Product Bill: </strong> <span style="color: #f74f06;">{{shippingaddress.order.get_total}} </span></p>
+                            <p><strong style="color: #4f4f4f;">Delivary charge: </strong> <span style="color: #f74f06;">{{shippingaddress.order.delivary_charge}} </span></p>
+                            {% with delivery_charge=shippingaddress.order.delivary_charge %}
+                            {% with total_amount=shippingaddress.order.get_total %}
+                                <p>
+                                    <strong style="color: #4f4f4f;">Total Bill: </strong>
+                                    <span style="color: #f74f06;">{{ delivery_charge|add:total_amount }}</span>
+                                </p>
+                            {% endwith %}
+                        {% endwith %}
+                          <p style="color: #4f4f4f;">Date: {{shippingaddress.timestamp}}</p>
+                          <p style="color: #4f4f4f;"> {{shippingaddress.timestamp|timesince}} ago</p>
                             <p></p>
                             
                         </div>
                         <div class="col-md-2 text-right">
                             <a href="{% url 'order_status' pk=shippingaddress.order.id %}" class="btn btn-outline-primary btn-order-complete">{{shippingaddress.order.status}}</a>
                         </div>
+                     
+                        <div class="col-md-12 text-right">
+                            <button onclick="printOrder('orderinfo_{{ shippingaddress.order.order_id }}')" class="btn btn-outline-dark">Print This data</button>
+                        </div>
 
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            <script>
+function printOrder(orderId) {
+    var orderDiv = document.getElementById(orderId);
+    
+    // Remove the button from the orderDiv
+    var buttonToRemove = orderDiv.querySelector('.btn');
+    var buttonToRemove2 = orderDiv.querySelector('button');
+    if (buttonToRemove) {
+        buttonToRemove.remove();
+    }
+    if (buttonToRemove2) {
+        buttonToRemove2.remove();
+    }
+    
+    var orderContent = orderDiv.innerHTML; // Get the content of the orderDiv
+    
+    var originalContents = document.body.innerHTML; // Store the original content
+    
+    document.body.innerHTML = orderContent; // Replace the content of the body with the order content
+    
+    window.print(); // Trigger the print dialog
+    
+    document.body.innerHTML = originalContents; // Restore the original content
+}
+
+            </script>
+        
         </div>
     </div>
 </div>

@@ -168,29 +168,29 @@ def create_order_item(request):
             add_on_product = AddOnProduct.objects.get(id=int(add_product))
            
         except:
-            print('No add on selected')
+            print('No add on get 1')
 
         try: 
 
             add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
 
         except:
-            print('No add on selected')
+            print('No add on get 2')
         try: 
 
 
             add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
         except:
-            print('No add on selected')
+            print('No add on get 3')
 
 
         userprofile = get_user(request)
 
         splited_data=actionanddata.split()
-        productId=int(splited_data[1])
+        productId=(splited_data[1])
         action=splited_data[0]
 
-        product = Product.objects.get(id=productId)
+        product = Product.objects.get(slug=productId)
         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
         orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
@@ -198,17 +198,17 @@ def create_order_item(request):
             orderItem.add_on_product.add(add_on_product)
 
         except:
-            print("No add on selected")
+            print("No add on selected 1")
         
         try:
             orderItem.add_on_product.add(add_on_product2)
         except:
-            print("No add on selected")
+            print("No add on selected 2")
         
         try: 
             orderItem.add_on_product.add(add_on_product3)
         except:
-            print("No add on selected")
+            print("No add on selected 3")
 
         if action == 'add':
             orderItem.quantity += 1
@@ -221,6 +221,7 @@ def create_order_item(request):
         orderItem.size = size
         orderItem.save()
         order.status = 'not_confirm'
+        order.totalbill=order.total
         order.save()
             
         if orderItem.quantity == 0:
@@ -232,7 +233,7 @@ def create_order_item(request):
         if cart:
             return redirect('cart')
 
-        return redirect('shop_details',pk=productId)
+        return redirect('shop_details',slug=productId)
 
 from .form import ShippingAddressForm
 def createOrder(request):
@@ -261,12 +262,22 @@ def cart(request):
         print('cuopon ',q)
 
         for c in coupons:
-            if c.cuppon_name==q:
-                order.coupon=True
-                order.coupon_percentange=c.percent
-                order.save()
+            
+            if c.cuppon_name==q and order.coupon!=True:
+                if order.get_total >= c.min_order:
+                    order.coupon=True
+                    order.coupon_percentange=c.percent
+                    order.save()
+
+
+    print('My get_total',order.get_total)
+    print('My total bill: ',order.totalbill)                
     if order.coupon:
-        saves=order.total - order.get_total
+      
+        # saves=abs(order.get_total - order.totalbill)
+        saves=abs(order.total - order.get_total)
+
+
     else:
         saves = 0
     print('get_order')
@@ -283,11 +294,16 @@ def location_choice(request,pk):
     order=Order.objects.get(id=pk)
     location = request.POST.get('location')
     
-    if location:
-        order.location=location
+    if location in ['outside_dhaka', 'inside_dhaka']:
+        order.location = location
+        
+        if location == 'outside_dhaka':
+            order.delivary_charge = 120
+        elif location == 'inside_dhaka':
+            order.delivary_charge = 80
+
         order.save()
         return redirect('checkout')
-
     context={
         'order':order
     }
@@ -332,6 +348,8 @@ def checkout(request):
     print(userProfile)
 
     order,c=Order.objects.get_or_create(user=userProfile,complete=False)
+    
+    subtotal = order.get_total+order.delivary_charge
 
     items=OrderItem.objects.filter(order=order)
     total=items.count()
@@ -347,44 +365,59 @@ def checkout(request):
             order.order_id=order_id
             order.complete=True
             order.status="Pending"
+            order.totalbill=subtotal
             order.save()     
             return redirect('order_success',pk=shipping_address.id)
 
     else:
         form = ShippingAddressForm()
 
+    
+
     context={
         'total':total,
         'items':items,
         'order':order,
         'form':form,
-        'userProfile':userProfile
+        'userProfile':userProfile,
+        'subtotal':subtotal
     }
  
     return render(request,'shop/checkout.html',context)
 def order_success(request,pk):
     data=ShippingAddress.objects.get(id=pk)
+    total = data.order.get_total+data.order.delivary_charge
+
     context={
-        'data':data
+        'data':data,
+        'total':total
     }
     return render(request,'shop/orderSuccess.html',context)
 def shop_grid(request,pk):
+    try:
 
-    userProfile=get_user(request)
+        userProfile=get_user(request)
 
-    collection=CollectionSet.objects.get(id=pk)
-    categories=collection.productcategory_set.all()
+        collection=CollectionSet.objects.get(id=pk)
+        categories=collection.productcategory_set.all()
 
-    print('categories',categories)
+        print('categories',categories)
 
 
-    context={
-        # 'products':products,
-        'categories':categories,
-        'userProfile':userProfile,
-        'x':True
-    }
-    return render(request,'shop/shop.html',context)
+        context={
+            # 'products':products,
+            'categories':categories,
+            'userProfile':userProfile,
+            'x':True
+        }
+        return render(request,'shop/shop.html',context)
+    except:
+        return render(request,'shop/404.html')
+
+from django.urls import reverse
+
+def go_to_admin_panel(request):
+    return redirect(reverse('admin:index'))
 
 def products(request,pk):
     cat=ProductCategory.objects.get(id=pk)
@@ -393,59 +426,89 @@ def products(request,pk):
     print(products)
     userProfile=get_user(request)
 
+    total_products = products.count()
+
+
+
     context={
         'products':products,
         'categories':cat,
-        'userProfile':userProfile
+        'userProfile':userProfile,
+        'total_products':total_products,
     }
     return render(request,'shop/shop.html',context) 
 
 from django.db.models import Q
-def shop_details(request,pk):
-    product=Product.objects.get(id=pk)
-    userProfile=get_user(request)
-    print(userProfile)
-    form=WriteReview()
+def shop_details(request,slug):
+    try:
+        product=Product.objects.get(slug=slug)
+        userProfile=get_user(request)
+        # print(userProfile)
+        form=WriteReview()
 
-    order,c=Order.objects.get_or_create(user=userProfile,complete=False)
+        order,c=Order.objects.get_or_create(user=userProfile,complete=False)
 
-    items=OrderItem.objects.filter(order=order)
+        items=OrderItem.objects.filter(order=order)
 
-    reviews=Review.objects.filter(product=product)
+        reviews=Review.objects.filter(product=product)
 
-    add_on_product = product.add_on_product.all()
-    add_on_product2 = product.add_on_product2.all()
-    add_on_product3 = product.add_on_product3.all()
+        add_on_product = product.add_on_product.all()
+        add_on_product2 = product.add_on_product2.all()
+        add_on_product3 = product.add_on_product3.all()
 
-    print(add_on_product)
+        # print(add_on_product)
 
-    star_count = product.average_rating
-    print('Products tags: ',product.tags)
+        product_categories=product.productCategory.all()
+  
 
-    lis=product.tags.all()
-    print(lis)
-    relatePro=[]
-    # for p in lis:
-    #     print('p is ',p.name)
-    #     a=Product.objects.filter(Q(tags__name__icontains=p.name))
-    #     relatePro.append(a)
-    relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()
+        star_count = product.average_rating
+
+        lis=product.tags.all()
+        
+        
+
+        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()
+
+        can_review = False
+
+        if request.user.is_authenticated:
+            user = request.user
+            user_profile = UserProfile.objects.get(user=user)
+            user_orders = Order.objects.filter(user=user_profile)
+
+            for order in user_orders:
+                order_items = OrderItem.objects.filter(order=order)
+                for order_item in order_items:
+                    if order_item.product == product:
+                        can_review = True
+                        break
+                if can_review:
+                    break
 
 
 
-    context={
-        'product':product,
-        'order':order,
-        'userProfile':userProfile,
-        'form':form,
-        'reviews':reviews,
-        'star_count':star_count,
-        'relatedProduct':relatePro,
-        'add_on_product':add_on_product,
-        'add_on_product2':add_on_product2,
-        'add_on_product3':add_on_product3
-    }
-    return render(request,'shop/shop-details.html',context)
+        context={
+            'product':product,
+            'order':order,
+            'userProfile':userProfile,
+            'form':form,
+            'reviews':reviews,
+            'star_count':star_count,
+            'relatedProduct':relatePro,
+            'add_on_product':add_on_product,
+            'add_on_product2':add_on_product2,
+            'add_on_product3':add_on_product3,
+            'product_categories':product_categories,
+            'tags':lis,
+            'can_review':can_review
+        }
+        
+        return render(request,'shop/shop-details.html',context)
+    except Exception as e:
+        return render(request,'shop/404.html',context={
+            'e':e
+        })
+
 from .decorator import admin_only
 @admin_only
 def viewOrder(request):
@@ -477,21 +540,39 @@ def order_status(request,pk):
     return render(request,'shop/orderStatus.html',context)
 
 from django.contrib.auth.decorators import login_required
+from PIL import Image as PILImage
+from io import BytesIO
+
 @login_required(login_url='login')
-def writeReview(request,pk):
-    product = Product.objects.get(id=pk)
+def writeReview(request,slug):
+    product = Product.objects.get(slug=slug)
     userProfile=get_user(request)
 
     if request.method == 'POST':
         form=WriteReview(request.POST,request.FILES)
+  
         if form.is_valid():
-            review=form.save(commit=False)
-            review.user=userProfile
-            review.product=product
-            review.save()
-            st='review done'
+                ratting = form.cleaned_data['ratting']
+                content = form.cleaned_data['content']
+                original_image = form.cleaned_data['image']
+                image = Review(ratting=ratting, content=content)
+                image.user=userProfile
+                image.product = product
 
-            return redirect('shop_details', pk=pk)
+                # Open and compress the image
+                img = PILImage.open(original_image)
+                img.thumbnail((800, 800))  # Resize the image
+                img_io = BytesIO()  # Create an in-memory object to store the compressed image
+                img.save(img_io, format='JPEG', quality=70)  # Save the compressed image to the in-memory object
+                
+                # Save the compressed image to the model
+                image.compressed_image.save(original_image.name, img_io, save=False)
+
+                image.save()  # Save the model instance
+                
+                # return redirect('success_url')  # Redirect to success page
+                return redirect('shop_details', slug=slug)
+        
 
     
     
@@ -568,3 +649,6 @@ def confirm_page(request,pk,pk2):
         'return_id':pk2,
     }
     return render(request,'shop/confirm_page.html',context)
+
+def custom_404_view(request,exception):
+    return render(request, 'shop/404.html', status=404)

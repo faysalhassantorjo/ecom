@@ -4,6 +4,9 @@ from django.utils.timezone import now
 from django.utils import timezone
 import uuid
 from taggit.managers import TaggableManager
+from autoslug import AutoSlugField
+
+from django.utils.text import slugify
 # Create your models here.
 
 class AnonymousUser(models.Model):
@@ -65,10 +68,12 @@ class AddOnProduct(models.Model):
 
 class Product(models.Model):
     name=models.CharField(max_length=100)
+    slug = AutoSlugField(populate_from='name',unique=True,null=True,default=None)
+
     product_code=models.CharField(max_length=100,null=True,blank=True)
-    add_on_product=models.ManyToManyField(AddOnProduct)
-    add_on_product2=models.ManyToManyField(AddOnProduct,related_name='ad_on_2')
-    add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3")
+    add_on_product=models.ManyToManyField(AddOnProduct,blank=True)
+    add_on_product2=models.ManyToManyField(AddOnProduct,related_name='ad_on_2',blank=True)
+    add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3",blank=True)
     description=models.TextField(null=True,blank=True)
     price = models.IntegerField(default=0)
     discount_percent=models.IntegerField(default=0)
@@ -85,6 +90,7 @@ class Product(models.Model):
     in_stock=models.BooleanField(default=True,blank=True)
     def __str__(self):
         return str(f'{self.name} ')
+
     
     def update_price(self):
         if self.discount:
@@ -147,9 +153,13 @@ class Product(models.Model):
         if reviews.exists():
             return len(reviews)
         return 0
-
-
-
+# from django.db.models.signals import pre_save
+# from django.dispatch import receiver
+# from myproject.util import unique_slug_generator
+# @receiver(pre_save, sender=Product)
+# def pre_save_receiver(sender, instance, *args, **kwargs):
+#     if not instance.slug:
+#         instance.slug = unique_slug_generator(instance)
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -175,6 +185,8 @@ class Order(models.Model):
     coupon_percentange=models.PositiveIntegerField(default=0,null=True,blank=True)
     cancel_reason=models.TextField(null=True,blank=True)
     location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
+    totalbill= models.PositiveIntegerField(default=0)
+    delivary_charge = models.PositiveIntegerField(default=False)
 
 
     def __str__(self):
@@ -185,13 +197,12 @@ class Order(models.Model):
         total = sum(item.item_total for item in order_items)
         if self.coupon:
             total-=total*(self.coupon_percentange/100)
-        
-        if self.location == 'outside_dhaka':
-            total += 120
-        elif self.location == 'inside_dhaka':
-            total += 80
 
         return int(total)
+
+       
+
+
     @property
     def total(self):
         order_items = OrderItem.objects.filter(order=self)
@@ -245,6 +256,8 @@ class Review(models.Model):
     )
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     at_time = models.DateTimeField(default=now, blank=True)
+    compressed_image = models.ImageField(upload_to='review-compressed/',blank=True,null=True)
+
 
     @property
     def imageURL(self):
@@ -254,6 +267,15 @@ class Review(models.Model):
             url=''
         return url
     
+    @property
+    def imageURL2(self):
+        try:
+            url=self.compressed_image.url
+        except:
+            url=''
+        return url
+    
+    
     def __str__(self):
         return str(f'{self.user} {self.product.name}' )
     
@@ -262,3 +284,4 @@ class Review(models.Model):
 class Cuppon(models.Model):
     cuppon_name=models.CharField(max_length=10)
     percent=models.PositiveIntegerField(default=0)
+    min_order= models.PositiveIntegerField(default=0)

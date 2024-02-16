@@ -131,12 +131,14 @@
                                 </ul>
                                 <ul class="checkout__total__all">
                                     <li>Total Items <span>{{order.total_items}}</span></li>
+                                    <li>Total <span>TK. {{order.get_total}}</span></li>
+
                                     {% if order.location == "inside_dhaka" %}
                                     <li>Total Items <span>TK. 80</span></li>
                                     {% else %}
                                     <li>Delivery <span>TK. 120</span></li>
                                     {% endif %}
-                                    <li>Total <span>TK. {{order.get_total}}</span></li>
+                                    <li>Pay <span>TK. {{subtotal}}</span></li>
                                 </ul>
                                 <!-- <div class="checkout__input__checkbox">
                                     <label for="acc-or">

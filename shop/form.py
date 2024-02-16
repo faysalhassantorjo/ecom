@@ -51,6 +51,7 @@ class AddProduct(forms.ModelForm):
         model = Product
         tags = TagField()
         fields = [
+            
             'name',
             'description',
             'price',

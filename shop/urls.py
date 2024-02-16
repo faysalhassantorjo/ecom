@@ -1,7 +1,10 @@
 
-from django.urls import path,include
+from django.urls import path,include,re_path
 from .views import *
 
+
+# def handle_unexpected_url(request):
+#     return render(request,'shop/404.html')
 urlpatterns = [
 
     path('', home, name='home'),
@@ -11,8 +14,8 @@ urlpatterns = [
     path('myorder/<int:pk>',profile, name="profile"),
     path('checkout/',checkout, name="checkout"),
     path('shop-grid/<int:pk>',shop_grid, name="shop_grid"),
-    path('shop-details/<int:pk>',shop_details, name="shop_details"),
-    path('write-review/<int:pk>',writeReview, name="writeReview"),
+    path('shop-details/<slug:slug>',shop_details, name="shop_details"),
+    path('write-review/<slug:slug>',writeReview, name="writeReview"),
     path('view-order/',viewOrder, name="viewOrder"),
     path('login/',login, name="login"),
     path('logout/',logoutV, name="logout"),
@@ -27,6 +30,7 @@ urlpatterns = [
     path('edit-product/<int:pk>/<int:pk2>',edit_product, name="edit_product"),
     path('delete-product/<int:pk>/<int:pk2>',delete_product, name="delete_product"),
     path('confirm-page/<int:pk>/<int:pk2>',confirm_page, name="confirm_page"),
+     path('go-to-admin/', go_to_admin_panel, name='go_to_admin'),
 
-
+# re_path(r'^.*$', handle_unexpected_url),
 ]
