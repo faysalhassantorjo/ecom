@@ -311,7 +311,7 @@ def location_choice(request,pk):
 
 def profile(request,pk):
     user=UserProfile.objects.get(id=pk)
-    orders=Order.objects.filter(user=user).order_by('-created_at')
+    orders=Order.objects.filter(user=user,complete=True).order_by('-created_at')
     print(user)
     print(orders)
 
@@ -550,7 +550,6 @@ def writeReview(request,slug):
 
     if request.method == 'POST':
         form=WriteReview(request.POST,request.FILES)
-  
         if form.is_valid():
                 ratting = form.cleaned_data['ratting']
                 content = form.cleaned_data['content']

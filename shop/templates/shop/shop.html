@@ -127,7 +127,7 @@
                                 display:block;
                             }
                         </style>
-                        <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="col-lg-4 col-md-6 col-sm-6">
                             <div class="product__item">
                                 <a href="{% url 'shop_details' slug=product.slug %}">    
                                      <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
@@ -151,7 +151,7 @@
 
                                     <a href="{% url 'shop_details' slug=product.slug %}" class="add-cart">See Details</a>
                                     <div class="rating">
-                                        <i class="fa-solid fa-star" style="color: yellow;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
+                                        <i class="fa-solid fa-star" style="color: #f74f06;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
                                     </div>
                                     <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
                                         {% if product.discount_percent %}
