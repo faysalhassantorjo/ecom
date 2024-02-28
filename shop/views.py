@@ -121,7 +121,7 @@ def home(request):
     for i in top_rated_product:
         print(i)
 
-    new_arrival_products = Product.objects.filter(new_arrival=True)
+    new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
 
     print(len(new_arrival_products))
 
@@ -129,7 +129,7 @@ def home(request):
         'products':products,
         'userProfile':userProfile,
         'top_rated_product':top_rated_product,
-        'new_arrival_products':new_arrival_products,
+        'new_arrival_products':new_arrival_products[:8],
         'heroCollections':heroCollections,
         'collectionsets':collectionsets,
         'discount_product':discount_product

@@ -646,7 +646,8 @@ ol {
 }
 
 .hero__social {
-	margin-top: 190px;
+	margin-top: -190px;
+	z-index: 20;
 }
 
 .hero__social a {
