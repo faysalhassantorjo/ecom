@@ -422,7 +422,7 @@ def go_to_admin_panel(request):
 def products(request,pk):
     cat=ProductCategory.objects.get(id=pk)
     print(cat)
-    products=cat.product_set.all().order_by('-arrive_at')
+    products=cat.product_set.all().order_by('?')
     print(products)
     userProfile=get_user(request)
 
