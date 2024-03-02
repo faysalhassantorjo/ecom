@@ -20,6 +20,27 @@ def get_ip(request):
         ip = request.META.get('REMOTE_ADDR', '')
     return ip
 
+def get_cart_total_items(request):
+    userProfile=None
+    if request.user.is_authenticated:
+        userProfile = get_user(request)
+    else:
+        session_key = request.session.session_key
+        user=None
+        try:
+            user = AnonymousUser.objects.get(session_key=session_key)
+        except AnonymousUser.DoesNotExist:
+                pass
+        if user:
+            userProfile = get_user(request)
+
+    if userProfile:
+        order=Order.objects.get(user=userProfile,complete=False)
+
+        items=OrderItem.objects.filter(order=order).count()
+        return order
+    return 0
+
 def create_anonymous_user(request):
     request.session.save()
     # session_key = get_ip(request)
@@ -91,7 +112,7 @@ def cart_items(request):
 
 def home(request):
     products= Product.objects.all()
-    userProfile=get_user(request)
+    userProfile=request.user
     # print(userProfile)
     top_rated_product=[]
 
@@ -138,6 +159,16 @@ def home(request):
     
 
     try:
+        session_key = request.session.session_key
+        user=None
+        try:
+            user = AnonymousUser.objects.get(session_key=session_key)
+        except AnonymousUser.DoesNotExist:
+            pass
+        if user:
+            userProfile = get_user(request)
+        else:userProfile=request.user
+
         order=Order.objects.get(user=userProfile,complete=False)
 
         items=OrderItem.objects.filter(order=order)
@@ -148,7 +179,7 @@ def home(request):
 
 
 
-    return render(request,'shop/home.html',context)
+    return render(request,'shop/nav.html',context)
 
 import json
 from django.http import JsonResponse
@@ -244,50 +275,61 @@ def createOrder(request):
     return JsonResponse("Order done", safe=False)
 
 def cart(request):
-    userProfile=get_user(request)
-    print(userProfile)
-
-    order,c=Order.objects.get_or_create(user=userProfile,complete=False)
-
-    items=OrderItem.objects.filter(order=order)
-
-    for i in items:
-        print(i.add_on_product.name)
-
-    total=items.count()
-    coupons=Cuppon.objects.all()
-
-    if request.method=='POST':
-        q=request.POST['q']
-        print('cuopon ',q)
-
-        for c in coupons:
-            
-            if c.cuppon_name==q and order.coupon!=True:
-                if order.get_total >= c.min_order:
-                    order.coupon=True
-                    order.coupon_percentange=c.percent
-                    order.save()
-
-
-    print('My get_total',order.get_total)
-    print('My total bill: ',order.totalbill)                
-    if order.coupon:
-      
-        # saves=abs(order.get_total - order.totalbill)
-        saves=abs(order.total - order.get_total)
-
-
+    if request.user.is_authenticated:
+        userProfile=get_user(request)
     else:
-        saves = 0
-    print('get_order')
-    context={
-        'total':total,
-        'items':items,
-        'order':order,
-        'userProfile':userProfile,
-        'saves':saves
-    }
+        session_key = request.session.session_key
+        user=None
+        try:
+            user = AnonymousUser.objects.get(session_key=session_key)
+        except AnonymousUser.DoesNotExist:
+            pass
+        if user:
+            userProfile = get_user(request)
+        else:userProfile=None
+    if userProfile:
+        order,c=Order.objects.get_or_create(user=userProfile,complete=False)
+
+        items=OrderItem.objects.filter(order=order)
+
+        for i in items:
+            print(i.add_on_product.name)
+
+        total=items.count()
+        coupons=Cuppon.objects.all()
+
+        if request.method=='POST':
+            q=request.POST['q']
+            print('cuopon ',q)
+
+            for c in coupons:
+                
+                if c.cuppon_name==q and order.coupon!=True:
+                    if order.get_total >= c.min_order:
+                        order.coupon=True
+                        order.coupon_percentange=c.percent
+                        order.save()
+
+
+        print('My get_total',order.get_total)
+        print('My total bill: ',order.totalbill)                
+        if order.coupon:
+        
+            # saves=abs(order.get_total - order.totalbill)
+            saves=abs(order.total - order.get_total)
+
+
+        else:
+            saves = 0
+        print('get_order')
+        context={
+            'total':total,
+            'items':items,
+            'order':order,
+            'userProfile':userProfile,
+            'saves':saves
+        }
+    else:context={}
     return render(request,'shop/shopping-cart.html',context)
 
 def location_choice(request,pk):
@@ -396,7 +438,7 @@ def order_success(request,pk):
 def shop_grid(request,pk):
     try:
 
-        userProfile=get_user(request)
+        userProfile=request.user
 
         collection=CollectionSet.objects.get(id=pk)
         categories=collection.productcategory_set.all()
@@ -405,13 +447,15 @@ def shop_grid(request,pk):
 
 
         context={
-            # 'products':products,
-            'categories':categories,
-            'userProfile':userProfile,
-            'x':True
-        }
+                # 'products':products,
+                'categories':categories,
+                'userProfile':userProfile,
+                'x':True,
+                'collection':collection
+            }
         return render(request,'shop/shop.html',context)
-    except:
+    except Exception as e:
+        print(e)
         return render(request,'shop/404.html')
 
 from django.urls import reverse
@@ -424,7 +468,7 @@ def products(request,pk):
     print(cat)
     products=cat.product_set.all().order_by('?')
     print(products)
-    userProfile=get_user(request)
+
 
     total_products = products.count()
 
@@ -433,22 +477,18 @@ def products(request,pk):
     context={
         'products':products,
         'categories':cat,
-        'userProfile':userProfile,
         'total_products':total_products,
     }
     return render(request,'shop/shop.html',context) 
 
 from django.db.models import Q
 def shop_details(request,slug):
-    try:
+    # try:
         product=Product.objects.get(slug=slug)
-        userProfile=get_user(request)
-        # print(userProfile)
+
         form=WriteReview()
 
-        order,c=Order.objects.get_or_create(user=userProfile,complete=False)
 
-        items=OrderItem.objects.filter(order=order)
 
         reviews=Review.objects.filter(product=product)
 
@@ -472,9 +512,10 @@ def shop_details(request,slug):
         can_review = False
 
         if request.user.is_authenticated:
-            user = request.user
-            user_profile = UserProfile.objects.get(user=user)
-            user_orders = Order.objects.filter(user=user_profile)
+            user = get_user(request)
+            order,c=Order.objects.get_or_create(user=user,complete=False)
+            # user_profile = UserProfile.objects.get(user=user)
+            user_orders = Order.objects.filter(user=user,status = 'Delivered')
 
             for order in user_orders:
                 order_items = OrderItem.objects.filter(order=order)
@@ -489,8 +530,6 @@ def shop_details(request,slug):
 
         context={
             'product':product,
-            'order':order,
-            'userProfile':userProfile,
             'form':form,
             'reviews':reviews,
             'star_count':star_count,
@@ -500,14 +539,16 @@ def shop_details(request,slug):
             'add_on_product3':add_on_product3,
             'product_categories':product_categories,
             'tags':lis,
-            'can_review':can_review
+            'can_review':can_review,
+            'order':get_cart_total_items(request)
         }
         
         return render(request,'shop/shop-details.html',context)
-    except Exception as e:
-        return render(request,'shop/404.html',context={
-            'e':e
-        })
+    # except Exception as e:
+    #     print(e)
+    #     return render(request,'shop/404.html',context={
+    #         'e':e
+    #     })
 
 from .decorator import admin_only
 @admin_only

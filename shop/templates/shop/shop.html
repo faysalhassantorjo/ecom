@@ -4,7 +4,7 @@
 
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-option">
-        <div class="container">
+        <!-- <div class="container">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__text">
@@ -20,8 +20,18 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
     <!-- Breadcrumb Section End -->
+
+    <section>
+        <div class="category-name text-center t" style="background-color: #000; color: #fff; padding: 10px; font-size: 1.2rem; font-weight: bold;">
+            {% if x %}
+                {{collection.name}}
+            {% else %}
+            {{categories.name}}
+            {% endif %}
+        </div>
+    </section>
 
     <!-- Shop Section Begin -->
     <section class="shop spad">
@@ -33,8 +43,8 @@
                         {% for categorie in categories %}
                         <div class="col-lg-4 col-12 mt-5">
                             <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                            <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
                                 <style>
                                  
@@ -127,7 +137,7 @@
                                 display:block;
                             }
                         </style>
-                        <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="col-lg-4 col-md-6 col-sm-6 mt-5">
                             <div class="product__item">
                                 <a href="{% url 'shop_details' slug=product.slug %}">    
                                      <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
@@ -161,7 +171,7 @@
                                         {% endif %}
                                   
                                 </div>
-                                {% if userProfile.user.is_staff %}
+                                {% if user.is_staff %}
                                 <div class="f">
                                     <a href="{% url 'edit_product' pk=product.id pk2=categories.id %}" class="f">edit produt</a>
                                 </div>
