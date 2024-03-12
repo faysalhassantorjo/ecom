@@ -239,7 +239,7 @@ function validateForm() {
                             </div> -->
                             <div class="product__details__last__option">
                                 <h5><span>Guaranteed Safe Checkout</span></h5>
-                                <img src="img/shop-details/details-payment.png" alt="">
+                                <!-- <img src="img/shop-details/details-payment.png" alt=""> -->
                                 <ul>
                                     <!-- <li><span>SKU:</span> 3812912</li> -->
                                     <li><span>Categories:</span> 
@@ -340,7 +340,7 @@ function validateForm() {
                                                                     {{review.user.user}}
                                                                 </a>
                                                                 &nbsp;&nbsp;
-                                                                <i class="fa-solid fa-star"></i> {{review.ratting}}
+                                                                <i class="fa-solid fa-star" style="color: #f74f06;"></i> {{review.ratting}}
                                                                 <span style="opacity: .7; font-size: .8rem;"> {{review.at_time}}</span>
                                                             </p>
                                                         </div>
@@ -376,47 +376,47 @@ function validateForm() {
 
                                                 <style>
                                                     .product__details__tab__content__item form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+                                                        background-color: #f9f9f9;
+                                                        padding: 20px;
+                                                        border-radius: 5px;
+                                                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                                                        }
 
-.product__details__tab__content__item form button {
-    background-color: #f74e06b3;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+                                                        .product__details__tab__content__item form button {
+                                                            background-color: #f74e06b3;
+                                                        color: white;
+                                                        padding: 10px 20px;
+                                                        border: none;
+                                                        border-radius: 5px;
+                                                        cursor: pointer;
+                                                        transition: background-color 0.3s ease;
+                                                        }
 
-.product__details__tab__content__item form button:hover {
-  background-color: #f74f06;
-}
+                                                        .product__details__tab__content__item form button:hover {
+                                                        background-color: #f74f06;
+                                                        }
 
-.product__details__tab__content__item form label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-}
+                                                        .product__details__tab__content__item form label {
+                                                        display: block;
+                                                        margin-bottom: 10px;
+                                                        font-weight: bold;
+                                                        }
 
-.product__details__tab__content__item form input[type="text"],
-.product__details__tab__content__item form input[type="email"],
-.product__details__tab__content__item form input[type="file"],
-.product__details__tab__content__item form textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
+                                                        .product__details__tab__content__item form input[type="text"],
+                                                        .product__details__tab__content__item form input[type="email"],
+                                                        .product__details__tab__content__item form input[type="file"],
+                                                        .product__details__tab__content__item form textarea {
+                                                        width: 100%;
+                                                        padding: 10px;
+                                                        margin-bottom: 15px;
+                                                        border: 1px solid #ccc;
+                                                        border-radius: 5px;
+                                                        box-sizing: border-box;
+                                                        }
 
-.product__details__tab__content__item form textarea {
-  height: 150px; /* Adjust the height of the textarea as needed */
-}
+                                                        .product__details__tab__content__item form textarea {
+                                                        height: 150px; /* Adjust the height of the textarea as needed */
+                                                        }
                                                 </style>
                                             <div class="col-lg-6">
                                                 {% if can_review %}
@@ -428,12 +428,14 @@ function validateForm() {
                                                         {{ form.as_p }}
 
                                                         <br>
-                                                        <button type="submit">Done</button>
+                                                        <button type="submit" class="btn">Done</button>
                                                     </form>
         
                                                 </div>
                                                 {% else %}
-                                                For give a review first you have to order this product and you have to create an account!!
+                                                <div class="alert alert-danger" role="alert">
+                                                    For give a review first you have to order this product and you have to create an account!!
+                                                  </div>
                                                 {% endif %}
                                             </div>
                                         </div>

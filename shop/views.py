@@ -112,7 +112,7 @@ def cart_items(request):
 
 def home(request):
     products= Product.objects.all()
-    userProfile=request.user
+    
     # print(userProfile)
     top_rated_product=[]
 
@@ -124,7 +124,7 @@ def home(request):
         discount_percent__gt=5
     )
 
-
+    all_categories = ProductCategory.objects.all().order_by('?')
 
     for product in products:
         rating=product.average_rating()
@@ -148,15 +148,18 @@ def home(request):
 
     context={
         'products':products,
-        'userProfile':userProfile,
         'top_rated_product':top_rated_product,
         'new_arrival_products':new_arrival_products[:8],
         'heroCollections':heroCollections,
         'collectionsets':collectionsets,
-        'discount_product':discount_product
+        'discount_product':discount_product,
+        'all_categories':all_categories[:10]
     }
 
-    
+    user=request.user
+    if user.is_authenticated:
+        userProfile = UserProfile.objects.get(user  = user)
+        context.update({'userProfile':userProfile})
 
     try:
         session_key = request.session.session_key
@@ -483,7 +486,7 @@ def products(request,pk):
 
 from django.db.models import Q
 def shop_details(request,slug):
-    # try:
+    try:
         product=Product.objects.get(slug=slug)
 
         form=WriteReview()
@@ -507,7 +510,7 @@ def shop_details(request,slug):
         
         
 
-        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()
+        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')
 
         can_review = False
 
@@ -515,7 +518,7 @@ def shop_details(request,slug):
             user = get_user(request)
             order,c=Order.objects.get_or_create(user=user,complete=False)
             # user_profile = UserProfile.objects.get(user=user)
-            user_orders = Order.objects.filter(user=user,status = 'Delivered')
+            user_orders = Order.objects.filter(user=user)
 
             for order in user_orders:
                 order_items = OrderItem.objects.filter(order=order)
@@ -533,7 +536,7 @@ def shop_details(request,slug):
             'form':form,
             'reviews':reviews,
             'star_count':star_count,
-            'relatedProduct':relatePro,
+            'relatedProduct':relatePro[:6],
             'add_on_product':add_on_product,
             'add_on_product2':add_on_product2,
             'add_on_product3':add_on_product3,
@@ -544,11 +547,11 @@ def shop_details(request,slug):
         }
         
         return render(request,'shop/shop-details.html',context)
-    # except Exception as e:
-    #     print(e)
-    #     return render(request,'shop/404.html',context={
-    #         'e':e
-    #     })
+    except Exception as e:
+        print(e)
+        return render(request,'shop/404.html',context={
+            'e':e
+        })
 
 from .decorator import admin_only
 @admin_only

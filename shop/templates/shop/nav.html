@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -73,17 +74,20 @@ rel="stylesheet"
 
   }
   .heading{
+    margin-bottom: 30px;
+  }
+  .heading h3{
     font-size: 2rem;
-    color: #fff;
-    padding: 10px;
+    color: #ececec;
     font-family: "Playfair Display", serif;
-  font-optical-sizing: auto;
-
-  margin-bottom: 20px;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    margin-bottom: 10px;
   }
   .heading h6{
-    font-size: .8rem;
+    font-size: 1rem;
     opacity: .8;
+    color: #fff;
   }
   .navbar{
     padding: 10px;
@@ -105,7 +109,30 @@ rel="stylesheet"
 </style>
 </head>
 <body>
-    
+     <!-- Custom CSS -->
+     <style>
+      /* Your existing CSS styles here */
+      /* Preloader styling */
+      .preloader {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #fff; /* Change background color as needed */
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+      }
+      .preloader-icon {
+          font-size: 3rem; /* Adjust icon size as needed */
+          color: #f74f06; /* Change icon color as needed */
+      }
+  </style>
+  <div class="preloader">
+    <i class="fas fa-spinner fa-spin preloader-icon"></i>
+</div>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg   c" >
   <!-- Container wrapper -->
@@ -119,9 +146,9 @@ rel="stylesheet"
       <!-- Navbar brand -->
       <a class="navbar-brand mt-2 mt-lg-0" href="#">
         <img
-          src="https://scontent.fdac135-1.fna.fbcdn.net/v/t39.30808-6/404117277_852639253531635_3205473683076855226_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=efb6e6&_nc_eui2=AeEe37Se75yL-8nVnXuiljVZBPVScqXRbocE9VJypdFuhxaXKFsB6K1aWB1LyC2HKlk0v63ejdBUuh6E6UgFKikI&_nc_ohc=Q6noXdr12UcAX-XdCmZ&_nc_ht=scontent.fdac135-1.fna&oh=00_AfAZPRjgp0e1B--I-7_OQgo3jDN504o_h5j9TgPyucYzwg&oe=65E589F8"
+          src="{% static 'image/logo/logo.jpg' %}"
           height="35"
-          alt="MDB Logo"
+          alt="logo"
           loading="lazy"
         />
       </a>
@@ -132,6 +159,8 @@ rel="stylesheet"
     <!-- Right elements -->
     <div class="d-flex align-items-center">
       <!-- Icon -->
+
+
       <a class="text-reset me-3" href="{% url 'cart' %}">
         <i class="fas fa-shopping-cart"></i>
         <span class="badge rounded-pill badge-notification bg-danger">{{order.total_items}}</span>
@@ -164,7 +193,13 @@ rel="stylesheet"
         >            
         {% if user.is_authenticated %}
           <li>
-            <a class="dropdown-item"  href="{% url 'profile' userProfile.id %}">my order</a>
+            <a class="dropdown-item"  href="{% url 'profile' pk=userProfile.id %}">my order</a>
+          </li>
+          {% endif %}
+
+          {% if user.is_superuser  %}
+          <li>
+            <a class="dropdown-item"  href="{% url 'viewOrder' %}">View Order</a>
           </li>
           {% endif %}
           <li>
@@ -188,11 +223,11 @@ rel="stylesheet"
   <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
     <div class="carousel-inner">
       {% for collection in heroCollections %}
-    <a href="{% url 'shop_grid' pk=collection.id %}">
-      <div class="carousel-item active" data-mdb-interval="10000" style="height: 80vh;">
-        <img src="{{collection.imageURL}}" style="width: 100%; height: 100%; object-fit: cover;" alt="Wild Landscape"/>
-      </div>
-    </a> 
+        <a href="{% url 'shop_grid' pk=collection.id %}">
+          <div class="carousel-item active" data-mdb-interval="10000" style="height: 550px; position: relative;">
+                        <img src="{{collection.imageURL}}" style="width: 100%; height: 100%; object-fit: cover;" alt="Wild Landscape"/>
+          </div>
+        </a> 
       {% endfor %}
     </div>
     <button class="carousel-control-prev" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="prev">
@@ -206,6 +241,9 @@ rel="stylesheet"
   </div>
 </section>
 
+
+
+
 <section class="mt-2">
 
   <div class="container">
@@ -216,7 +254,6 @@ rel="stylesheet"
         <div class="card bg-dark text-white t" style="width: auto;  height: 550px;">
           <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach"/>
           <div class="card-img-overlay text-center d-flex justify-content-center " style="align-items: center;">
-            <!-- <h5 class="card-title" style="font-size: 2rem; padding:10px; border: 1px solid #fff; background-color: #000000;">Card title</h5> -->
            
           </div>
         </div>
@@ -252,7 +289,7 @@ rel="stylesheet"
             <div class="row">
               <div class="el-wrapper">
                 <div class="box-up">
-                  <img class="img" src="https://longg.up.railway.app/media/collectionset/415480677_882790947183132_1785656445559556462_n.jpg" width="100%" height="auto" style="object-fit: cover;" alt="">
+                  <img class="img" src="{{product.imageURL}}" width="100%" height="auto" style="object-fit: cover;" alt="">
                   <div class="img-info">
                     <div class="info-inner">
                       {% if product.in_stock != True %}
@@ -273,7 +310,7 @@ rel="stylesheet"
                   <a class="cart" href="{% url 'shop_details' slug=product.slug %}">
                     <span class="price" > <span style="font-size: 1.5rem; color: #f74f06;">{{product.price}}</span>Tk. {% if product.discount_percent %}<del style="font-size: .9rem;">{{product.update_price}}</del>{% endif %}</span>
                     <span class="add-to-cart">
-                      <span class="txt">See Details</span>
+                      <span class="txt"><i class="fa-solid fa-cart-shopping" style="font-size: 25px; color: #f74f06;"></i><i class="fa-solid fa-plus" style="font-size: 15px; color: #f74f06;"></i></span>
                     </span>
                   </a>
                 </div>
@@ -307,7 +344,7 @@ rel="stylesheet"
       background-position: center;
       background-size: cover;
       width: 300px;
-      height: 400px;
+      height: 448px;
     }
 
     .swiper-slide img {
@@ -667,7 +704,10 @@ font-family: "Playfair Display", serif;
 
 </style>
 
- <!-- Footer -->
+
+
+
+<!-- Footer -->
 <footer class="text-center text-lg-start bg-body-tertiary text-muted">
   <!-- Section: Social media -->
   <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
@@ -711,68 +751,68 @@ font-family: "Playfair Display", serif;
         <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
           <!-- Content -->
           <h6 class="text-uppercase fw-bold mb-4">
-            <i class="fas fa-gem me-3"></i>Company name
+            <a class=" " href="#">
+              <img
+                src="{% static 'image/logo/logo2.png' %}"
+                height="55"
+                alt="logo"
+                loading="lazy"
+              />
+  
+
+            </a>    Longg
           </h6>
           <p>
-            Here you can use rows and columns to organize your footer content. Lorem ipsum
-            dolor sit amet, consectetur adipisicing elit.
+            Take Love "longg-লং"
+            Explore our collection and embrace a fusion of style, comfort, and elegance.
           </p>
         </div>
         <!-- Grid column -->
 
         <!-- Grid column -->
         <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            Products
+           <!-- Links -->
+           <h6 class="text-uppercase fw-bold mb-4">
+            Collection
           </h6>
+         
+          {% for collection in heroCollections %}
           <p>
-            <a href="#!" class="text-reset">Angular</a>
+            <a href="{% url 'shop_grid' pk=collection.id %}" class="text-reset">{{collection.name}}</a>
           </p>
-          <p>
-            <a href="#!" class="text-reset">React</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Vue</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Laravel</a>
-          </p>
+          {% endfor %}
+        {% for collection in collectionsets %}
+        <p>
+          <a href="{% url 'shop_grid' pk=collection.id %}" class="text-reset">{{collection.name}}</a>
+        </p>
+        {% endfor %}
         </div>
         <!-- Grid column -->
 
         <!-- Grid column -->
         <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-          <!-- Links -->
           <h6 class="text-uppercase fw-bold mb-4">
-            Useful links
+            Category
           </h6>
+          {% for category in all_categories %}
           <p>
-            <a href="#!" class="text-reset">Pricing</a>
+            <a href="{% url 'products' pk=category.id %}" class="text-reset">{{category.name}}</a>
           </p>
-          <p>
-            <a href="#!" class="text-reset">Settings</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Orders</a>
-          </p>
-          <p>
-            <a href="#!" class="text-reset">Help</a>
-          </p>
+          {% endfor %}
         </div>
         <!-- Grid column -->
 
         <!-- Grid column -->
         <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-          <!-- Links -->
-          <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-          <p><i class="fas fa-home me-3"></i> New York, NY 10012, US</p>
-          <p>
-            <i class="fas fa-envelope me-3"></i>
-            info@example.com
-          </p>
-          <p><i class="fas fa-phone me-3"></i> + 01 234 567 88</p>
-          <p><i class="fas fa-print me-3"></i> + 01 234 567 89</p>
+             <!-- Links -->
+             <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+             <p><i class="fas fa-home me-3"></i> Mohammadpur,zakir hossain road , Dhaka</p>
+             <p>
+               <i class="fas fa-envelope me-3"></i>
+               
+             longfashion2020@gmail.com
+             </p>
+             <p><i class="fas fa-phone me-3"></i> + 01323-426706</p>
         </div>
         <!-- Grid column -->
       </div>
@@ -784,17 +824,20 @@ font-family: "Playfair Display", serif;
   <!-- Copyright -->
   <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
     © 2021 Copyright:
-    <a class="text-reset fw-bold" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    <a class="text-reset fw-bold" href="/">longgFashion.com</a>
   </div>
   <!-- Copyright -->
 </footer>
 <!-- Footer -->
 
 
-
-
-
-
+<script>
+  // When the page is fully loaded
+  window.onload = function() {
+      // Hide the preloader
+      document.querySelector('.preloader').style.display = 'none';
+  };
+</script>
 
 
 
