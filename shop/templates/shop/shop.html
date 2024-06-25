@@ -1,198 +1,162 @@
-{% extends 'shop/main.html' %}
+<!DOCTYPE html>
+{% load static%}
+<html lang="en">
 
-{% block body %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Cards</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
-    <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-option">
-        <!-- <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb__text">
-                        <h4>Shop</h4>
-                        <div class="breadcrumb__links">
-                            <a href="/">Home</a>
-                            <span>Shop</span>
-                    
-                        </div>
-                    <strong> {{total_products}} Products</strong>
 
-                    </div>
-                </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            background: #0B1215;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #000000;;
+            padding: 10px 20px;
+            color: white;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            border-radius: 10px;
+        }
+
+        .navbar .logo img {
+            height: 60px;
+        }
+
+        .navbar .cart {
+            font-size: 30px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .product-card {
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(207, 207, 207, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card img:hover{
+            transform: scale(1.4);
+            
+        }
+
+        .product-details {
+            padding: 16px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            color: #fafafa;
+            font-family: "Playfair Display", serif;
+        }
+
+        .price {
+            margin: 8px 0;
+            font-size: 16px;
+            color: #e74c3c;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                justify-content: center;
+                position: relative;
+            }
+
+            .navbar .cart {
+                position: absolute;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="logo">
+            <img src="{% static 'image/logo/logo.jpg' %}" alt="Logo">
+        </div>
+        <div class="cart"> 
+            <a class="text-reset me-3" href="{% url 'cart' %}"style="text-decoration: none;">
+                <i class="fas fa-shopping-cart" style="color: #e74c3c;">
+                <span style="color: #fff; font-size: 18px;">{{cart_items}}</span>
+                </i>
+
+            </a></div>
+    </div>
+
+    <div class="container">
+        {% for product in products %}
+        <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
+        <div class="product-card">
+            <img src="{{ product.imageURL }}" alt="Product Image">
+            <div class="product-details" >
+                <p class="product-name">{{ product.name }}</p>
+                <p class="price">Tk. {{ product.price }}</p>
+                {% if product.discount_percent %}
+                <p class="original-price">Tk. {{ product.update_price }}</p>
+                {% endif %}
             </div>
         </div>
-    </section> -->
-    <!-- Breadcrumb Section End -->
+        </a>
+        {% endfor %}
+    </div>
+</body>
 
-    <section>
-        <div class="category-name text-center t" style="background-color: #000; color: #fff; padding: 10px; font-size: 1.2rem; font-weight: bold;">
-            {% if x %}
-                {{collection.name}}
-            {% else %}
-            {{categories.name}}
-            {% endif %}
-        </div>
-    </section>
-
-    <!-- Shop Section Begin -->
-    <section class="shop spad">
-        <div class="container" >
-      
-           
-                    <div class="row">
-                        {% if x %}
-                        {% for categorie in categories %}
-                        <div class="col-lg-4 col-12 mt-5">
-                            <link rel="preconnect" href="https://fonts.googleapis.com">
-                            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                            <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-
-                                <style>
-                                 
-                                    .category-cardx {
-                                        position: relative;
-                                        width: 300px;
-                                        height: 450px;
-                                        background-color: #fff;
-                                        border-radius: 8px;
-                                        overflow: hidden;
-                                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                                        transition: transform 0.3s ease;
-                                    }
-                            
-                                    .category-cardx:hover {
-                                        transform: scale(1.05);
-                                    }
-                            
-                                    .category-cardx img {
-                                        width: 100%;
-                                        height: 100%;
-                                        object-fit: cover;
-                                        border-bottom: 1px solid #ddd;
-                                    }
-                            
-                                    .category-card-contentx {
-                                        position: absolute;
-                                        bottom: 0;
-                                        left: 0;
-                                        width: 100%;
-                                        /* height: 100%; */
-                                        /* padding: 20px; */
-                                        background:#0000008b;
-                                    }
-                            
-                                    .category-cardx h2 {
-                                        margin: 0;
-                                        font-size: 2em;
-                                        font-weight: bold;
-                                        color: #ffffff;
-                                        bottom: 0;
-                                    }
-                            
-                                    .category-cardx p {
-                                        font-size: 1em;
-                                        color: #666;
-                                        margin-top: 10px;
-                                    }
-                                    .t{
-
-                        font-family: "Playfair Display", serif;
-                        font-optical-sizing: auto;
-                        font-weight: weight;
-                        font-style: normal;
-
-                                    }
-                                    .s{
-                                        /* -webkit-mask-image: linear-gradient(to bottom, black,transparent);
-                                        mask-image: linear-gradient(to bottom, black,transparent); */
-
-                                    }
-                                </style>
-                       
-                                <a href="{% url 'products' pk=categorie.id %}">
-                                    <div class="category-cardx">
-                                        <img class="s" src="{{categorie.imageURL}}" alt="Category Image">
-                                        <div class="category-card-contentx">
-                                            <h2 class="text-center t">{{categorie.name}}</h2>
-                                        </div>
-                                    </div>
-                       
-                                </a>
- 
-                            
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        {% for product in products %}
-                        <style>
-                            .f a{
-                                text-decoration: none;
-                                color: #000;
-                                padding: 5px;
-                                text-transform: capitalize;
-                                margin-top: 10px;
-                                border: 1px solid black;
-                
-                            }
-                            .f a:hover{
-                                display:block;
-                            }
-                        </style>
-                        <div class="col-lg-4 col-md-6 col-sm-6 mt-5">
-                            <div class="product__item">
-                                <a href="{% url 'shop_details' slug=product.slug %}">    
-                                     <div class="product__item__pic set-bg" data-setbg="{{product.imageURL}}">
-                                        {% if product.in_stock != True %}
-                                        <span class="label">out of stock</span>
-                                        {% else %}
-                                        {% if product.discount_percent %}
-                                        <span class="label" style="background-color: #f74f06;">{{product.discount_percent}}% off</span>
-                                        {% endif %}
-                                        {% endif %}
-                                    <ul class="product__hover">
-                                        <!-- <li><a href="#"><img src="img/icon/heart.png" alt=""></a></li>
-                                        <li><a href="#"><img src="img/icon/compare.png" alt=""> <span>Compare</span></a>
-                                        </li>
-                                        <li><a href="#"><img src="img/icon/search.png" alt=""></a></li> -->
-                                    </ul>
-                                    </div>
-                                </a>
-                                <div class="product__item__text">
-                                    <h6 style="font-size: 1.2rem;">{{product.name}}</h6>
-
-                                    <a href="{% url 'shop_details' slug=product.slug %}" class="add-cart">See Details</a>
-                                    <div class="rating">
-                                        <i class="fa-solid fa-star" style="color: #f74f06;"></i>&nbsp;&nbsp;{{product.average_rating}} <span</span>
-                                    </div>
-                                    <h5 style="opacity: .8;">TK. {{product.price}} &nbsp; 
-                                        {% if product.discount_percent %}
-                                        <del style="font-size: small;"> 
-                                         TK. {{product.update_price}}
-                                        </del></h5>
-                                        {% endif %}
-                                  
-                                </div>
-                                {% if user.is_staff %}
-                                <div class="f">
-                                    <a href="{% url 'edit_product' pk=product.id pk2=categories.id %}" class="f">edit produt</a>
-                                </div>
-                                <div class="f mt-4">
-                                    <a href="{% url 'confirm_page' pk=product.id pk2=categories.id %}" class="f">delete produt</a>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-
-                          
-                  
-                        
-                    </div>
-                    
-           
-            </div>
-     
-    </section>
-    <!-- Shop Section End -->
-
-   {% endblock %}
+</html>

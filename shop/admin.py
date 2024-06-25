@@ -9,7 +9,7 @@ class PostAdmin(admin.ModelAdmin):
     # form = AddProduct
     # list_display = ("name",)
     # prepopulated_fields = {"slug": ("name",)}
-    
+    exclude =('_ratting',)
     class Media:
         js= ('tineyInject.js',)
 

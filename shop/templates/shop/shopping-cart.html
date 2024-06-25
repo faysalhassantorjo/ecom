@@ -130,9 +130,18 @@
                                             <div class="product__cart__item__text">
                                                 <h5>{{item.product.name}}</h5>
                                                 <span>Size: {{item.size}}</span>
-    <br>
+    <br>            
+                                                {% if item.is_stitched %}
                                                 <span>TK. {{item.product.price}}</span>
+                                                {% else %}
+                                                <span>TK. {{item.product.unstitched_price}}</span>
+                                                {% endif %}
                                             </div>
+                                            {% if item.is_stitched %}
+                                                
+                                                {% else %}
+                                                <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                            {% endif %}
                                         </td>
                   
                                         <style>
@@ -150,6 +159,8 @@
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
                                                 <input type="text" name="action" value="remove {{ item.product.slug }}" hidden>
                                                 <input type="text" name="from" value="cart" hidden>
+                                                <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
+
                                                 <button type="submit" class="btn-number"  style="border: none;background: none;" >
                                                 <i class="fa fa-minus"></i>
                                                 </button>
@@ -161,6 +172,8 @@
                                                     <input type="text" name="size" value="{{item.size}}" hidden>
                                                     <input type="text" name="action" value="add {{ item.product.slug }}" hidden>
                                                     <input type="text" name="from" value="cart" hidden>
+                                                <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
+
     
                                                 <button type="submit" class="btn-number"  style="border: none;background: none;">
                                                 <i class="fa fa-plus"></i>
@@ -177,6 +190,7 @@
                                                 <input type="text" name="size" value="{{item.size}}" hidden>
                                                 <input type="text" name="action" value="delete {{ item.product.slug }}" hidden>
                                                 <input type="text" name="from" value="cart" hidden>
+                                                <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
     
                                             <button type="submit" class="btn-number"  style="border: none;background: none;">
                                             <i class="fa fa-close"></i>

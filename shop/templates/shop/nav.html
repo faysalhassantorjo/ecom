@@ -22,9 +22,11 @@ rel="stylesheet"
 />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
 <style>
   html,
 
@@ -54,9 +56,9 @@ rel="stylesheet"
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    /* object-fit: contain; */
+   
   }
+
 </style>
 <style>
   section{
@@ -101,11 +103,7 @@ rel="stylesheet"
   .c{
     background: #ffffff00;
   }
-  .top-ratting{
-    background-color: rgba(0, 0, 0, 0.607);
-    height: 70px;
-    border-radius: 10px;
-  }
+ 
 </style>
 </head>
 <body>
@@ -129,6 +127,50 @@ rel="stylesheet"
           font-size: 3rem; /* Adjust icon size as needed */
           color: #f74f06; /* Change icon color as needed */
       }
+      .hero{
+        max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+      }
+      .hero-image{
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+      }
+      .t{
+        width: auto; 
+        height: 600px;
+        object-fit: contain;
+      
+      }
+  
+      .collection-heading span{
+        font-size: 2.5rem;
+        backdrop-filter: blur(4px);
+        color: #0d0d0d;
+        font-weight: bold;
+        padding:10px;
+        width: 100%;;
+      }
+
+      @media (max-width: 600px) {
+        .hero-image{
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+        .t{
+          width: auto;
+          height: 350px;
+          object-fit: cover;
+        }
+        .collection-heading span{
+        font-size: 1.5rem;
+
+      }
+      
+        }
+
   </style>
   <div class="preloader">
     <i class="fas fa-spinner fa-spin preloader-icon"></i>
@@ -183,7 +225,7 @@ rel="stylesheet"
           src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
             class="rounded-circle"
             height="35"
-            alt="Black and White Portrait of a Man"
+            alt="p"
             loading="lazy"
           />
         </a>
@@ -224,10 +266,10 @@ rel="stylesheet"
     <div class="carousel-inner">
       {% for collection in heroCollections %}
         <a href="{% url 'shop_grid' pk=collection.id %}">
-          <div class="carousel-item active" data-mdb-interval="10000" style="height: 550px; position: relative;">
-                        <img src="{{collection.imageURL}}" style="width: 100%; height: 100%; object-fit: cover;" alt="Wild Landscape"/>
+          <div class="carousel-item {% if forloop.first %}active{% endif %}" data-mdb-interval="10000">
+            <img src="{{ collection.imageURL }}" class="d-block w-100 hero-image"  alt="Image Description">
           </div>
-        </a> 
+        </a>
       {% endfor %}
     </div>
     <button class="carousel-control-prev" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="prev">
@@ -240,31 +282,99 @@ rel="stylesheet"
     </button>
   </div>
 </section>
+<hr>
+<section style="margin-top: 50px;">
+  <style>
+
+    .swiper {
+      width: 100%;
+ 
+    }
+
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+      width: 300px;
+      height: 448px;
+    }
+
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+    }
+    .top-ratting{
+   
+   height: 70px;
+   border-radius: 10px;
+ }
+  </style>
+  <div class="heading text-center">
+    <h3>Top Ratting Products</h3>
+    <h6>Grab these new items before they are gone!</h6>
+  </div>
+  <div class="swiper mySwiper" style="height: 450px;">
+    <div class="swiper-wrapper">
+      {% for product in top_rated_product %}
+      <div class="swiper-slide " style="border-radius: 6px; background: #0d0d0d;">
+        <a href="{% url 'shop_details' slug=product.slug %}">
+        <div class="card  text-white"  style="height: 100%; width: 100%; background: #0d0d0d;">
+  
+          <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach"/>
+    
+          <div class="card-img-overlay d-flex flex-column justify-content-between">
+            <div class="top-left p-3" style="position: absolute; top: 0; left: 0; ">
+                <h5 class="card-title " style="font-size: 1rem; color: #ffffff;">
+                  <span class="p-2" style="background-color: #f74f06; color: #0B1215;" > {{ product.average_rating }}★</span>
+                   
+                </h5>
+            </div>
+            <style>
+              .details{
+                -webkit-mask-image: linear-gradient(to bottom, black,transparent);
+                mask-image: linear-gradient(to bottom, black,transparent);
+              }
+            </style>
+            <div class="bottom p-3 " style="position: absolute; bottom: 0; left: 0; width: 100%; ">
+                <h5 class="card-title mb-0" style="font-size: 1.2rem; color: #ffffff;">
+                    {{ product.name }}
+                </h5>
+                <hr>
+                <p class="card-text mb-0" style="font-size:1.2rem; color: #ffffff;">
+                    {{ product.price }} Tk.
+                </p>
+            </div>
+        </div>
+        
+          
+        </div>
+      </a>
+      </div>
+  
+      {% endfor %}
+    </div>
+    <!-- <div class="swiper-pagination"></div> -->
+  </div>
+</section>
 
 
-
-
-<section class="mt-2">
+<section>
 
   <div class="container">
     <div class="row">
       {% for collection in collectionsets %}
       <div class="col-12 col-lg-6 mb-4">
         <a href="{% url 'shop_grid' pk=collection.id %}">
-        <div class="card bg-dark text-white t" style="width: auto;  height: 550px;">
+        <div class="card bg-dark text-white t">
           <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach"/>
-          <div class="card-img-overlay text-center d-flex justify-content-center " style="align-items: center;">
+          <div class="card-img-overlay text-center d-flex justify-content-center collection-heading" style="align-items: center;">
+            <span>{{collection.name}}</span>
            
           </div>
         </div>
       </a>
       </div>
       {% endfor %}
-      <style>
-        .t:hover{
-          opacity: .7;
-        }
-      </style>
+  
     </div>
   </div>
 
@@ -276,9 +386,7 @@ rel="stylesheet"
     <h3>Hot Discount Products</h3>
     <h6>Grab these new items before they are gone!</h6>
   </div>
-  <style>
 
-  </style>
   <div class="container">
     <div class="row x ">
 
@@ -287,6 +395,7 @@ rel="stylesheet"
         <div class="container page-wrapper">
           <div class="page-inner">
             <div class="row">
+              <a href="{% url 'shop_details' slug=product.slug %}">
               <div class="el-wrapper">
                 <div class="box-up">
                   <img class="img" src="{{product.imageURL}}" width="100%" height="auto" style="object-fit: cover;" alt="">
@@ -298,7 +407,7 @@ rel="stylesheet"
                       <span  class="p-company">{{product.discount_percent}}% off</span>
                       {% endif %}              
                     </div>
-                    <div class="a-size">   <span class="p-name">{{product.name}}</span></div>
+                    <div class="a-size">   <span class="p-name" style="color: #000;">{{product.name}}</span></div>
                   </div>
                 </div>
         
@@ -307,14 +416,15 @@ rel="stylesheet"
                     <div class="h-bg-inner"></div>
                   </div>
         
-                  <a class="cart" href="{% url 'shop_details' slug=product.slug %}">
-                    <span class="price" > <span style="font-size: 1.5rem; color: #f74f06;">{{product.price}}</span>Tk. {% if product.discount_percent %}<del style="font-size: .9rem;">{{product.update_price}}</del>{% endif %}</span>
+                  <div class="cart" >
+                    <span class="price" > <span style="font-size: 1.5rem; color: #f74f06;">{{product.price}}Tk.</span> {% if product.discount_percent %}<del style="font-size: .9rem;">{{product.update_price}}</del>{% endif %}</span>
                     <span class="add-to-cart">
-                      <span class="txt"><i class="fa-solid fa-cart-shopping" style="font-size: 25px; color: #f74f06;"></i><i class="fa-solid fa-plus" style="font-size: 15px; color: #f74f06;"></i></span>
+                      <span class="txt" style="font-size: 1.5rem;">Details</span>
                     </span>
-                  </a>
+                  </div>
                 </div>
               </div>
+            </a>
             </div>
           </div>
         </div>
@@ -333,50 +443,6 @@ rel="stylesheet"
 {% if top_rated_product %}
 <section>
   <!-- Swiper -->
-  <style>
-
-    .swiper {
-      width: 100%;
-      padding-bottom: 50px;
-    }
-
-    .swiper-slide {
-      background-position: center;
-      background-size: cover;
-      width: 300px;
-      height: 448px;
-    }
-
-    .swiper-slide img {
-      display: block;
-      width: 100%;
-    }
-  </style>
-  <div class="heading text-center">
-    <h3>Top Ratting Products</h3>
-    <h6>Grab these new items before they are gone!</h6>
-  </div>
-  <div class="swiper mySwiper">
-    <div class="swiper-wrapper">
-      {% for product in top_rated_product %}
-      <div class="swiper-slide" style="border-radius: 6px;">
-        <a href="{% url 'shop_details' slug=product.slug %}">
-        <div class="card  text-white"  style="height: 100%; width: 100%;">
-
-          <img src="{{product.imageURL}}" class="card-img" alt="Stony Beach"/>
-    
-          <div class="card-img-overlay d-flex flex-column justify-content-end">
-            <h5 class="card-title top-ratting align-text-bottom" style="font-size: 1.2rem; padding:10px; margin-top: auto; ">  {{product.average_rating}} <span style="color: #f74f06;">★</span> <br> {{product.price}}Tk. </h5>
-          </div>
-          
-        </div>
-      </a>
-      </div>
-
-      {% endfor %}
-    </div>
-    <!-- <div class="swiper-pagination"></div> -->
-  </div>
 
   <!-- Swiper JS -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -480,7 +546,8 @@ rel="stylesheet"
   -ms-transform: translateY(-50%);
   -o-transform: translateY(-50%);
   transform: translateY(-50%);
-  color: #818181;
+  /* color: #818181; */
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .el-wrapper:hover .add-to-cart {
@@ -524,7 +591,7 @@ rel="stylesheet"
 }
 
 .el-wrapper .img {
-  padding: 20px 0;
+  padding: 5px;
   -webkit-transition: all 800ms cubic-bezier(0, 0, 0.18, 1);
   -moz-transition: all 800ms cubic-bezier(0, 0, 0.18, 1);
   -o-transition: all 800ms cubic-bezier(0, 0, 0.18, 1);

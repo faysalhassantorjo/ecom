@@ -21,25 +21,17 @@ def get_ip(request):
     return ip
 
 def get_cart_total_items(request):
-    userProfile=None
-    if request.user.is_authenticated:
-        userProfile = get_user(request)
-    else:
-        session_key = request.session.session_key
-        user=None
-        try:
-            user = AnonymousUser.objects.get(session_key=session_key)
-        except AnonymousUser.DoesNotExist:
-                pass
-        if user:
-            userProfile = get_user(request)
+    userProfile = get_user(request)
 
     if userProfile:
-        order=Order.objects.get(user=userProfile,complete=False)
+        try:
+            order=Order.objects.get(user=userProfile,complete=False)
 
-        items=OrderItem.objects.filter(order=order).count()
-        return order
-    return 0
+        # items=OrderItem.objects.filter(order=order).count()
+            return order
+        except:
+            
+            return 0
 
 def create_anonymous_user(request):
     request.session.save()
@@ -102,19 +94,19 @@ def cart_items(request):
     userprofile=get_user(request)
     try:
         order=Order.objects.get(user=userprofile,complete=False)
-    except:
-        print('you hav no order')
-
-    items=OrderItem.objects.filter(order=order)
+        items=OrderItem.objects.filter(order=order)
     
-    return items
+        return items
+    except:
+        return []
+
+    
 
 
 def home(request):
     products= Product.objects.all()
     
-    # print(userProfile)
-    top_rated_product=[]
+    top_rated_product = Product.objects.filter(_ratting__gt = 3)
 
     heroCollections=CollectionSet.objects.filter(hero=True)
 
@@ -129,18 +121,14 @@ def home(request):
     for product in products:
         rating=product.average_rating()
         time_frame = timezone.now() - product.arrive_at
-        print('time frame',time_frame.days)
         if  time_frame.days <= 7:
             product.new_arrival=True
             product.save()
         else:
             product.new_arrival=False
             product.save()
-        if rating>3:
-            top_rated_product.append(product)
+
     
-    for i in top_rated_product:
-        print(i)
 
     new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
 
@@ -162,15 +150,7 @@ def home(request):
         context.update({'userProfile':userProfile})
 
     try:
-        session_key = request.session.session_key
-        user=None
-        try:
-            user = AnonymousUser.objects.get(session_key=session_key)
-        except AnonymousUser.DoesNotExist:
-            pass
-        if user:
-            userProfile = get_user(request)
-        else:userProfile=request.user
+        userProfile = get_user(request)
 
         order=Order.objects.get(user=userProfile,complete=False)
 
@@ -197,25 +177,41 @@ def create_order_item(request):
         add_product=request.POST.get('add_on_product',None)
         add_product2=request.POST.get('add_on_product2',None)
         add_product3=request.POST.get('add_on_product3',None)
-        print(add_product)
-        try: 
-            add_on_product = AddOnProduct.objects.get(id=int(add_product))
-           
-        except:
-            print('No add on get 1')
-
-        try: 
-
-            add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
-
-        except:
-            print('No add on get 2')
-        try: 
+        
+        is_istiched = request.POST.get('unstitched', None)  # Retrieve 'unstitched' from POST request
+        print("fasghasdfadag: ",is_istiched)
+        if is_istiched is not None:
+            if is_istiched.lower() == 'true':
+                is_istiched = True
+            else:
+                is_istiched = False
+        else:
+            is_istiched = True
 
 
-            add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
-        except:
-            print('No add on get 3')
+            
+        print('hello this is : ',is_istiched)
+        if add_product or add_product2 or add_product3:
+            print(add_product)
+            try: 
+                if add_product:
+                    add_on_product = AddOnProduct.objects.get(id=int(add_product))
+            
+            except:
+                print('No add on get 1')
+
+            try: 
+
+                add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
+
+            except:
+                print('No add on get 2')
+            try: 
+
+
+                add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
+            except:
+                print('No add on get 3')
 
 
         userprofile = get_user(request)
@@ -227,22 +223,24 @@ def create_order_item(request):
         product = Product.objects.get(slug=productId)
         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
-        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size)
-        try: 
-            orderItem.add_on_product.add(add_on_product)
+        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size,is_stitched = is_istiched)
+        
+        if add_product or add_product2 or add_product3:
+            try: 
+                orderItem.add_on_product.add(add_on_product)
 
-        except:
-            print("No add on selected 1")
-        
-        try:
-            orderItem.add_on_product.add(add_on_product2)
-        except:
-            print("No add on selected 2")
-        
-        try: 
-            orderItem.add_on_product.add(add_on_product3)
-        except:
-            print("No add on selected 3")
+            except:
+                print("No add on selected 1")
+            
+            try:
+                orderItem.add_on_product.add(add_on_product2)
+            except:
+                print("No add on selected 2")
+            
+            try: 
+                orderItem.add_on_product.add(add_on_product3)
+            except:
+                print("No add on selected 3")
 
         if action == 'add':
             orderItem.quantity += 1
@@ -251,18 +249,16 @@ def create_order_item(request):
             orderItem.quantity -= 1
         elif action == 'delete':
             orderItem.quantity = 0
-
+        print('is product is istiched?',is_istiched)
         orderItem.size = size
         orderItem.save()
         order.status = 'not_confirm'
         order.totalbill=order.total
-        order.save()
             
         if orderItem.quantity == 0:
             orderItem.delete()
-
-        print('selected size: ',size)
-        print('selected action: ',action)
+        order.save()
+        
 
         if cart:
             return redirect('cart')
@@ -442,7 +438,7 @@ def shop_grid(request,pk):
     try:
 
         userProfile=request.user
-
+        user = get_user(request)
         collection=CollectionSet.objects.get(id=pk)
         categories=collection.productcategory_set.all()
 
@@ -456,7 +452,7 @@ def shop_grid(request,pk):
                 'x':True,
                 'collection':collection
             }
-        return render(request,'shop/shop.html',context)
+        return render(request,'shop/shop2.html',context)
     except Exception as e:
         print(e)
         return render(request,'shop/404.html')
@@ -475,18 +471,20 @@ def products(request,pk):
 
     total_products = products.count()
 
-
+    cart_item = len(cart_items(request))
+   
 
     context={
         'products':products,
         'categories':cat,
         'total_products':total_products,
+        'cart_items':cart_item
     }
     return render(request,'shop/shop.html',context) 
 
 from django.db.models import Q
 def shop_details(request,slug):
-    try:
+    # try:
         product=Product.objects.get(slug=slug)
 
         form=WriteReview()
@@ -499,7 +497,6 @@ def shop_details(request,slug):
         add_on_product2 = product.add_on_product2.all()
         add_on_product3 = product.add_on_product3.all()
 
-        # print(add_on_product)
 
         product_categories=product.productCategory.all()
   
@@ -547,11 +544,11 @@ def shop_details(request,slug):
         }
         
         return render(request,'shop/shop-details.html',context)
-    except Exception as e:
-        print(e)
-        return render(request,'shop/404.html',context={
-            'e':e
-        })
+    # except Exception as e:
+    #     print(e)
+    #     return render(request,'shop/404.html',context={
+    #         'e':e
+    #     })
 
 from .decorator import admin_only
 @admin_only
@@ -601,16 +598,7 @@ def writeReview(request,slug):
                 image = Review(ratting=ratting, content=content)
                 image.user=userProfile
                 image.product = product
-
-                # Open and compress the image
-                img = PILImage.open(original_image)
-                img.thumbnail((800, 800))  # Resize the image
-                img_io = BytesIO()  # Create an in-memory object to store the compressed image
-                img.save(img_io, format='JPEG', quality=70)  # Save the compressed image to the in-memory object
-                
-                # Save the compressed image to the model
-                image.compressed_image.save(original_image.name, img_io, save=False)
-
+                image.image = original_image
                 image.save()  # Save the model instance
                 
                 # return redirect('success_url')  # Redirect to success page

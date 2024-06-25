@@ -113,23 +113,31 @@
                     <div class="col-lg-8">
                         <div class="product__details__text">
                             <h4>{{product.name}}</h4>
+                            
                             <div class="rating">
                               {{product.average_rating}}<i class="fa-solid fa-star"></i>
                                 <span> - {{ product.total_reviews }} Reviews</span>
                             </div>
+                            {% if product.unstitched_price %}
+                            <div class="unstiched mb-2">
+                                <button id="unstiched-button" class="btn btn-dark">Unstitched?</button>
+                            </div>
+                            {% endif %}
+                            <h3 id="product-price">{{ product.price }} TK</h3>
                             
-                            <h3>{{product.price}} TK.
                                 <span>   
                                 {% if product.discount_percent %} 
                                 TK. {{product.update_price}}
                                 </span>
                                 {% endif %}
                         </h3>
-
+                       
 <!-- product_template.html -->
 <form method="post" action="{% url 'update_item' %}" id="add-to-cart-form" onsubmit="return validateForm()">
     {% csrf_token %}
-    
+    <div id="form_c">
+
+    </div>
     <div class="product__details__option">
         <div class="product__details__option__size">
             <span>Select Size</span>
@@ -230,6 +238,34 @@ function validateForm() {
     }
     return true;
 }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Get the elements
+    const button = document.getElementById("unstiched-button");
+    const priceElement = document.getElementById("product-price");
+    
+    const inputContainer = document.getElementById("form_c")
+    // The unstitched price (you'll replace this with the actual value from your server or context)
+    const unstitchedPrice = "{{ product.unstitched_price }}";
+
+    // Add click event listener to the button
+    button.addEventListener("click", function() {
+        // Update the price element's text content
+        priceElement.textContent = `${unstitchedPrice} TK`;
+        const inputField = document.createElement("input");
+        inputField.type = "hidden";
+        inputField.value = unstitchedPrice;
+        inputField.name = "unstitched"
+        inputField.classList.add("form-control", "mt-2");
+        inputContainer.appendChild(inputField);
+        button.innerText = "Unstitched Price is "
+        button.classList = ""
+        button.style.border = "none"
+        
+    });
+});
+
 </script>
                 
 

@@ -9,6 +9,35 @@ from autoslug import AutoSlugField
 from django.utils.text import slugify
 # Create your models here.
 
+from django.db.models.fields.files import ImageField, ImageFieldFile
+from PIL import Image
+from io import BytesIO
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+class ResizedImageFieldFile(ImageFieldFile):
+    def save(self, name, content, save=True):
+        # Open the uploaded image
+        img = Image.open(content)
+        
+        # Resize the image to fit within the maximum size while maintaining the aspect ratio
+        max_size = (800, 800)  # You can adjust this size as needed
+        img.thumbnail(max_size, Image.Resampling.LANCZOS)  # Use LANCZOS resampling filter
+        
+        # Save the resized image to a BytesIO object with reduced quality
+        img_io = BytesIO()
+        img.save(img_io, format=img.format, quality=100)  # Adjust quality here
+        img_io.seek(0)
+        
+        # Create a SimpleUploadedFile with the resized image data
+        content = SimpleUploadedFile(name, img_io.read(), content.content_type)
+        
+        # Save the resized image using the parent class method
+        super().save(name, content, save)
+
+class ResizedImageField(ImageField):
+    attr_class = ResizedImageFieldFile
+
+
 class AnonymousUser(models.Model):
     session_key = models.CharField(max_length=40, unique=True)
 
@@ -21,7 +50,7 @@ class AnonymousUser(models.Model):
 class CollectionSet(models.Model):
     name=models.CharField(max_length=100)
     hero=models.BooleanField(default=False)
-    image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
+    image=ResizedImageField(upload_to='collectionset/',blank=True,null=True)
     @property
     def imageURL(self):
         try:
@@ -37,7 +66,7 @@ class CollectionSet(models.Model):
 class ProductCategory(models.Model):
     name=models.CharField(max_length=100)
     collection=models.ManyToManyField(CollectionSet)
-    image=models.ImageField(upload_to='category/',blank=True,null=True)
+    image=ResizedImageField(upload_to='category/',blank=True,null=True)
 
     @property
     def imageURL(self):
@@ -76,18 +105,20 @@ class Product(models.Model):
     add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3",blank=True)
     description=models.TextField(null=True,blank=True)
     price = models.IntegerField(default=0)
+    unstitched_price = models.PositiveIntegerField(default=0)
     discount_percent=models.IntegerField(default=0)
     main_price = models.IntegerField(default=0)
     discount=models.BooleanField(default=True,null=True,blank=False)
     productCategory = models.ManyToManyField(ProductCategory)
-    image=models.ImageField(upload_to='product-image/',blank=True,null=True)
-    image2=models.ImageField(upload_to='product-image/',blank=True,null=True)
-    image3=models.ImageField(upload_to='product-image/',blank=True,null=True)
-    image4=models.ImageField(upload_to='product-image/',blank=True,null=True)
+    image=ResizedImageField(upload_to='product-image/',blank=True,null=True)
+    image2=ResizedImageField(upload_to='product-image/',blank=True,null=True)
+    image3=ResizedImageField(upload_to='product-image/',blank=True,null=True)
+    image4=ResizedImageField(upload_to='product-image/',blank=True,null=True)
     arrive_at=models.DateTimeField(default=now,blank=True)
     new_arrival=models.BooleanField(default=False,blank=True)
     tags = TaggableManager()
     in_stock=models.BooleanField(default=True,blank=True)
+    _ratting = models.FloatField(default=0)
     def __str__(self):
         return str(f'{self.name} ')
 
@@ -146,6 +177,8 @@ class Product(models.Model):
         reviews = Review.objects.filter(product=self)
         if reviews.exists():
             s= sum([review.ratting for review in reviews]) / len(reviews)
+            self._ratting =s
+            self.save()
             return round(s, 1)
         return 0
     def total_reviews(self):
@@ -153,13 +186,6 @@ class Product(models.Model):
         if reviews.exists():
             return len(reviews)
         return 0
-# from django.db.models.signals import pre_save
-# from django.dispatch import receiver
-# from myproject.util import unique_slug_generator
-# @receiver(pre_save, sender=Product)
-# def pre_save_receiver(sender, instance, *args, **kwargs):
-#     if not instance.slug:
-#         instance.slug = unique_slug_generator(instance)
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -224,11 +250,15 @@ class OrderItem(models.Model):
     add_on_product= models.ManyToManyField(AddOnProduct)
     order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
     size=models.CharField(max_length=10,blank=True,null=True)
+    is_stitched = models.BooleanField(default=True)
     @property
     def item_total(self):
         add_on = self.add_on_product.all()
         total_add_on = sum(add_pro.price for add_pro in add_on)
-        total=self.product.price*self.quantity
+        if  self.is_stitched:
+            total=self.product.price*self.quantity
+        else:  
+            total=self.product.unstitched_price*self.quantity
         return total+(total_add_on*self.quantity)
 
 class ShippingAddress(models.Model):
@@ -249,14 +279,13 @@ class ShippingAddress(models.Model):
 class Review(models.Model):
     user=models.ForeignKey(UserProfile,on_delete=models.CASCADE)
     content= models.TextField()
-    image=models.ImageField(upload_to='product-review/',blank=True,null=True)
+    image=ResizedImageField(upload_to='product-review/',blank=True,null=True)
 
     ratting = models.IntegerField(
         choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
     )
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     at_time = models.DateTimeField(default=now, blank=True)
-    compressed_image = models.ImageField(upload_to='review-compressed/',blank=True,null=True)
 
 
     @property
