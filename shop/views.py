@@ -74,17 +74,21 @@ def logoutV(request):
 from django.contrib.auth.forms import UserCreationForm
 
 def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            authenticated_user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+    try:
+        if request.method == 'POST':
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                authenticated_user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
 
-            if authenticated_user is not None:
-                auth_login(request, authenticated_user)
-                return redirect("home")
-    else:
-        form = UserCreationForm()
+                if authenticated_user is not None:
+                    UserProfile.objects.create(user=user)
+                    auth_login(request, authenticated_user)
+                    return redirect("home")
+        else:
+            form = UserCreationForm()
+    except Exception as e:
+        return render(request,'shop/404.html')
 
     return render(request, 'shop/register.html', {'form': form})
 
