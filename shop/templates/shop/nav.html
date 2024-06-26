@@ -101,7 +101,7 @@ rel="stylesheet"
 
   }
   .c{
-    background: #ffffff00;
+    background:none;
   }
  
 </style>
@@ -156,7 +156,7 @@ rel="stylesheet"
       @media (max-width: 600px) {
         .hero-image{
           width: 100%;
-          height: auto;
+          height: 400px;
           object-fit: cover;
         }
         .t{
@@ -176,10 +176,10 @@ rel="stylesheet"
     <i class="fas fa-spinner fa-spin preloader-icon"></i>
 </div>
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg   c" >
+<nav class="navbar navbar-expand-lg   c" style="box-shadow: none;" >
   <!-- Container wrapper -->
     
-    <div class="container navbar bg-body-tertiary" style="opacity: .9;border-radius: 10px;  ">
+    <div class="container navbar " style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
     <!-- Toggle button -->
 
 
@@ -189,7 +189,7 @@ rel="stylesheet"
       <a class="navbar-brand mt-2 mt-lg-0" href="#">
         <img
           src="{% static 'image/logo/logo.jpg' %}"
-          height="35"
+          height="45"
           alt="logo"
           loading="lazy"
         />
@@ -204,7 +204,7 @@ rel="stylesheet"
 
 
       <a class="text-reset me-3" href="{% url 'cart' %}">
-        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-shopping-cart" style="color: #f74f06;"></i>
         <span class="badge rounded-pill badge-notification bg-danger">{{order.total_items}}</span>
 
       </a>
@@ -319,7 +319,7 @@ rel="stylesheet"
         <a href="{% url 'shop_details' slug=product.slug %}">
         <div class="card  text-white"  style="height: 100%; width: 100%; background: #0d0d0d;">
   
-          <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach"/>
+          <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach" loading="lazy"/>
     
           <div class="card-img-overlay d-flex flex-column justify-content-between">
             <div class="top-left p-3" style="position: absolute; top: 0; left: 0; ">
@@ -365,7 +365,7 @@ rel="stylesheet"
       <div class="col-12 col-lg-6 mb-4">
         <a href="{% url 'shop_grid' pk=collection.id %}">
         <div class="card bg-dark text-white t">
-          <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach"/>
+          <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach" loading="lazy"/>
           <div class="card-img-overlay text-center d-flex justify-content-center collection-heading" style="align-items: center;">
             <span>{{collection.name}}</span>
            

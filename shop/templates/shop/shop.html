@@ -145,7 +145,7 @@
         {% for product in products %}
         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
         <div class="product-card">
-            <img src="{{ product.imageURL }}" alt="Product Image">
+            <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
             <div class="product-details" >
                 <p class="product-name">{{ product.name }}</p>
                 <p class="price">Tk. {{ product.price }}</p>
