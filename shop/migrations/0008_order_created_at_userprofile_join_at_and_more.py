@@ -27,14 +27,14 @@ class Migration(migrations.Migration):
             name='complete',
             field=models.BooleanField(blank=True, default=False),
         ),
-        migrations.AlterField(
-            model_name='order',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
-        ),
-        migrations.AlterField(
-            model_name='product',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
-        ),
+        # migrations.AlterField(
+        #     model_name='order',
+        #     name='id',
+        #     field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+        # ),
+        # migrations.AlterField(
+        #     model_name='product',
+        #     name='id',
+        #     field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+        # ),
     ]
