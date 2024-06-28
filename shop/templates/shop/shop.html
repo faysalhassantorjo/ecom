@@ -67,7 +67,7 @@
         }
 
         .product-card img:hover{
-            transform: scale(1.4);
+            transform: scale(1.5);
             
         }
 
@@ -91,7 +91,7 @@
         }
 
         .original-price {
-            font-size: 14px;
+            font-size: 10px;
             color: #999;
             text-decoration: line-through;
             font-family: "Space Grotesk", sans-serif;
@@ -140,21 +140,62 @@
 
             </a></div>
     </div>
+    <style>
+        .product-card {
+    position: relative;
+}
 
+.stock-out-msg {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 10;
+    border-radius: 3px;
+    font-family: "Space Grotesk", sans-serif;
+}
+
+    </style>
     <div class="container">
         {% for product in products %}
         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
         <div class="product-card">
             <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+            {% if product.in_stock %}
+                {% if product.discount_percent %}
+                    <div class="stock-out-msg " style="background-color: #f74f06;">{{product.discount_percent}}% Off</div>
+                {% endif %}
+            {% else %}
+            <div class="stock-out-msg">Stock Out</div>
+            {% endif %}
+
+
             <div class="product-details" >
-                <p class="product-name">{{ product.name }}</p>
+                <p class="product-name">{{ product.name }} </p>
+                
                 <p class="price">Tk. {{ product.price }}</p>
                 {% if product.discount_percent %}
                 <p class="original-price">Tk. {{ product.update_price }}</p>
                 {% endif %}
+                {% if user.is_superuser %}
+                <form action="{% url 'edit_product' product.id categories.id %}" method="get">
+                    <button type="submit" class="btn btn-outline-dark" style="padding: 10px; background-color: #000000; color: #fff; cursor:pointer">Edit product</button>
+                </form>
+            {% endif %}
+    
+            
             </div>
+
+
         </div>
         </a>
+                    
+
+   
         {% endfor %}
     </div>
 </body>
