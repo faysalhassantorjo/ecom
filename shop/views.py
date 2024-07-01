@@ -61,6 +61,7 @@ def login(request):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
+            userprofile,created = UserProfile.objects.get_or_create(user =user)
             return redirect('home')
     else:
         form = LoginForm()
