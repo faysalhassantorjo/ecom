@@ -29,7 +29,8 @@ class ShippingAddressForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ShippingAddressForm, self).__init__(*args, **kwargs)
 
-        self.fields['address'].widget = forms.Textarea(attrs={'rows': 4}) 
+        self.fields['address'].widget = forms.Textarea(attrs={'rows': 4})
+        self.fields['email'].required = False
 
 
 class WriteReview(forms.ModelForm):

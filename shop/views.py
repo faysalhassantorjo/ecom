@@ -123,25 +123,24 @@ def home(request):
 
     all_categories = ProductCategory.objects.all().order_by('?')
 
-    for product in products:
-        rating=product.average_rating()
-        time_frame = timezone.now() - product.arrive_at
-        if  time_frame.days <= 7:
-            product.new_arrival=True
-            product.save()
-        else:
-            product.new_arrival=False
-            product.save()
+    # for product in products:
+    #     rating=product.average_rating()
+    #     time_frame = timezone.now() - product.arrive_at
+    #     if  time_frame.days <= 10:
+    #         product.new_arrival=True
+    #         product.save()
+    #     else:
+    #         product.new_arrival=False
+    #         product.save()
 
-    
+
 
     new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
 
-    print(len(new_arrival_products))
 
     context={
         'products':products,
-        'top_rated_product':top_rated_product,
+        'top_rated_product':new_arrival_products,
         'new_arrival_products':new_arrival_products[:8],
         'heroCollections':heroCollections,
         'collectionsets':collectionsets,
@@ -489,7 +488,7 @@ def products(request,pk):
 
 from django.db.models import Q
 def shop_details(request,slug):
-    # try:
+    try:
         product=Product.objects.get(slug=slug)
 
         form=WriteReview()
@@ -512,26 +511,28 @@ def shop_details(request,slug):
         
         
 
-        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')
+        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
-        can_review = False
+        can_review = True
 
-        if request.user.is_authenticated:
-            user = get_user(request)
-            order,c=Order.objects.get_or_create(user=user,complete=False)
-            # user_profile = UserProfile.objects.get(user=user)
-            user_orders = Order.objects.filter(user=user)
+        # if request.user.is_authenticated:
+        #     user = get_user(request)
+        #     order,c=Order.objects.get_or_create(user=user,complete=False)
+        #     # user_profile = UserProfile.objects.get(user=user)
+        #     user_orders = Order.objects.filter(user=user)
 
-            for order in user_orders:
-                order_items = OrderItem.objects.filter(order=order)
-                for order_item in order_items:
-                    if order_item.product == product:
-                        can_review = True
-                        break
-                if can_review:
-                    break
+        #     for order in user_orders:
+        #         order_items = OrderItem.objects.filter(order=order)
+        #         for order_item in order_items:
+        #             if order_item.product == product:
+        #                 can_review = True
+        #                 break
+        #         if can_review:
+        #             break
 
+        cate = product.productCategory.earliest('id')
 
+        print(cate)
 
         context={
             'product':product,
@@ -549,11 +550,11 @@ def shop_details(request,slug):
         }
         
         return render(request,'shop/shop-details.html',context)
-    # except Exception as e:
-    #     print(e)
-    #     return render(request,'shop/404.html',context={
-    #         'e':e
-    #     })
+    except Exception as e:
+        print(e)
+        return render(request,'shop/404.html',context={
+            'e':e
+        })
 
 from .decorator import admin_only
 @admin_only

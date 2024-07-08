@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Longg-লং</title>
+
     <!-- Font Awesome -->
 <link
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -22,7 +23,9 @@ rel="stylesheet"
 />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-
+<head>
+  <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}"/>
+</head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
@@ -156,12 +159,12 @@ rel="stylesheet"
       @media (max-width: 600px) {
         .hero-image{
           width: 100%;
-          height: 400px;
+          height: 300px;
           object-fit:cover;
         }
         .t{
           width: auto;
-          height: 350px;
+          height: 400px;
           object-fit: cover;
         }
         .collection-heading span{
@@ -309,7 +312,7 @@ rel="stylesheet"
  }
   </style>
   <div class="heading text-center">
-    <h3>Top Ratting Products</h3>
+    <h3>Top Selling Products</h3>
     <h6>Grab these new items before they are gone!</h6>
   </div>
   <div class="swiper mySwiper" style="height: 450px;">
@@ -322,12 +325,12 @@ rel="stylesheet"
           <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach" loading="lazy"/>
     
           <div class="card-img-overlay d-flex flex-column justify-content-between">
-            <div class="top-left p-3" style="position: absolute; top: 0; left: 0; ">
+            <!-- <div class="top-left p-3" style="position: absolute; top: 0; left: 0; ">
                 <h5 class="card-title " style="font-size: 1rem; color: #ffffff;">
                   <span class="p-2" style="background-color: #f74f06; color: #0B1215;" > {{ product.average_rating }}★</span>
                    
                 </h5>
-            </div>
+            </div> -->
             <style>
               .details{
                 -webkit-mask-image: linear-gradient(to bottom, black,transparent);

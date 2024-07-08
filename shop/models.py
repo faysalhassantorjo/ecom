@@ -66,11 +66,19 @@ class ProductCategory(models.Model):
     name=models.CharField(max_length=100)
     collection=models.ManyToManyField(CollectionSet)
     image=ResizedImageField(upload_to='category/',blank=True,null=True)
+    size_chart=ResizedImageField(upload_to='sizechart/',blank=True,null=True)
 
     @property
     def imageURL(self):
         try:
             url=self.image.url
+        except:
+            url=''
+        return url
+    @property
+    def sizeChartURL(self):
+        try:
+            url=self.size_chart.url
         except:
             url=''
         return url

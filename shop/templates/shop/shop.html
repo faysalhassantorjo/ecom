@@ -5,9 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Cards</title>
+    <title>Longg-লং</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
+    <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}"/>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,27 +22,7 @@
             background: #0B1215;
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #000000;;
-            padding: 10px 20px;
-            color: white;
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-            border-radius: 10px;
-        }
-
-        .navbar .logo img {
-            height: 60px;
-        }
-
-        .navbar .cart {
-            font-size: 30px;
-        }
-
+       
         .container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -91,7 +72,7 @@
         }
 
         .original-price {
-            font-size: 10px;
+            font-size: 14px;
             color: #999;
             text-decoration: line-through;
             font-family: "Space Grotesk", sans-serif;
@@ -99,7 +80,7 @@
 
         @media (min-width: 1024px) {
             .container {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -114,32 +95,42 @@
                 grid-template-columns: 1fr;
             }
 
-            .navbar {
-                justify-content: center;
-                position: relative;
-            }
+       
 
-            .navbar .cart {
-                position: absolute;
-                right: 20px;
-            }
+     
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="logo">
-            <img src="{% static 'image/logo/logo.jpg' %}" alt="Logo">
-        </div>
-        <div class="cart"> 
-            <a class="text-reset me-3" href="{% url 'cart' %}"style="text-decoration: none;">
-                <i class="fas fa-shopping-cart" style="color: #e74c3c;">
-                <span style="color: #fff; font-size: 18px;">{{cart_items}}</span>
-                </i>
+    <!-- Navbar -->
+    <style>
+        .navbar-brand {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+    </style>
 
-            </a></div>
-    </div>
+    <nav class="navbar " style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
+        <div class="container-fluid justify-content-center">
+            <a class="navbar-brand" href="#" style="text-decoration: none;">
+                <img src="{% static 'image/logo/logo2.png' %}" height="100" alt="Logo" loading="lazy">
+            </a>
+        </div>
+    </nav>
+    
+  <!-- Navbar -->
+
+
+
+
+
     <style>
         .product-card {
     position: relative;
@@ -164,7 +155,10 @@
         {% for product in products %}
         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
         <div class="product-card">
-            <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+            <div class="div" style="overflow: hidden;">
+                <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+
+            </div>
             {% if product.in_stock %}
                 {% if product.discount_percent %}
                     <div class="stock-out-msg " style="background-color: #f74f06;">{{product.discount_percent}}% Off</div>
@@ -177,10 +171,11 @@
             <div class="product-details" >
                 <p class="product-name">{{ product.name }} </p>
                 
-                <p class="price">Tk. {{ product.price }}</p>
+                <p class="price">Tk. {{ product.price }}
                 {% if product.discount_percent %}
-                <p class="original-price">Tk. {{ product.update_price }}</p>
+                <span class="original-price"> {{ product.update_price }}</span>
                 {% endif %}
+                </p>
                 {% if user.is_superuser %}
                 <form action="{% url 'edit_product' product.id categories.id %}" method="get">
                     <button type="submit" class="btn btn-outline-dark" style="padding: 10px; background-color: #000000; color: #fff; cursor:pointer">Edit product</button>

@@ -49,12 +49,17 @@
                                         <th>
                                          Order ID:    {{shippingaddress.order.order_id}}
                                         </th>
+                                        <th>
+                                         Email :    {{shippingaddress.email}}
+                                        </th>
+                                        <th>
+                                         Phon :    {{shippingaddress.phon}}
+                                        </th>
                                     </tr>
                                     <tr>
                                         <th>Name</th>
                                         <th>Address Details</th>
                                         <th>Address Note</th>
-                                        <th>Phone </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,7 +67,6 @@
                                         <td>{{shippingaddress.first_name}} {{shippingaddress.last_name}}</td>
                                         <td>{{shippingaddress.address}}</td>
                                         <td>{{shippingaddress.address_note}}</td>
-                                        <td>{{shippingaddress.phon}}</td>
                                             
                                     </tr>
                                 </tbody>
