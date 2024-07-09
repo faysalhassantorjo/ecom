@@ -36,7 +36,7 @@ class ShippingAddressForm(forms.ModelForm):
 class WriteReview(forms.ModelForm):
     class Meta:
         model=Review
-        fields=['ratting','content','image']
+        fields=['ratting','content',]
 
 class OrderStatus(forms.ModelForm):
     class Meta:

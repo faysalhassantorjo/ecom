@@ -111,7 +111,7 @@ def cart_items(request):
 def home(request):
     products= Product.objects.all()
     
-    top_rated_product = Product.objects.filter(_ratting__gt = 3)
+    top_rated_product = Product.objects.filter(_ratting__gt = 2)
 
     heroCollections=CollectionSet.objects.filter(hero=True)
 
@@ -140,7 +140,7 @@ def home(request):
 
     context={
         'products':products,
-        'top_rated_product':new_arrival_products,
+        'top_rated_product':top_rated_product,
         'new_arrival_products':new_arrival_products[:8],
         'heroCollections':heroCollections,
         'collectionsets':collectionsets,
