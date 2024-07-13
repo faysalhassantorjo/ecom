@@ -278,19 +278,10 @@ def createOrder(request):
     return JsonResponse("Order done", safe=False)
 
 def cart(request):
-    if request.user.is_authenticated:
-        userProfile=get_user(request)
-    else:
-        session_key = request.session.session_key
-        user=None
-        try:
-            user = AnonymousUser.objects.get(session_key=session_key)
-        except AnonymousUser.DoesNotExist:
-            pass
-        if user:
-            userProfile = get_user(request)
-        else:userProfile=None
-    if userProfile:
+    userProfile = get_user(request)
+    
+      
+    try:
         order,c=Order.objects.get_or_create(user=userProfile,complete=False)
 
         items=OrderItem.objects.filter(order=order)
@@ -332,7 +323,9 @@ def cart(request):
             'userProfile':userProfile,
             'saves':saves
         }
-    else:context={}
+    except Exception as e:
+        return render(request,'shop/404.html')
+        
     return render(request,'shop/shopping-cart.html',context)
 
 def location_choice(request,pk):
@@ -391,8 +384,14 @@ def order_cancel(request,pk):
 def checkout(request):
     userProfile=get_user(request)
     print(userProfile)
-
-    order,c=Order.objects.get_or_create(user=userProfile,complete=False)
+    try:
+        order=Order.objects.get(user=userProfile,complete=False)
+        if order.total_items == 0:
+            return render(request,'shop/404.html',{'e':"Your Cart Have 0 product. Add Product in your Cart."})
+            
+    except Exception:
+        return render(request,'shop/404.html',{'e':"You Don't Have any Order. Add Product in your Cart."})
+        
     
     subtotal = order.get_total+order.delivary_charge
 

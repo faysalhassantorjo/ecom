@@ -275,7 +275,7 @@ class ShippingAddress(models.Model):
     address=models.TextField()
     address_note=models.CharField(max_length=100)
     phon=models.CharField(max_length=20)
-    email=models.CharField(max_length=20)
+    email=models.CharField(max_length=100)
     timestamp=models.DateTimeField(default=now,blank=True)
 
 
