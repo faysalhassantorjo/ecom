@@ -92,14 +92,13 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
         'USER': 'postgres',
-        'PASSWORD': 'uvUxlnNcunKbbWnzuYZPdFqmDpxdaIrO',
+        'PASSWORD': 'fqsXmXhMveDGnDAjJCuGJVKRYIheNvFF',
         'HOST': 'monorail.proxy.rlwy.net',
-        'PORT': '17341',
+        'PORT': '37839',
     }
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://web-production-6e54.up.railway.app',
     'https://longg.up.railway.app'
 ]
 
