@@ -50,10 +50,18 @@ class CollectionSet(models.Model):
     name=models.CharField(max_length=100)
     hero=models.BooleanField(default=False)
     image=ResizedImageField(upload_to='collectionset/',blank=True,null=True)
+    mobile_image = ResizedImageField(upload_to="collectionset/",blank=True,null=True)
     @property
     def imageURL(self):
         try:
             url=self.image.url
+        except:
+            url=''
+        return url
+    @property
+    def mobileimageURL(self):
+        try:
+            url=self.mobile_image.url
         except:
             url=''
         return url

@@ -146,6 +146,10 @@ rel="stylesheet"
         object-fit: contain;
       
       }
+      .mobile-image{
+        width: 100%;
+        height: auto;
+      }
   
       .collection-heading span{
         font-size: 2.5rem;
@@ -156,21 +160,15 @@ rel="stylesheet"
         width: 100%;;
       }
 
-      @media (max-width: 600px) {
-        .hero-image{
-          width: 100%;
-          height: 300px;
-          object-fit:cover;
-        }
+      @media (max-width: 767px) {
         .t{
           width: auto;
           height: 400px;
           object-fit: cover;
         }
         .collection-heading span{
-        font-size: 1.5rem;
-
-      }
+          font-size: 1.5rem;
+        }
       
         }
 
@@ -191,8 +189,8 @@ rel="stylesheet"
       <!-- Navbar brand -->
       <a class="navbar-brand mt-2 mt-lg-0" href="#">
         <img
-          src="{% static 'image/logo/logo.jpg' %}"
-          height="45"
+          src="{% static 'image/logo/logo2.png' %}"
+          height="55"
           alt="logo"
           loading="lazy"
         />
@@ -207,8 +205,8 @@ rel="stylesheet"
 
 
       <a class="text-reset me-3" href="{% url 'cart' %}">
-        <i class="fas fa-shopping-cart" style="color: #f74f06;"></i>
-        <span class="badge rounded-pill badge-notification bg-danger">{{order.total_items}}</span>
+        <i class="fas fa-shopping-cart" style="font-size: 23px; border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff" ></i>
+        <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">{{order.total_items}}</span>
 
       </a>
 
@@ -270,7 +268,12 @@ rel="stylesheet"
       {% for collection in heroCollections %}
         <a href="{% url 'shop_grid' pk=collection.id %}">
           <div class="carousel-item {% if forloop.first %}active{% endif %}" data-mdb-interval="10000">
-            <img src="{{ collection.imageURL }}" class="d-block w-100 hero-image"  alt="Image Description">
+            <!-- <img src="{{ collection.imageURL }}" class="d-block w-100 hero-image"  alt="Image Description"> -->
+            <picture>
+              <source  media="(max-width: 767px)" srcset="{{ collection.mobileimageURL }}" class="mobile-image">
+              <img src="{{ collection.imageURL }}"  class="hero-image desktop-image">
+          </picture>
+              
           </div>
         </a>
       {% endfor %}
@@ -285,6 +288,8 @@ rel="stylesheet"
     </button>
   </div>
 </section>
+
+
 <hr>
 <section style="margin-top: 50px;">
   <style>
@@ -370,7 +375,7 @@ rel="stylesheet"
         <div class="card bg-dark text-white t">
           <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach" loading="lazy"/>
           <div class="card-img-overlay text-center d-flex justify-content-center collection-heading" style="align-items: center;">
-            <span>{{collection.name}}</span>
+            <!-- <span>{{collection.name}}</span> -->
            
           </div>
         </div>
@@ -792,21 +797,15 @@ font-family: "Playfair Display", serif;
       <a href="" class="me-4 text-reset">
         <i class="fab fa-facebook-f"></i>
       </a>
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-twitter"></i>
-      </a>
+ 
       <a href="" class="me-4 text-reset">
         <i class="fab fa-google"></i>
       </a>
       <a href="" class="me-4 text-reset">
         <i class="fab fa-instagram"></i>
       </a>
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-linkedin"></i>
-      </a>
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-github"></i>
-      </a>
+
+
     </div>
     <!-- Right -->
   </section>
@@ -840,37 +839,10 @@ font-family: "Playfair Display", serif;
         <!-- Grid column -->
 
         <!-- Grid column -->
-        <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-           <!-- Links -->
-           <h6 class="text-uppercase fw-bold mb-4">
-            Collection
-          </h6>
-         
-          {% for collection in heroCollections %}
-          <p>
-            <a href="{% url 'shop_grid' pk=collection.id %}" class="text-reset">{{collection.name}}</a>
-          </p>
-          {% endfor %}
-        {% for collection in collectionsets %}
-        <p>
-          <a href="{% url 'shop_grid' pk=collection.id %}" class="text-reset">{{collection.name}}</a>
-        </p>
-        {% endfor %}
-        </div>
-        <!-- Grid column -->
 
         <!-- Grid column -->
-        <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-          <h6 class="text-uppercase fw-bold mb-4">
-            Category
-          </h6>
-          {% for category in all_categories %}
-          <p>
-            <a href="{% url 'products' pk=category.id %}" class="text-reset">{{category.name}}</a>
-          </p>
-          {% endfor %}
-        </div>
-        <!-- Grid column -->
+
+       
 
         <!-- Grid column -->
         <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
