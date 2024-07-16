@@ -21,17 +21,14 @@ def get_ip(request):
     return ip
 
 def get_cart_total_items(request):
-    userProfile = get_user(request)
-
+    userProfile = check_user(request)
+    order =[]
     if userProfile:
         try:
             order=Order.objects.get(user=userProfile,complete=False)
-
-        # items=OrderItem.objects.filter(order=order).count()
-            return order
         except:
-            
-            return 0
+            order=[]
+    return order
 
 def create_anonymous_user(request):
     request.session.save()
@@ -41,6 +38,14 @@ def create_anonymous_user(request):
     anonymous_user,c = AnonymousUser.objects.get_or_create(session_key=session_key)
     return anonymous_user
 
+def check_user(request):
+    request.session.save()
+    session_key = request.session.session_key
+    try:
+        userProfile = UserProfile.objects.get(user__username = session_key)
+    except:
+        userProfile = None
+    return userProfile
 
 def get_user(request):
     user =None
@@ -94,16 +99,16 @@ def register(request):
     return render(request, 'shop/register.html', {'form': form})
 
 
-def cart_items(request):
+# def cart_items(request):
    
-    userprofile=get_user(request)
-    try:
-        order=Order.objects.get(user=userprofile,complete=False)
-        items=OrderItem.objects.filter(order=order)
+#     userprofile=get_user(request)
+#     try:
+#         order=Order.objects.get(user=userprofile,complete=False)
+#         items=OrderItem.objects.filter(order=order)
     
-        return items
-    except:
-        return []
+#         return items
+#     except:
+#         return []
 
     
 
@@ -154,10 +159,13 @@ def home(request):
         context.update({'userProfile':userProfile})
 
     try:
-        userProfile = get_user(request)
-
-        order=Order.objects.get(user=userProfile,complete=False)
-
+        userProfile = check_user(request)
+        order =[]
+        if userProfile:
+            try:
+                order=Order.objects.get(user=userProfile,complete=False)
+            except:
+                order=[]
         items=OrderItem.objects.filter(order=order)
         
         context.update({'order':order,'items':items})
@@ -278,55 +286,49 @@ def createOrder(request):
     return JsonResponse("Order done", safe=False)
 
 def cart(request):
-    userProfile = get_user(request)
+    userProfile = check_user(request)
+    order = None
     
-      
+    if userProfile:
+        try:
+            order = Order.objects.get(user=userProfile, complete=False)
+        except Order.DoesNotExist:
+            order = None
+    
     try:
-        order,c=Order.objects.get_or_create(user=userProfile,complete=False)
+        coupons = Cuppon.objects.all()
 
-        items=OrderItem.objects.filter(order=order)
-
-        for i in items:
-            print(i.add_on_product.name)
-
-        total=items.count()
-        coupons=Cuppon.objects.all()
-
-        if request.method=='POST':
-            q=request.POST['q']
-            print('cuopon ',q)
+        if request.method == 'POST':
+            q = request.POST['q']
+            print('coupon', q)
 
             for c in coupons:
-                
-                if c.cuppon_name==q and order.coupon!=True:
+                if c.coupon_name == q and order and not order.coupon:
                     if order.get_total >= c.min_order:
-                        order.coupon=True
-                        order.coupon_percentange=c.percent
+                        order.coupon = True
+                        order.coupon_percentage = c.percent
                         order.save()
 
-
-        print('My get_total',order.get_total)
-        print('My total bill: ',order.totalbill)                
-        if order.coupon:
+        print('My get_total', order.get_total if order else 0)
+        print('My total bill:', order.totalbill if order else 0)
         
-            # saves=abs(order.get_total - order.totalbill)
-            saves=abs(order.total - order.get_total)
-
-
-        else:
-            saves = 0
+        saves = 0
+        if order and order.coupon:
+            saves = abs(order.total - order.get_total)
+        
         print('get_order')
-        context={
-            'total':total,
-            'items':items,
-            'order':order,
-            'userProfile':userProfile,
-            'saves':saves
+        
+    
+        context = {
+            'order': order,
+            'userProfile': userProfile,
+            'saves': saves
         }
     except Exception as e:
-        return render(request,'shop/404.html')
+        print(e)
+        return render(request, 'shop/404.html')
         
-    return render(request,'shop/shopping-cart.html',context)
+    return render(request, 'shop/shopping-cart.html', context)
 
 def location_choice(request,pk):
     order=Order.objects.get(id=pk)
@@ -382,10 +384,14 @@ def order_cancel(request,pk):
     return render(request,'shop/orderStatus.html',context)
 
 def checkout(request):
-    userProfile=get_user(request)
-    print(userProfile)
+    userProfile = check_user(request)
+    order =[]
+    if userProfile:
+        try:
+            order=Order.objects.get(user=userProfile,complete=False)
+        except:
+            order=[]
     try:
-        order=Order.objects.get(user=userProfile,complete=False)
         if order.total_items == 0:
             return render(request,'shop/404.html',{'e':"Your Cart Have 0 product. Add Product in your Cart."})
             
@@ -440,8 +446,14 @@ def order_success(request,pk):
 def shop_grid(request,pk):
     try:
 
-        userProfile=request.user
-        user = get_user(request)
+        userProfile = check_user(request)
+        order =[]
+        if userProfile:
+            try:
+                order=Order.objects.get(user=userProfile,complete=False)
+            except:
+                order=[]
+            
         collection=CollectionSet.objects.get(id=pk)
         categories=collection.productcategory_set.all()
 
@@ -451,9 +463,9 @@ def shop_grid(request,pk):
         context={
                 # 'products':products,
                 'categories':categories,
-                'userProfile':userProfile,
                 'x':True,
-                'collection':collection
+                'collection':collection,
+                'order':order
             }
         return render(request,'shop/shop2.html',context)
     except Exception as e:
@@ -474,14 +486,12 @@ def products(request,pk):
 
     total_products = products.count()
 
-    cart_item = len(cart_items(request))
    
 
     context={
         'products':products,
         'categories':cat,
         'total_products':total_products,
-        'cart_items':cart_item
     }
     return render(request,'shop/shop.html',context) 
 
@@ -608,6 +618,7 @@ def writeReview(request,slug):
                 
                 # return redirect('success_url')  # Redirect to success page
                 return redirect('shop_details', slug=slug)
+    else: return redirect('shop_details', slug=slug)
         
 
     

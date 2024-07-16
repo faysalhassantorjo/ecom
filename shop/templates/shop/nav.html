@@ -206,7 +206,13 @@ rel="stylesheet"
 
       <a class="text-reset me-3" href="{% url 'cart' %}">
         <i class="fas fa-shopping-cart" style="font-size: 23px; border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff" ></i>
-        <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">{{order.total_items}}</span>
+        <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
+          {% if order.total_items %}
+          {{order.total_items}}
+          {% else %}
+          0
+          {% endif %}
+        </span>
 
       </a>
 
@@ -783,7 +789,7 @@ font-family: "Playfair Display", serif;
 
 
 <!-- Footer -->
-<footer class="text-center text-lg-start bg-body-tertiary text-muted">
+<footer class="text-center text-lg-start bg-body-tertiary text-muted" style="opacity: .6;">
   <!-- Section: Social media -->
   <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
     <!-- Left -->

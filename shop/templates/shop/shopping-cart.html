@@ -121,7 +121,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for item in items %}
+                                {% for item in order.order_items.all %}
     
                                     <tr>
                                         <td class="product__cart__item">
@@ -201,9 +201,9 @@
                                     </tr>
                                     <tr>
 
-                                                    
+                                    
+                                    {% if item.add_on_product.all %}                           
                                     <td>
-                                                                
                                         <table>
                                             <thead>
                                                 <th>Add On</th>
@@ -234,7 +234,7 @@
                                         </table>
                                         
                                     </td>
-
+                                     {%  endif %}
                                     </tr>
                                 
                                 {% endfor %}
