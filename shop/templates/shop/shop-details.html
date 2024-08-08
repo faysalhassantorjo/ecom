@@ -51,7 +51,7 @@ rel="stylesheet">
           <!-- Collapsible wrapper -->
           <div class="" id="navbarSupportedContent">
             <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="#">
+            <a class="navbar-brand mt-2 mt-lg-0" href="/">
               <img
                 src="{% static 'image/logo/logo2.png' %}"
                 height="55"
@@ -277,17 +277,30 @@ rel="stylesheet">
                             <div class="product__details__option" style="margin-top: 20px;">
                                 <div class="product__details__option__size">
                                     <span>Select Size</span>
-                                    <label for="size_xxl">44
-                                        <input type="radio" id="size_xxl" value="44" name="size">
+                                 
+                           
+                                    <label for="size_sm">36
+                                        <input type="radio" id="size_sm" value="36" name="size">
                                     </label>
-                                    <label for="size_xl">42
-                                        <input type="radio" id="size_xl" value="42" name="size">
+
+                                    <label for="size_sm">38
+                                        <input type="radio" id="size_sm" value="38" name="size">
                                     </label>
+
                                     <label for="size_l">40
                                         <input type="radio" id="size_l" value="40" name="size">
                                     </label>
-                                    <label for="size_sm">36
-                                        <input type="radio" id="size_sm" value="36" name="size">
+
+                                    <label for="size_xl">42
+                                        <input type="radio" id="size_xl" value="42" name="size">
+                                    </label>
+                               
+                                    <label for="size_xxl">44
+                                        <input type="radio" id="size_xxl" value="44" name="size">
+                                    </label>
+
+                                    <label for="size_xxl">46
+                                        <input type="radio" id="size_xxll" value="46" name="size">
                                     </label>
                                 </div>
                             </div>
@@ -514,10 +527,18 @@ rel="stylesheet">
                                                 <div class="card-body">
                                                     <div class="ms-3">
                                                         <p class="fw-bold">
-                                                            <a href="{% url 'profile' pk=review.user.id %}"
+                                                            
+                                                            {% if review.user.user.username|length < 18 %}
+                                                            <a 
                                                                 style="text-transform: capitalize; text-decoration: none; color:black">
                                                                 {{review.user.user}}
                                                             </a>
+                                                            {% else %}
+                                                            <a 
+                                                            style="text-transform: capitalize; text-decoration: none; color:black">
+                                                            Anonymous User
+                                                            </a>
+                                                            {% endif %}
                                                             &nbsp;&nbsp;
                                                             <i class="fa-solid fa-star" style="color: #f74f06;"></i>
                                                             {{review.ratting}}
@@ -606,7 +627,7 @@ rel="stylesheet">
                                             }
                                         </style>
                                         <div class="col-lg-6">
-                                            {% if can_review %}
+                                            {% if user.is_authenticated %}
                                             <div class="product__details__tab__content__item mt-4">
                                                 <form method="POST" action="{% url 'writeReview' slug=product.slug %}"
                                                     enctype="multipart/form-data">

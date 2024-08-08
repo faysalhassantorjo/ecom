@@ -114,22 +114,7 @@ rel="stylesheet"
      <style>
       /* Your existing CSS styles here */
       /* Preloader styling */
-      .preloader {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: #fff; /* Change background color as needed */
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 9999;
-      }
-      .preloader-icon {
-          font-size: 3rem; /* Adjust icon size as needed */
-          color: #f74f06; /* Change icon color as needed */
-      }
+ 
       .hero{
         max-width: 1200px;
             margin: 20px auto;
@@ -173,9 +158,6 @@ rel="stylesheet"
         }
 
   </style>
-  <div class="preloader">
-    <i class="fas fa-spinner fa-spin preloader-icon"></i>
-</div>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg   c" style="box-shadow: none;" >
   <!-- Container wrapper -->
@@ -267,6 +249,7 @@ rel="stylesheet"
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
+
 
 <section class="hero">
   <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
@@ -789,7 +772,7 @@ font-family: "Playfair Display", serif;
 
 
 <!-- Footer -->
-<footer class="text-center text-lg-start bg-body-tertiary text-muted" style="opacity: .6;">
+<footer class="text-center text-lg-start text-muted" style="opacity: 1; background-color: #ececec; backdrop-filter: blur(10px);">
   <!-- Section: Social media -->
   <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
     <!-- Left -->
@@ -879,13 +862,7 @@ font-family: "Playfair Display", serif;
 <!-- Footer -->
 
 
-<script>
-  // When the page is fully loaded
-  window.onload = function() {
-      // Hide the preloader
-      document.querySelector('.preloader').style.display = 'none';
-  };
-</script>
+
 
 
 

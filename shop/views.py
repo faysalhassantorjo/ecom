@@ -11,6 +11,7 @@ from .form import PriceSortForm,WriteReview,OrderStatus,AddProduct,AddCategory,A
 
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout,authenticate
+from django.core.cache import cache
 
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -114,19 +115,56 @@ def register(request):
 
 
 def home(request):
-    products= Product.objects.all()
     
-    top_rated_product = Product.objects.filter(_ratting__gt = 2)
+    
+    cache_keys = {
+        'top_rated_products': 'top_rated_products',
+        'hero_collections': 'hero_collections',
+        'collection_sets': 'collection_sets',
+        'discount_products': 'discount_products',
+        'all_categories': 'all_categories',
+        'new_arrival_products': 'new_arrival_products',
+    }
 
-    heroCollections=CollectionSet.objects.filter(hero=True)
+    # Get data from cache
+    top_rated_products = cache.get(cache_keys['top_rated_products'])
+    hero_collections = cache.get(cache_keys['hero_collections'])
+    collection_sets = cache.get(cache_keys['collection_sets'])
+    discount_products = cache.get(cache_keys['discount_products'])
+    all_categories = cache.get(cache_keys['all_categories'])
+    new_arrival_products = cache.get(cache_keys['new_arrival_products'])
 
-    collectionsets=CollectionSet.objects.filter(hero=False)
+    # If not in cache, query the database and store in cache
+    if not top_rated_products:
+        top_rated_products = Product.objects.filter(_ratting__gt=2)
+        cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*1)  
+        print('Query occured 1')
 
-    discount_product = Product.objects.filter(
-        discount_percent__gt=5
-    )
+    if not hero_collections:
+        hero_collections = CollectionSet.objects.filter(hero=True)
+        cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*1)  # Cache for 15 minutes
+        print('Query occured 2')
 
-    all_categories = ProductCategory.objects.all().order_by('?')
+    if not collection_sets:
+        collection_sets = CollectionSet.objects.filter(hero=False)
+        cache.set(cache_keys['collection_sets'], collection_sets, timeout=60*1)  # Cache for 15 minutes
+        print('Query occured 3')
+
+    if not discount_products:
+        discount_products = Product.objects.filter(discount_percent__gt=5)
+        cache.set(cache_keys['discount_products'], discount_products, timeout=60*1)  # Cache for 15 minutes
+        print('Query occured 4')
+
+    if not all_categories:
+        all_categories = ProductCategory.objects.all().order_by('?')
+        cache.set(cache_keys['all_categories'], all_categories, timeout=60*1)  # Cache for 15 minutes
+        print('Query occured 5')
+
+    if not new_arrival_products:
+        new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
+        cache.set(cache_keys['new_arrival_products'], new_arrival_products, timeout=60*1)  # Cache for 15 minutes
+        print('Query occured 6')
+
 
     # for product in products:
     #     rating=product.average_rating()
@@ -138,18 +176,12 @@ def home(request):
     #         product.new_arrival=False
     #         product.save()
 
-
-
-    new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
-
-
     context={
-        'products':products,
-        'top_rated_product':top_rated_product,
+        'top_rated_product':top_rated_products,
         'new_arrival_products':new_arrival_products[:8],
-        'heroCollections':heroCollections,
-        'collectionsets':collectionsets,
-        'discount_product':discount_product,
+        'heroCollections':hero_collections,
+        'collectionsets':collection_sets,
+        'discount_product':discount_products,
         'all_categories':all_categories[:10]
     }
 
@@ -444,6 +476,7 @@ def order_success(request,pk):
     }
     return render(request,'shop/orderSuccess.html',context)
 def shop_grid(request,pk):
+    
     try:
 
         userProfile = check_user(request)
@@ -453,11 +486,20 @@ def shop_grid(request,pk):
                 order=Order.objects.get(user=userProfile,complete=False)
             except:
                 order=[]
-            
+        
         collection=CollectionSet.objects.get(id=pk)
-        categories=collection.productcategory_set.all()
+        
+        cache_key = f"collection_category{pk}"
+                
+        categories = cache.get(cache_key)
+        
+        if categories is None:
+            
+            categories=collection.productcategory_set.all()
+            
+            cache.set(cache_key,categories,timeout=60)
 
-        print('categories',categories)
+            print('categories',categories)
 
 
         context={
@@ -478,10 +520,16 @@ def go_to_admin_panel(request):
     return redirect(reverse('admin:index'))
 
 def products(request,pk):
+
     cat=ProductCategory.objects.get(id=pk)
-    print(cat)
-    products=cat.product_set.all().order_by('?')
-    print(products)
+    
+    cache_key = f'product_category_{pk}'
+    products = cache.get(cache_key) 
+    if products is None:
+        
+        products=cat.product_set.all().order_by('?')
+        cache.set(cache_key,products,timeout=60*1)
+        print('product query occured')
 
 
     total_products = products.count()
