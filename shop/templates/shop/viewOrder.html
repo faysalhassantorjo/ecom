@@ -75,8 +75,8 @@
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Product Image</th>
-                                        <th>Product Name</th>
+                                        <th>Image</th>
+                                        <th>Name</th>
                                         <th>Quantity</th>
                                         <th>Size</th>
                                         <th>Price</th>
@@ -85,12 +85,21 @@
                                 <tbody>
                                     {% for orderItem in shippingaddress.order.order_items.all %}
                                     <tr>    
-                                        <td>  <img src="{{orderItem.product.imageURL}}" style="height: auto;width: 50px;"> </td>
+                                        <td> 
+                                             <img src="{{orderItem.product.imageURL}}" style="height: 70px;width: auto; object-fit: cover;"><br>
+                                             {% if orderItem.is_stitched %}
+                                                
+                                             {% else %}
+                                             <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                             {% endif %}
+                                        </td>
+                                   
                                         <td>{{orderItem.product.name}}</td>
                                         <td>{{orderItem.quantity}}</td>
                                         <td>{{orderItem.size}}</td>
                                         <td>{{orderItem.item_total}}</td>
                                     </tr>
+                                    {% if orderItem.add_on_product.all %}
                                     <tr>
                                         <td>Add On Product</td>
                                                     
@@ -126,8 +135,8 @@
                                             </table>
                                             
                                         </td>
-    
                                     </tr>
+                                    {% endif %}
                                     
                                     {% endfor %}
                                 </tbody>
