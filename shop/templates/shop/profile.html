@@ -29,11 +29,11 @@
                           {% endfor %}
                       </td>
                       <td>{{ order.get_total }}TK</td>
-                      {% if order.status == 'Pending' %}
+                      <!-- {% if order.status == 'Pending' %}
                       <td><a href="{% url 'order_cancel' pk=order.id %}" style="text-decoration: none; color: black;">cancel</a></td>
                       {% else %}
                       <td><a href="" style="text-decoration: none; color: black; opacity: .5;">cancel</a></td>
-                      {% endif %}
+                      {% endif %} -->
                   </tr>
               {% endif %}
           {% endfor %}
