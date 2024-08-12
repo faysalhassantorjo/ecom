@@ -136,33 +136,33 @@ def home(request):
 
     # If not in cache, query the database and store in cache
     if not top_rated_products:
-        top_rated_products = Product.objects.filter(_ratting__gt=2)
-        cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*1)  
+        top_rated_products = Product.objects.filter(_ratting__gt=2).order_by('?')
+        cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*20)  
         print('Query occured 1')
 
     if not hero_collections:
         hero_collections = CollectionSet.objects.filter(hero=True)
-        cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*1)  # Cache for 15 minutes
+        cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*20)  # Cache for 15 minutes
         print('Query occured 2')
 
     if not collection_sets:
         collection_sets = CollectionSet.objects.filter(hero=False)
-        cache.set(cache_keys['collection_sets'], collection_sets, timeout=60*1)  # Cache for 15 minutes
+        cache.set(cache_keys['collection_sets'], collection_sets, timeout=60*20)  # Cache for 15 minutes
         print('Query occured 3')
 
     if not discount_products:
         discount_products = Product.objects.filter(discount_percent__gt=5)
-        cache.set(cache_keys['discount_products'], discount_products, timeout=60*1)  # Cache for 15 minutes
+        cache.set(cache_keys['discount_products'], discount_products, timeout=60*20)  # Cache for 15 minutes
         print('Query occured 4')
 
     if not all_categories:
         all_categories = ProductCategory.objects.all().order_by('?')
-        cache.set(cache_keys['all_categories'], all_categories, timeout=60*1)  # Cache for 15 minutes
+        cache.set(cache_keys['all_categories'], all_categories, timeout=60*20)  # Cache for 15 minutes
         print('Query occured 5')
 
     if not new_arrival_products:
         new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
-        cache.set(cache_keys['new_arrival_products'], new_arrival_products, timeout=60*1)  # Cache for 15 minutes
+        cache.set(cache_keys['new_arrival_products'], new_arrival_products, timeout=60*20)  # Cache for 15 minutes
         print('Query occured 6')
 
 
@@ -497,7 +497,7 @@ def shop_grid(request,pk):
             
             categories=collection.productcategory_set.all()
             
-            cache.set(cache_key,categories,timeout=60)
+            cache.set(cache_key,categories,timeout=60*20)
 
             print('categories',categories)
 
@@ -528,7 +528,7 @@ def products(request,pk):
     if products is None:
         
         products=cat.product_set.all().order_by('?')
-        cache.set(cache_key,products,timeout=60*1)
+        cache.set(cache_key,products,timeout=60*20)
         print('product query occured')
 
 
@@ -647,7 +647,7 @@ from django.contrib.auth.decorators import login_required
 from PIL import Image as PILImage
 from io import BytesIO
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def writeReview(request,slug):
     product = Product.objects.get(slug=slug)
     userProfile=get_user(request)
@@ -657,12 +657,12 @@ def writeReview(request,slug):
         if form.is_valid():
                 ratting = form.cleaned_data['ratting']
                 content = form.cleaned_data['content']
-                original_image = form.cleaned_data['image']
-                image = Review(ratting=ratting, content=content)
-                image.user=userProfile
-                image.product = product
-                image.image = original_image
-                image.save()  # Save the model instance
+                # original_image = form.cleaned_data['image']
+                review = Review(ratting=ratting, content=content)
+                review.user=userProfile
+                review.product = product
+                # review.image = original_image
+                review.save()  # Save the model instance
                 
                 # return redirect('success_url')  # Redirect to success page
                 return redirect('shop_details', slug=slug)

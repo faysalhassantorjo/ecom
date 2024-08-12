@@ -627,7 +627,6 @@ rel="stylesheet">
                                             }
                                         </style>
                                         <div class="col-lg-6">
-                                            {% if user.is_authenticated %}
                                             <div class="product__details__tab__content__item mt-4">
                                                 <form method="POST" action="{% url 'writeReview' slug=product.slug %}"
                                                     enctype="multipart/form-data">
@@ -642,12 +641,10 @@ rel="stylesheet">
                                                 </form>
 
                                             </div>
-                                            {% else %}
-                                            <div class="alert alert-danger" role="alert">
+                                            <!-- <div class="alert alert-danger" role="alert">
                                                 For give a review first you have to order this product and you have to
                                                 create an account!!
-                                            </div>
-                                            {% endif %}
+                                            </div> -->
                                         </div>
                                     </div>
 
