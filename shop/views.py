@@ -12,6 +12,7 @@ from .form import PriceSortForm,WriteReview,OrderStatus,AddProduct,AddCategory,A
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout,authenticate
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -110,8 +111,6 @@ def register(request):
 #         return items
 #     except:
 #         return []
-
-    
 
 
 def home(request):
@@ -288,11 +287,14 @@ def create_order_item(request):
 
         if action == 'add':
             orderItem.quantity += 1
+            print('order item added')
             messages.success(request, 'Product added to cart successfully.')
         elif action == 'remove':
             orderItem.quantity -= 1
+            print('product removed')
         elif action == 'delete':
             orderItem.quantity = 0
+            print('product deleted')
         print('is product is istiched?',is_istiched)
         orderItem.size = size
         orderItem.save()
@@ -519,6 +521,7 @@ from django.urls import reverse
 def go_to_admin_panel(request):
     return redirect(reverse('admin:index'))
 
+@cache_page(60 * 20) 
 def products(request,pk):
 
     cat=ProductCategory.objects.get(id=pk)
