@@ -43,6 +43,11 @@ def create_anonymous_user(request):
 def check_user(request):
     request.session.save()
     session_key = request.session.session_key
+    
+    if request.user.is_authenticated:
+        userProfile= UserProfile.objects.get(user = request.user)
+        return userProfile
+    
     try:
         userProfile = UserProfile.objects.get(user__username = session_key)
     except:
@@ -61,19 +66,21 @@ def get_user(request):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
     return userprofile
+from django.contrib.auth import authenticate, login
 
-def login(request):
+def user_login(request):
     if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            auth_login(request, user)
-            userprofile,created = UserProfile.objects.get_or_create(user =user)
-            return redirect('home')
-    else:
-        form = LoginForm()
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(request, username=username, password=password)
 
-    return render(request, 'shop/login.html', {'form': form})
+            if user is not None:
+                login(request, user)
+                return redirect('home')  # Redirect to homepage or dashboard after login
+            else:
+                messages.error(request, 'Invalid username or password')
+
+    return render(request, 'shop/login.html')
 
 def logoutV(request):
     logout(request)
@@ -82,24 +89,29 @@ def logoutV(request):
 from django.contrib.auth.forms import UserCreationForm
 
 def register(request):
-    try:
-        if request.method == 'POST':
-            form = UserCreationForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                authenticated_user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+    if request.method == 'POST':
+        username = request.POST['username']
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        
+        # Validate passwords
+        if password1 != password2:
+            messages.error(request, "Passwords do not match")
+            return render(request, 'shop/register.html')
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists")
+            return render(request, 'shop/register.html')
 
-                if authenticated_user is not None:
-                    UserProfile.objects.create(user=user)
-                    auth_login(request, authenticated_user)
-                    return redirect("home")
-        else:
-            form = UserCreationForm()
-    except Exception as e:
-        return render(request,'shop/404.html')
-
-    return render(request, 'shop/register.html', {'form': form})
-
+        # Create the user
+        user = User.objects.create_user(username=username, password=password1)
+        user.save()
+        messages.success(request, f"Account created for {username}")
+        login(request, user)
+        return redirect('home') 
+    else: return render(request, 'shop/register.html')
+    return render(request, 'shop/register.html')
 
 # def cart_items(request):
    
@@ -186,7 +198,7 @@ def home(request):
 
     user=request.user
     if user.is_authenticated:
-        userProfile = UserProfile.objects.get(user  = user)
+        userProfile,created = UserProfile.objects.get_or_create(user  = user)
         context.update({'userProfile':userProfile})
 
     try:
