@@ -133,7 +133,7 @@ class Product(models.Model):
     new_arrival=models.BooleanField(default=False,blank=True)
     tags = TaggableManager()
     in_stock=models.BooleanField(default=True,blank=True)
-    _ratting = models.FloatField(default=0)
+    ratting = models.FloatField(default=0)
     def __str__(self):
         return str(f'{self.name} ')
 
@@ -192,7 +192,7 @@ class Product(models.Model):
         reviews = Review.objects.filter(product=self)
         if reviews.exists():
             s= sum([review.ratting for review in reviews]) / len(reviews)
-            self._ratting =s
+            self.ratting =s
             self.save()
             return round(s, 1)
         return 0

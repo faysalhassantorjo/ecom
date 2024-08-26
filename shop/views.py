@@ -147,7 +147,7 @@ def home(request):
 
     # If not in cache, query the database and store in cache
     if not top_rated_products:
-        top_rated_products = Product.objects.filter(_ratting__gt=2).order_by('?')
+        top_rated_products = Product.objects.filter(ratting__gt=2).order_by('?')
         cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*20)  
         print('Query occured 1')
 
