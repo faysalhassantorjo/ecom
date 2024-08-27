@@ -259,8 +259,9 @@ rel="stylesheet">
                         <h4 style="text-transform: capitalize; font-size: 3rem;">{{product.name}}</h4>
 
                         <div class="rating">
-                            {{product.average_rating}}<i class="fa-solid fa-star"></i>
-                            <span> - {{ product.total_reviews }} Reviews</span>
+                            {{product.ratting}}<i class="fa-solid fa-star"></i>
+                            <span> - {{ product.ratting }} Reviews</span>
+                            <span style="display: none;">{{product.average_rating}}</span>
                         </div>
                         {% if product.unstitched_price %}
                         <div class="unstiched mb-2">
