@@ -260,12 +260,15 @@ rel="stylesheet">
 
                         <div class="rating">
                             {{product.ratting}}<i class="fa-solid fa-star"></i>
-                            <span> - {{ product.ratting }} Reviews</span>
+                            <span> - {{ product.total_reviews }} Reviews</span>
+
                             <span style="display: none;">{{product.average_rating}}</span>
+
                         </div>
                         {% if product.unstitched_price %}
                         <div class="unstiched mb-2">
-                            <button id="unstiched-button" class="btn btn-dark">Unstitched?</button>
+                            <button id="unstiched-button" class="primary-btn" style="font-size: .8rem; padding: 5px; border-radius: 3px;">Unstitched?</button> 
+                            <i class="fa-solid fa-arrows-rotate" onclick="window.location.reload()"></i>
                         </div>
                         {% endif %}
                         <h3 id="product-price" style="padding:10px; opacity: .7;">{{ product.price }} TK</h3>
