@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__
 # with open(os.path.join(BASE_DIR,'secret_key.txt')) as f:
 #     SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['*','longg.up.railway.app']
+DEBUG = False
+ALLOWED_HOSTS = ['*','longg.up.railway.app','longgfashion.com']
 
 
 # Application definition
@@ -97,7 +97,8 @@ DATABASES = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://longg.up.railway.app'
+    'https://longg.up.railway.app',
+    'https://longgfashion.com'
 ]
 
 # Password validation
