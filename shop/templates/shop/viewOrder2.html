@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Orders</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .order-card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .product-img {
+            width: auto;
+            height: 60px;
+            object-fit: cover;
+        }
+        .info-icon {
+            margin-right: 10px;
+        }
+        /* Details section styling */
+        .details-section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #f74f06;
+        }
+        .details-section p {
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .x{
+            justify-content :space-around;
+        }
+        /* Bill Summary styling */
+        .bill-summary {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            width: 300px;
+        }
+        .bill-summary li {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            border-left: 5px solid #f74f06;
+        }
+        .bill-summary li span {
+            font-weight: bold;
+        }
+        .bill-summary li.total {
+            background-color: #f74f06;
+            color: white;
+            border-left: none;
+        }
+        .bill-summary li.total span {
+            font-weight: bold;
+        }
+
+
+        /* Status dropdown */
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .status-display {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        td{
+            text-align: center;
+        }
+
+        /* Responsive Table for Mobile */
+        @media (max-width: 768px) {
+            .table {
+                display: block;
+
+            }
+            .table thead {
+                display: none;
+            }
+            .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
+            .table td {
+                padding: 10px;
+                border: none;
+                border-bottom: 1px solid #ddd;
+                position: relative;
+                text-align: right;
+            }
+            .table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                font-weight: bold;
+                text-align: left;
+
+            }
+            .product-img {
+                width: auto;
+                height: 50px;
+            }
+
+            .x{
+                justify-content: space-between;
+            }
+            .cngbtn{
+                font-size: 10px;
+            }
+            .status-display{
+                font-size: 1rem;
+            }
+            .status-container{
+                display: block;
+                padding: 15px;
+            }
+            .bill-summary {
+                width: 250px;
+            }
+            .date{
+                font-size: 10px;
+            }
+
+        }
+
+        @media (max-width: 576px) {
+            .table td {
+                padding: 8px;
+            }
+            .product-img {
+                width: auto;
+                height: 50px;
+            }
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">View Orders</h1>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="ordersTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab">Available Orders</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button" role="tab">Confirmed Orders</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">Cancelled Orders</button>
+            </li>
+        </ul>
+
+        <!-- Tab content -->
+        <div class="tab-content mt-4" id="ordersTabContent" >
+            <!-- Available Orders Section -->
+            <div class="tab-pane fade show active" id="available" role="tabpanel" aria-labelledby="available-tab">
+                <h3 class="mb-4">Available Orders</h3>
+                
+                <!-- Order Details Card -->
+                {% for shippingaddress in shippingAddress %}
+                <div class="card order-card p-3 mt-1" id = "{{ shippingaddress.order.order_id }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between h">
+                            <h5 class="card-title">Order: <span style="background-color: #f74f06; padding: 3px; color:#ddd">#{{ shippingaddress.order.order_id }}</span> </h5>
+                            <p class="date"><strong>Date:</strong> {{shippingaddress.timestamp}} <span>({{shippingaddress.timestamp|timesince}} ago)</span></p>
+                        </div>
+                        
+                        <hr>
+
+                        <!-- Customer Info -->
+                        <div class="row details-section">
+                            <div class="col-md-6">
+                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
+                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
+                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
+                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Product Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered mt-4">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center">Image</th>
+                                        <th class="text-center">Product Name</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Size</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for orderItem in shippingaddress.order.order_items.all %}
+                                    <tr>
+                                        <td data-label="Image">
+                                            <img src="{{orderItem.product.imageURL}}" alt="product" class="product-img">
+                                            {% if orderItem.is_stitched %}                                  
+                                            {% else %}
+                                            <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Product Name">{{orderItem.product.name}}</td>
+                                        <td data-label="Quantity">{{orderItem.quantity}}</td>
+                                        <td data-label="Size">{{orderItem.size}}</td>
+                                        <td data-label="Price">{{orderItem.item_total}}</td>
+                                    </tr>
+                                                {% if orderItem.add_on_product.all %}
+                                                <tr>
+                                                    <td>Add On Product</td>
+                                                                
+                                                    <td>
+                                                                                
+                                                        <table>
+                                                            <thead>
+                                                                <th>Add On </th>
+                                                                <th>Size</th>
+                                                                <th>price</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for add_on in orderItem.add_on_product.all %}
+                
+                                                                <tr>
+                                                                    
+                                                                <td>
+                                                                {{ add_on.name }}<br>
+                                                                </td>
+                                                                <td>
+                                                                    {{add_on.size}} <br>                             
+                
+                                                                </td>
+                                                                <td>
+                                                                {{add_on.price}} TK.<br>                             
+                
+                                                                </td>
+                            
+                                                                </tr>
+                                                                {% endfor %}
+                
+                                                            </tbody>
+                                                        </table>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Bill Summary -->
+                        <div class="d-flex  x">
+                            <ul class="bill-summary mt-4" >
+                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}}</li>
+                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}}</li>
+                                {% with delivery_charge=shippingaddress.order.delivary_charge %}
+                                {% with total_amount=shippingaddress.order.get_total %}
+                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }}</li>
+                                {% endwith %}
+                                {% endwith %}
+                            </ul>
+
+                            <!-- Status Dropdown and Display -->
+                            <div class="status-container no-print">
+                                <div class="status-display" id="statusDisplay">Status: {{shippingaddress.order.status}}</div>
+                            
+                                <div class="dropdown">
+                                    <form method="POST" action="{% url 'order_status' %}">
+                                        {% csrf_token %}
+
+                                        <input type="text" name="order-id" hidden value="{{shippingaddress.order.id}}">
+                                        <button class="btn btn-secondary dropdown-toggle cngbtn" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-rotate"></i>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                                            <li>
+                                                <button class="dropdown-item" type="submit" name="status" value="Pending">Pending</button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" type="submit" name="status" value="Confirmed">Confirmed</button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" type="submit" name="status" value="Cancelled">Cancelled</button>
+                                            </li>
+                                        </ul>
+                                    </form>
+                                </div>
+                            </div>
+                            
+
+                           
+                        </div>
+                        <div class="text-center no-print">
+                            <button class="btn btn-dark text-center" style="font-size: 1.5rem;" onclick="printDiv('{{ shippingaddress.order.order_id }}')"> Print</button>
+                        </div>
+                        <!-- Order Summary -->
+         
+                    </div>
+                </div>
+                {% endfor %}
+              
+            </div>
+
+            <!-- Confirmed Orders Section -->
+            <div class="tab-pane fade" id="confirmed" role="tabpanel" aria-labelledby="confirmed-tab">
+                <h3>Confirmed Orders</h3>
+                <!-- Add confirmed order details here -->
+            </div>
+
+            <!-- Cancelled Orders Section -->
+            <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+                <h3>Cancelled Orders</h3>
+    
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Function to set the order status and display it
+        function setStatus(status) {
+            document.getElementById('statusDisplay').innerText = 'Status: ' + status;
+        }
+
+        function printDiv(divId) {
+            var originalContents = document.body.innerHTML;
+            var printContents = document.getElementById(divId).innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+
+    
+</body>
+</html>

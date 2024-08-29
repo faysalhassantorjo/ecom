@@ -14,6 +14,34 @@ from django.contrib.auth import logout,authenticate
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
+
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+from django.conf import settings
+
+def send_html_email(shippingAddress):
+    subject = f'Order Being Processed #{shippingAddress.order.order_id}'
+    html_message = render_to_string('shop/mail.html', {'shippingaddress': shippingAddress})
+    plain_message = strip_tags(html_message)
+    from_email = settings.EMAIL_HOST_USER
+    # 'Jannatulferdospia77@gmail.com'
+    customr_email = shippingAddress.email
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    print('customer mail ', customr_email)
+    email = EmailMessage(
+        subject,
+        html_message,
+        from_email,
+        recipient_list,
+    )
+    email.content_subtype = 'html'  # Important to send HTML content
+    email.send()
+    print('Email send done')
+
+
+
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:
@@ -127,7 +155,7 @@ def register(request):
 
 def home(request):
     
-    
+    # send_html_email()
     cache_keys = {
         'top_rated_products': 'top_rated_products',
         'hero_collections': 'hero_collections',
@@ -462,7 +490,8 @@ def checkout(request):
             order.complete=True
             order.status="Pending"
             order.totalbill=subtotal
-            order.save()     
+            order.save()
+            send_html_email(shipping_address)
             return redirect('order_success',pk=shipping_address.id)
 
     else:
@@ -640,23 +669,21 @@ def viewOrder(request):
        'shippingAddress': shippingAddress,
        'userProfile':userProfile
     }
-    return render(request,'shop/viewOrder.html',context)
+    return render(request,'shop/viewOrder2.html',context)
 
-def order_status(request,pk):
+def order_status(request):
     
-    order=Order.objects.get(id=pk)
     if request.method == 'POST':
-        form = OrderStatus(request.POST,instance=order)
-        if form.is_valid():
-            order = form.save()
+        order_id = request.POST.get('order-id')
+        status = request.POST.get('status')
+        order=Order.objects.get(id=order_id)
+        
+        order.status = status
+        
+        order.save()
             
-            return redirect('viewOrder')
-    else:
-        form = OrderStatus(instance=order)
-    context={
-        'form':form
-    }
-    return render(request,'shop/orderStatus.html',context)
+        return redirect('viewOrder')
+    return HttpResponse('somthing worng')
 
 from django.contrib.auth.decorators import login_required
 from PIL import Image as PILImage

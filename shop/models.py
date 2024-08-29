@@ -205,6 +205,7 @@ class Product(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('not_confirm','not_confirm'),
+        ('Confirmed','Confirmed'),
         ('Pending', 'Pending'),
         ('Processing', 'Processing'),
         ('Shipped', 'Shipped'),
