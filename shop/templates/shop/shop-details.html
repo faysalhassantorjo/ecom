@@ -199,12 +199,15 @@ rel="stylesheet">
                                 </div>
                             </a>
                         </li>
+                        {% if product.imageURL2 %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">
                                 <div class="product__thumb__pic set-bg" data-setbg="{{product.imageURL2}}">
                                 </div>
                             </a>
                         </li>
+                        {% endif %}
+                        {% if product.imageURL3 %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-3" role="tab">
                                 <div class="product__thumb__pic set-bg" data-setbg="{{product.imageURL3}}">
@@ -212,6 +215,8 @@ rel="stylesheet">
                                 </div>
                             </a>
                         </li>
+                        {% endif %}
+                        {% if product.imageURL4 %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#tabs-4" role="tab">
                                 <div class="product__thumb__pic set-bg" data-setbg="{{product.imageURL4}}">
@@ -219,6 +224,7 @@ rel="stylesheet">
                                 </div>
                             </a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="col-lg-6 col-md-9">

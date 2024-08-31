@@ -28,7 +28,7 @@ def send_html_email(shippingAddress):
     from_email = settings.EMAIL_HOST_USER
     # 'Jannatulferdospia77@gmail.com'
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com','Jannatulferdospia77@gmail.com']
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -591,11 +591,8 @@ from django.db.models import Q
 def shop_details(request,slug):
     try:
         product=Product.objects.get(slug=slug)
-
+        product.average_rating
         form=WriteReview()
-
-
-
         reviews=Review.objects.filter(product=product)
 
         add_on_product = product.add_on_product.all()
@@ -649,8 +646,26 @@ def shop_details(request,slug):
             'can_review':can_review,
             'order':get_cart_total_items(request)
         }
-        
-        return render(request,'shop/shop-details.html',context)
+        user=request.user
+        if user.is_authenticated:
+            userProfile,created = UserProfile.objects.get_or_create(user  = user)
+            context.update({'userProfile':userProfile})
+
+        try:
+            userProfile = check_user(request)
+            order =[]
+            if userProfile:
+                try:
+                    order=Order.objects.get(user=userProfile,complete=False)
+                except:
+                    order=[]
+            items=OrderItem.objects.filter(order=order)
+            
+            context.update({'order':order,'items':items})
+        except Exception as e:
+            print(e)
+
+        return render(request,'shop/shop-details2.html',context)
     except Exception as e:
         print(e)
         return render(request,'shop/404.html',context={
@@ -694,26 +709,39 @@ from PIL import Image as PILImage
 from io import BytesIO
 
 # @login_required(login_url='login')
-def writeReview(request,slug):
+def writeReview(request, slug):
     product = Product.objects.get(slug=slug)
-    userProfile=get_user(request)
 
     if request.method == 'POST':
-        form=WriteReview(request.POST,request.FILES)
-        if form.is_valid():
-                ratting = form.cleaned_data['ratting']
-                content = form.cleaned_data['content']
-                # original_image = form.cleaned_data['image']
-                review = Review(ratting=ratting, content=content)
-                review.user=userProfile
-                review.product = product
-                # review.image = original_image
-                review.save()  # Save the model instance
-                
-                # return redirect('success_url')  # Redirect to success page
-                return redirect('shop_details', slug=slug)
-    else: return redirect('shop_details', slug=slug)
+        # Get user from request or POST data
+   
+        user = request.POST.get('user_name')
         
+        rating = request.POST.get('rating')
+        content = request.POST.get('content')
+        
+        # Ensure all fields are present before creating the review
+        if user and rating and content:
+            review = Review.objects.create(
+                product=product,
+                user_name=user, 
+                ratting=rating,
+                content=content
+            )
+            
+            if request.user.is_authenticated:
+                user = request.user
+                userprofile =UserProfile.objects.get(user = user)
+                review.user = userprofile
+                review.save()
+            
+            return redirect('shop_details', slug=slug)
+        else:
+            # Handle the case where some fields are missing
+            print("Missing review fields.")
+            return redirect('shop_details', slug=slug)
+    
+    return redirect('shop_details', slug=slug)        
 
     
     

@@ -293,7 +293,8 @@ class ShippingAddress(models.Model):
 
 
 class Review(models.Model):
-    user=models.ForeignKey(UserProfile,on_delete=models.CASCADE)
+    user=models.ForeignKey(UserProfile,on_delete=models.CASCADE, null=True, blank=True)
+    user_name = models.CharField(max_length=50,null=True)
     content= models.TextField()
     image=ResizedImageField(upload_to='product-review/',blank=True,null=True)
 
@@ -303,26 +304,9 @@ class Review(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     at_time = models.DateTimeField(default=now, blank=True)
 
-
-    @property
-    def imageURL(self):
-        try:
-            url=self.image.url
-        except:
-            url=''
-        return url
-    
-    @property
-    def imageURL2(self):
-        try:
-            url=self.compressed_image.url
-        except:
-            url=''
-        return url
-    
     
     def __str__(self):
-        return str(f'{self.user} {self.product.name}' )
+        return str(f'{self.user} - {self.user_name} {self.product.name}' )
     
 
 
