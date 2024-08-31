@@ -714,34 +714,25 @@ rel="stylesheet">
 <!-- Related Section Begin -->
 <section class="related spad">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                {% if relatedProduct %}
-                <h3 class="related-title">Related Product</h3>
-                {% endif %}
-            </div>
-        </div>
 
 
         <style>
+    
             .product-card {
                 box-shadow: 0 4px 8px rgb(207, 207, 207);
                 border-radius: 8px;
                 overflow: hidden;
                 text-align: center;
+                min-width: 250px; /* Ensure each product card has a consistent width */
+                margin-right: 10px; /* Spacing between cards */
+                flex-shrink: 0; /* Prevents shrinking of the cards */
             }
 
             .product-card img {
                 width: 100%;
                 height: auto;
                 object-fit: cover;
-                /* transition: transform 1s ease; */
             }
-
-            /* .product-card img:hover{
-            transform: scale(1.5);
-            
-        } */
 
             .product-details {
                 padding: 16px;
@@ -769,23 +760,16 @@ rel="stylesheet">
                 font-family: "Space Grotesk", sans-serif;
             }
 
-            .reco {
-
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 16px;
-                max-width: 1400px;
-                margin: 20px auto;
-                padding: 0 20px;
-                grid-template-columns: repeat(4, 1fr);
-                background-color: #f3f2ee;
-                padding: 30px;
+            .reco-container {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 30px 0;
                 border-radius: 8px;
-
             }
 
-            .product-card {
-                position: relative;
+            .reco {
+                display: inline-flex;
+                padding-left: 15px;
             }
 
             .stock-out-msg {
@@ -802,48 +786,55 @@ rel="stylesheet">
                 font-family: "Space Grotesk", sans-serif;
             }
 
+            /* Scrollbar customization */
+            .reco-container::-webkit-scrollbar {
+                height: 8px;
+            }
 
+            .reco-container::-webkit-scrollbar-thumb {
+                background-color: #ccc;
+                border-radius: 10px;
+            }
 
-            @media (max-width: 1024px) {
-                .reco {
-                    grid-template-columns: repeat(1, 1fr);
-                }
+            .reco-container::-webkit-scrollbar-track {
+                background-color: #f3f2ee;
             }
         </style>
-        <div class="row reco">
-            {% for product in relatedProduct %}
-            <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
-                <div class="product-card">
-                    <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
-                    {% if product.in_stock %}
-                    {% if product.discount_percent %}
-                    <div class="stock-out-msg " style="background-color: #f74f06;">{{product.discount_percent}}% Off
-                    </div>
-                    {% endif %}
-                    {% else %}
-                    <div class="stock-out-msg">Stock Out</div>
-                    {% endif %}
 
-
-                    <div class="product-details">
-                        <p class="product-name">{{ product.name }} </p>
-
-                        <p class="price">Tk. {{ product.price }}</p>
+        <div class="reco-container">
+            {% if relatedProduct %}
+                <h3 class="related-title">Related Product</h3>
+                {% endif %}
+            <div class="reco">
+                {% for product in relatedProduct %}
+                <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
+                    <div class="product-card">
+                        <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+                        {% if product.in_stock %}
                         {% if product.discount_percent %}
-                        <p class="original-price">Tk. {{ product.update_price }}</p>
+                        <div class="stock-out-msg" style="background-color: #f74f06;">{{product.discount_percent}}% Off
+                        </div>
+                        {% endif %}
+                        {% else %}
+                        <div class="stock-out-msg">Stock Out</div>
                         {% endif %}
 
-
-
+                        <div class="product-details">
+                            <p class="product-name">{{ product.name }} </p>
+                            <p class="price">Tk. {{ product.price }}</p>
+                            {% if product.discount_percent %}
+                            <p class="original-price">Tk. {{ product.update_price }}</p>
+                            {% endif %}
+                        </div>
                     </div>
-
-
-                </div>
-            </a>
-            {% endfor %}
+                </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </section>
+
+
 
 
 <script src="{% static 'shop/js/jquery-3.3.1.min.js'%}"></script>

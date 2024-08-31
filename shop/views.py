@@ -661,12 +661,16 @@ from .decorator import admin_only
 @admin_only
 def viewOrder(request):
 
-    shippingAddress=ShippingAddress.objects.all().order_by('-timestamp')
+    shippingAddress=ShippingAddress.objects.filter(order__status = "Pending").order_by('-timestamp')
+    confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed").order_by('-timestamp')
+    cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
     
     userProfile=get_user(request)
 
     context={
-       'shippingAddress': shippingAddress,
+       'shippingAddresss': shippingAddress,
+       'confirmed_order': confrimed_order,
+       'canceled_order': cancelled_order,
        'userProfile':userProfile
     }
     return render(request,'shop/viewOrder2.html',context)

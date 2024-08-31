@@ -163,13 +163,16 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" id="ordersTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab">Available Orders</button>
+                <button class="nav-link text-dark active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab">Available Orderss (<span class="text-success">{{shippingAddresss|length}}</span>) </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button" role="tab">Confirmed Orders</button>
+                <button class="nav-link text-dark" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button" role="tab">Confirmed Orders </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">Cancelled Orders</button>
+                <button class="nav-link text-dark" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">Cancelled Orders </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link text-dark" href="/admin/">Admin-Panel</a>
             </li>
         </ul>
 
@@ -180,7 +183,7 @@
                 <h3 class="mb-4">Available Orders</h3>
                 
                 <!-- Order Details Card -->
-                {% for shippingaddress in shippingAddress %}
+                {% for shippingaddress in shippingAddresss %}
                 <div class="card order-card p-3 mt-1" id = "{{ shippingaddress.order.order_id }}">
                     <div class="card-body">
                         <div class="d-flex justify-content-between h">
@@ -328,14 +331,258 @@
 
             <!-- Confirmed Orders Section -->
             <div class="tab-pane fade" id="confirmed" role="tabpanel" aria-labelledby="confirmed-tab">
-                <h3>Confirmed Orders</h3>
-                <!-- Add confirmed order details here -->
+                <h3>Confirmed Orders ({{confirmed_order|length}})</h3>
+                {% for shippingaddress in confirmed_order %}
+                <div class="card order-card p-3 mt-1" id = "{{ shippingaddress.order.order_id }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between h">
+                            <h5 class="card-title">Order: <span style="background-color: #f74f06; padding: 3px; color:#ddd">#{{ shippingaddress.order.order_id }}</span> </h5>
+                            <p class="date"><strong>Date:</strong> {{shippingaddress.timestamp}} <span>({{shippingaddress.timestamp|timesince}} ago)</span></p>
+                        </div>
+                        
+                        <hr>
+
+                        <!-- Customer Info -->
+                        <div class="row details-section">
+                            <div class="col-md-6">
+                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
+                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
+                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
+                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Product Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered mt-4">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center">Image</th>
+                                        <th class="text-center">Product Name</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Size</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for orderItem in shippingaddress.order.order_items.all %}
+                                    <tr>
+                                        <td data-label="Image">
+                                            <img src="{{orderItem.product.imageURL}}" alt="product" class="product-img">
+                                            {% if orderItem.is_stitched %}                                  
+                                            {% else %}
+                                            <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Product Name">{{orderItem.product.name}}</td>
+                                        <td data-label="Quantity">{{orderItem.quantity}}</td>
+                                        <td data-label="Size">{{orderItem.size}}</td>
+                                        <td data-label="Price">{{orderItem.item_total}}</td>
+                                    </tr>
+                                                {% if orderItem.add_on_product.all %}
+                                                <tr>
+                                                    <td>Add On Product</td>
+                                                                
+                                                    <td>
+                                                                                
+                                                        <table>
+                                                            <thead>
+                                                                <th>Add On </th>
+                                                                <th>Size</th>
+                                                                <th>price</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for add_on in orderItem.add_on_product.all %}
+                
+                                                                <tr>
+                                                                    
+                                                                <td>
+                                                                {{ add_on.name }}<br>
+                                                                </td>
+                                                                <td>
+                                                                    {{add_on.size}} <br>                             
+                
+                                                                </td>
+                                                                <td>
+                                                                {{add_on.price}} TK.<br>                             
+                
+                                                                </td>
+                            
+                                                                </tr>
+                                                                {% endfor %}
+                
+                                                            </tbody>
+                                                        </table>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Bill Summary -->
+                        <div class="d-flex  x">
+                            <ul class="bill-summary mt-4" >
+                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}}</li>
+                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}}</li>
+                                {% with delivery_charge=shippingaddress.order.delivary_charge %}
+                                {% with total_amount=shippingaddress.order.get_total %}
+                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }}</li>
+                                {% endwith %}
+                                {% endwith %}
+                            </ul>
+ 
+                            <!-- Status Dropdown and Display -->
+                            <div class="status-container no-print">
+                                <div class="status-display">Status: <span style="background-color: rgb(0, 128, 0); color: #f1f1f1; padding: 5px; border-radius: 3px;">{{shippingaddress.order.status}}</span> </div>
+                            
+                         
+                            </div>
+                            
+
+                           
+                        </div>
+                        <div class="text-center no-print">
+                            <button class="btn btn-dark text-center" style="font-size: 1.5rem;" onclick="printDiv('{{ shippingaddress.order.order_id }}')"> Print</button>
+                        </div>
+                        <!-- Order Summary -->
+         
+                    </div>
+                </div>
+                {% endfor %}
             </div>
 
             <!-- Cancelled Orders Section -->
             <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
-                <h3>Cancelled Orders</h3>
-    
+                <h3>Cancelled Orders ({{canceled_order|length}})</h3>
+                {% for shippingaddress in canceled_order %}
+                <div class="card order-card p-3 mt-1" id = "{{ shippingaddress.order.order_id }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between h">
+                            <h5 class="card-title">Order: <span style="background-color: #f74f06; padding: 3px; color:#ddd">#{{ shippingaddress.order.order_id }}</span> </h5>
+                            <p class="date"><strong>Date:</strong> {{shippingaddress.timestamp}} <span>({{shippingaddress.timestamp|timesince}} ago)</span></p>
+                        </div>
+                        
+                        <hr>
+
+                        <!-- Customer Info -->
+                        <div class="row details-section">
+                            <div class="col-md-6">
+                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
+                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
+                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
+                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note}}</p>
+                            </div>
+                        </div>
+
+                        <!-- Product Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered mt-4">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="text-center">Image</th>
+                                        <th class="text-center">Product Name</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Size</th>
+                                        <th class="text-center">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for orderItem in shippingaddress.order.order_items.all %}
+                                    <tr>
+                                        <td data-label="Image">
+                                            <img src="{{orderItem.product.imageURL}}" alt="product" class="product-img">
+                                            {% if orderItem.is_stitched %}                                  
+                                            {% else %}
+                                            <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Product Name">{{orderItem.product.name}}</td>
+                                        <td data-label="Quantity">{{orderItem.quantity}}</td>
+                                        <td data-label="Size">{{orderItem.size}}</td>
+                                        <td data-label="Price">{{orderItem.item_total}}</td>
+                                    </tr>
+                                                {% if orderItem.add_on_product.all %}
+                                                <tr>
+                                                    <td>Add On Product</td>
+                                                                
+                                                    <td>
+                                                                                
+                                                        <table>
+                                                            <thead>
+                                                                <th>Add On </th>
+                                                                <th>Size</th>
+                                                                <th>price</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for add_on in orderItem.add_on_product.all %}
+                
+                                                                <tr>
+                                                                    
+                                                                <td>
+                                                                {{ add_on.name }}<br>
+                                                                </td>
+                                                                <td>
+                                                                    {{add_on.size}} <br>                             
+                
+                                                                </td>
+                                                                <td>
+                                                                {{add_on.price}} TK.<br>                             
+                
+                                                                </td>
+                            
+                                                                </tr>
+                                                                {% endfor %}
+                
+                                                            </tbody>
+                                                        </table>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Bill Summary -->
+                        <div class="d-flex  x">
+                            <ul class="bill-summary mt-4" >
+                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}}</li>
+                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}}</li>
+                                {% with delivery_charge=shippingaddress.order.delivary_charge %}
+                                {% with total_amount=shippingaddress.order.get_total %}
+                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }}</li>
+                                {% endwith %}
+                                {% endwith %}
+                            </ul>
+
+                            <!-- Status Dropdown and Display -->
+                            <div class="status-container no-print">
+                                <div class="status-display" id="statusDisplay">Status: <span style="background-color: rgb(173, 7, 43); color: #f1f1f1; padding: 5px; border-radius: 3px;">{{shippingaddress.order.status}}</span> </div>
+                            
+                         
+                            </div>
+                            
+
+                           
+                        </div>
+                        <div class="text-center no-print">
+                            <button class="btn btn-dark text-center" style="font-size: 1.5rem;" onclick="printDiv('{{ shippingaddress.order.order_id }}')"> Print</button>
+                        </div>
+                        <!-- Order Summary -->
+         
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
