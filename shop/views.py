@@ -165,7 +165,11 @@ def home(request):
         'new_arrival_products': 'new_arrival_products',
     }
     
-    visit_count = PageVisit.objects.filter(url=request.path).first().count
+       
+    try:
+        visit_count = PageVisit.objects.filter(url=request.path).first().count
+    except:
+        visit_count =0
 
     # Get data from cache
     top_rated_products = cache.get(cache_keys['top_rated_products'])
