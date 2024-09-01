@@ -330,9 +330,9 @@
             <!-- Product Details -->
             <div class="col-md-6">
                 <div class="product-details p-4">
-                    <h2> {{product.name}}</h2>
+                    <h2 style="font-size: 2rem;"> {{product.name}}</h2>
 
-                    <p class="price" style="font-size: 2rem;">Tk. <span id="product-price">{{product.price}}</span>
+                    <p class="price" style="font-size: 1.7rem;">Tk. <span id="product-price">{{product.price}}</span>
                           {% if product.discount_percent %}
                         <del style="opacity: .8; font-size: 1rem;">
                              {{product.update_price}}
@@ -350,7 +350,7 @@
                     {% if product.unstitched_price %}
                     <div class="unstiched mt-4">
                         <button type="button" 
-                        id="unstiched-button" class="btn btn-dark"  style="font-size: 1rem; background-color: #343a40;">
+                        id="unstiched-button" class="btn btn-dark"  style="font-size: 1.5rem; background-color: #343a40;">
                             Unstitched?
                         </button> 
                     </div>
