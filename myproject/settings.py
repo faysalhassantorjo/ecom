@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'shop.middleware.PageVisitMiddleware',
 ]
 
 
@@ -89,23 +90,23 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'fqsXmXhMveDGnDAjJCuGJVKRYIheNvFF',
-        'HOST': 'monorail.proxy.rlwy.net',
-        'PORT': '37839',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'fqsXmXhMveDGnDAjJCuGJVKRYIheNvFF',
+#         'HOST': 'monorail.proxy.rlwy.net',
+#         'PORT': '37839',
+#     }
+# }
 
 CSRF_TRUSTED_ORIGINS = [
     'https://longg.up.railway.app',

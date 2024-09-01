@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,AddOnProduct
+from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,AddOnProduct,PageVisit
 import json
 from django.http import JsonResponse
 from django.contrib.sessions.models import Session
@@ -164,6 +164,8 @@ def home(request):
         'all_categories': 'all_categories',
         'new_arrival_products': 'new_arrival_products',
     }
+    
+    visit_count = PageVisit.objects.filter(url=request.path).first().count
 
     # Get data from cache
     top_rated_products = cache.get(cache_keys['top_rated_products'])
@@ -221,7 +223,8 @@ def home(request):
         'heroCollections':hero_collections,
         'collectionsets':collection_sets,
         'discount_product':discount_products,
-        'all_categories':all_categories[:10]
+        'all_categories':all_categories[:10],
+        'visit_count':visit_count
     }
 
     user=request.user
@@ -608,6 +611,11 @@ def shop_details(request,slug):
         lis=product.tags.all()
         
         
+        try:
+            visit_count = PageVisit.objects.filter(url=request.path).first().count
+        except:
+            visit_count =0
+        
 
         relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
@@ -644,7 +652,8 @@ def shop_details(request,slug):
             'product_categories':product_categories,
             'tags':lis,
             'can_review':can_review,
-            'order':get_cart_total_items(request)
+            'order':get_cart_total_items(request),
+            'visit_count':visit_count
         }
         user=request.user
         if user.is_authenticated:

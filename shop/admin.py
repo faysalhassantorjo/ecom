@@ -26,3 +26,7 @@ admin.site.register(Review)
 admin.site.register(CollectionSet)
 admin.site.register(Cuppon)
 admin.site.register(AddOnProduct)
+
+@admin.register(PageVisit)
+class PageVisitAdmin(admin.ModelAdmin):
+    list_display = ('view_name', 'url', 'count')

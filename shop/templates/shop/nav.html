@@ -180,7 +180,7 @@ rel="stylesheet"
 
     </div>
     <!-- Collapsible wrapper -->
-
+   
     <!-- Right elements -->
     <div class="d-flex align-items-center">
       <!-- Icon -->
@@ -227,7 +227,7 @@ rel="stylesheet"
             <a class="dropdown-item"  href="{% url 'profile' pk=userProfile.id %}">my order</a>
           </li>
           {% endif %}
-
+ 
           {% if user.is_superuser  %}
           <li>
             <a class="dropdown-item"  href="{% url 'viewOrder' %}">View Order</a>
@@ -249,7 +249,11 @@ rel="stylesheet"
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
-
+{% if request.user.is_superuser %}
+    <div class="page-visit text-center" style="color: #fff;">
+      visit Count - {{visit_count}}
+    </div>
+    {% endif %}
 
 <section class="hero">
   <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>

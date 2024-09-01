@@ -314,3 +314,13 @@ class Cuppon(models.Model):
     cuppon_name=models.CharField(max_length=10)
     percent=models.PositiveIntegerField(default=0)
     min_order= models.PositiveIntegerField(default=0)
+    
+
+class PageVisit(models.Model):
+    url = models.CharField(max_length=255, unique=True)
+    view_name = models.CharField(max_length=255)
+    count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.view_name} ({self.url}) - {self.count} visits"
+    
