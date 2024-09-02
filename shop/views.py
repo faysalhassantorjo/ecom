@@ -40,7 +40,23 @@ def send_html_email(shippingAddress):
     email.send()
     print('Email send done')
 
-
+def send_confermation_mail(shippingAddress):
+    subject = f'Order Confirmed #{shippingAddress.order.order_id}'
+    html_message = render_to_string('shop/order-comfrim-mail.html', {'shippingaddress': shippingAddress})
+    plain_message = strip_tags(html_message)
+    from_email = settings.EMAIL_HOST_USER
+    customr_email = shippingAddress.email
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    print('customer mail ', customr_email)
+    email = EmailMessage(
+        subject,
+        html_message,
+        from_email,
+        recipient_list,
+    )
+    email.content_subtype = 'html' 
+    email.send()
+    print('Email send done')
 
 def get_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -186,14 +202,7 @@ def home(request):
         'all_categories': 'all_categories',
         'new_arrival_products': 'new_arrival_products',
     }
-    
-       
-    try:
-        visit_count = PageVisit.objects.filter(url=request.path).first().count
-        visit_count2 = PageVisit.objects.filter(url=request.path)
-        print(visit_count2)
-    except:
-        visit_count =0
+
 
     # Get data from cache
     top_rated_products = cache.get(cache_keys['top_rated_products'])
@@ -252,7 +261,6 @@ def home(request):
         'collectionsets':collection_sets,
         'discount_product':discount_products,
         'all_categories':all_categories[:10],
-        'visit_count':visit_count
     }
 
     user=request.user
@@ -443,7 +451,7 @@ def location_choice(request,pk):
         order.location = location
         
         if location == 'outside_dhaka':
-            order.delivary_charge = 120
+            order.delivary_charge = 150
         elif location == 'inside_dhaka':
             order.delivary_charge = 80
 
@@ -738,9 +746,17 @@ def order_status(request):
         
         order.status = status
         
+        shippingAddress=ShippingAddress.objects.get(order = order)
+   
         order.save()
+        
+        if order.status == "Confirmed":
+            send_confermation_mail(shippingAddress)
+            print("------------")
+            print("Email sent done")
             
         return redirect('viewOrder')
+
     return HttpResponse('somthing worng')
 
 from django.contrib.auth.decorators import login_required

@@ -252,11 +252,6 @@ rel="stylesheet"
   <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
-{% if request.user.is_superuser %}
-    <div class="page-visit text-center" style="color: #fff;">
-      visit Count - {{visit_count}}
-    </div>
-    {% endif %}
 
 <section class="hero">
   <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>

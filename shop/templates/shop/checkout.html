@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Prata&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" />
     <link rel="stylesheet" href="{% static 'shop/css/style.css' %}" type="text/css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Longg-লং</title>
 
     <style>
@@ -140,13 +140,13 @@
                                 {% if order.location == "inside_dhaka" %}
                                     <li>Delivery <span>TK. 80</span></li>
                                 {% else %}
-                                    <li>Delivery <span>TK. 120</span></li>
+                                    <li>Delivery <span>TK. 150</span></li>
                                 {% endif %}
                                 <li>Pay <span>TK. {{subtotal}}</span></li>
                             </ul>
 
                             <h6>Cash On Delivery <i class="fa-solid fa-truck"></i></h6>
-                            <!-- Single Place Order Button -->
+                           
                             <button id="placeOrderBtn" type="submit" class="site-btn">PLACE ORDER</button>
 
                             <!-- Thanks for the order message -->
