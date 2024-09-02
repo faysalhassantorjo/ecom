@@ -643,7 +643,8 @@ def shop_details(request,slug):
             visit_count = PageVisit.objects.filter(url=request.path).first().count
         except:
             visit_count =0
-        
+            
+        absolute_image_url = request.build_absolute_uri(product.imageURL)
 
         relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
@@ -681,7 +682,8 @@ def shop_details(request,slug):
             'tags':lis,
             'can_review':can_review,
             'order':get_cart_total_items(request),
-            'visit_count':visit_count
+            'visit_count':visit_count,
+            'absolute_image_url': absolute_image_url,
         }
         user=request.user
         if user.is_authenticated:
