@@ -151,8 +151,30 @@ def register(request):
 #         return items
 #     except:
 #         return []
+from collections import Counter
 
+def visit_stats(request):
+    # Get all page visits
+    visits = PageVisit.objects.all()
 
+    # Count total visits
+    total_visits = visits.count()
+
+    # Count visits by URL and convert to a dictionary
+    url_visit_counts = dict(Counter(visits.values_list('url', flat=True)))
+
+    # Prepare data for the graph
+    urls = list(url_visit_counts.keys())
+    visit_counts = list(url_visit_counts.values())
+
+    context = {
+        'total_visits': total_visits,
+        'url_visit_counts': url_visit_counts,
+        'urls': urls,
+        'visit_counts': visit_counts,
+    }
+
+    return render(request, 'shop/visit_stats.html', context)
 def home(request):
     
     # send_html_email()
@@ -168,6 +190,8 @@ def home(request):
        
     try:
         visit_count = PageVisit.objects.filter(url=request.path).first().count
+        visit_count2 = PageVisit.objects.filter(url=request.path)
+        print(visit_count2)
     except:
         visit_count =0
 

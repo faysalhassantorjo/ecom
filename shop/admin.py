@@ -29,4 +29,4 @@ admin.site.register(AddOnProduct)
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'url', 'count')
+    list_display = ('view_name', 'url','session_address', 'count')

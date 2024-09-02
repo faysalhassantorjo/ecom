@@ -317,8 +317,9 @@ class Cuppon(models.Model):
     
 
 class PageVisit(models.Model):
-    url = models.CharField(max_length=255, unique=True)
+    url = models.CharField(max_length=255)
     view_name = models.CharField(max_length=255)
+    session_address = models.CharField(max_length=255, null=True, blank=True)
     count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
