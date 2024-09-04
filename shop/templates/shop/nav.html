@@ -458,22 +458,26 @@ rel="stylesheet"
   <!-- Initialize Swiper -->
   <script>
     var swiper = new Swiper(".mySwiper", {
-      effect: "coverflow",
-      grabCursor: true,
-      centeredSlides: true,
-      slidesPerView: "auto",
-      coverflowEffect: {
-        rotate: 50,
-        stretch: 0,
-        depth: 100,
-        modifier: 1,
-        slideShadows: true,
-      },
-      pagination: {
-        el: ".swiper-pagination",
-      },
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: "auto",
+        coverflowEffect: {
+            rotate: 50,
+            stretch: 0,
+            depth: 100,
+            modifier: 1,
+            slideShadows: true,
+        },
+        autoplay: {  // Autoplay configuration
+            delay: 3000,  // Delay between slides in milliseconds (3 seconds)
+            disableOnInteraction: false,  // Continue autoplay after user interaction
+        },
+        pagination: {
+            el: ".swiper-pagination",
+        },
     });
-  </script>
+</script>
 </section>
 {% endif %}
 
