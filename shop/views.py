@@ -192,7 +192,9 @@ def visit_stats(request):
 
     return render(request, 'shop/visit_stats.html', context)
 def home(request):
-    
+    new_arrivals = Product.get_new_arrivals()
+
+    print('New Arrival Products are: ',new_arrivals)
     # send_html_email()
     cache_keys = {
         'top_rated_products': 'top_rated_products',
@@ -261,6 +263,7 @@ def home(request):
         'collectionsets':collection_sets,
         'discount_product':discount_products,
         'all_categories':all_categories[:10],
+        'new_arrivals':new_arrivals
     }
 
     user=request.user

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.utils import timezone
+from datetime import timedelta
 from taggit.managers import TaggableManager
 from autoslug import AutoSlugField
 
@@ -201,6 +202,15 @@ class Product(models.Model):
         if reviews.exists():
             return len(reviews)
         return 0
+    
+    
+    
+    @classmethod
+    def get_new_arrivals(cls):
+        # Get the current time and subtract 15 days from it
+        threshold_date = timezone.now() - timedelta(days=15)
+        # Filter products that arrived within the last 15 days
+        return cls.objects.filter(arrive_at__gte=threshold_date)
 
 class Order(models.Model):
     STATUS_CHOICES = [
