@@ -208,7 +208,7 @@ def home(request):
 
     # Get data from cache
     top_rated_products = cache.get(cache_keys['top_rated_products'])
-    hero_collections = cache.get(cache_keys['hero_collections'])
+    hero_collections = CollectionSet.objects.filter(hero=True)
     collection_sets = cache.get(cache_keys['collection_sets'])
     discount_products = cache.get(cache_keys['discount_products'])
     all_categories = cache.get(cache_keys['all_categories'])
@@ -220,10 +220,10 @@ def home(request):
         cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*20)  
         print('Query occured 1')
 
-    if not hero_collections:
-        hero_collections = CollectionSet.objects.filter(hero=True)
-        cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*20)  # Cache for 15 minutes
-        print('Query occured 2')
+    # if not hero_collections:
+    #     hero_collections = CollectionSet.objects.filter(hero=True)
+    #     # cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*20)  # Cache for 15 minutes
+    #     print('Query occured 2')
 
     if not collection_sets:
         collection_sets = CollectionSet.objects.filter(hero=False)
