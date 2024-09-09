@@ -396,34 +396,36 @@
 
                     {% if add_on_product or add_on_product2 or add_on_product3 %}
                     <div class="card addon-section">
-                        <div class="card-header">
+                        <div class="card-header text-light" style="font-size: 1.2rem;">
                             Addons
+                            <p style="font-size: 1rem; opacity: .8; font-family: 'Atma', system-ui; font-weight: 300; font-style: normal;">
+                                আপনি চাইলে স্টিচ/আনস্টিচ কামিজ এর সাথে নিচের দেওয়া অ্যাড-অন মেনু থেকে Inner Top সিলেক্ট করে নিতে পারেন। সেক্ষেত্রে প্রোডাক্টের মূল্যের সাথে Add On মূল্যটি যোগ হবে।</p>
                         </div>
                         <div class="card-body d-flex">
                             <select name="add_on_product" id="" class="form-control">
-                                <option value="none" style="font-size: 1.1rem;">-------</option>
+                                <option class="text-dark" value="none" style="font-size: 1.1rem;">select</option>
 
                                 {% for add_product in add_on_product %}
-                                <option value="{{add_product.id}}" style="font-size: 1.1rem;">
-                                    {{add_product.name}} - {{add_product.price}}Tk.</option>
+                                <option class="text-dark" value="{{add_product.id}}" style="font-size:.9rem;">
+                                    {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
                                 {% endfor %}
                             </select>
-                            <select name="add_on_product2" id="" class="form-control">
-                                <option value="none" style="font-size: 1.1rem;">-------</option>
+                            &nbsp;<select name="add_on_product2" id="" class="form-control">
+                                <option value="none" class="text-dark" style="font-size: 1.1rem;">select</option>
 
                                 {% for add_product in add_on_product2 %}
-                                <option value="{{add_product.id}}" style="font-size: 1.1rem;">
-                                    {{add_product.name}} - {{add_product.price}}Tk.</option>
+                                <option value="{{add_product.id}}" style="font-size: .9rem;">
+                                    {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
                                 {% endfor %}
                             </select>
-                            <select name="add_on_product3" id="" class="form-control">
+                            <!-- <select name="add_on_product3" id="" class="form-control">
                                 <option value="none" style="font-size: 1.1rem;">-------</option>
 
                                 {% for add_product in add_on_product3 %}
                                 <option value="{{add_product.id}}" style="font-size: 1.1rem;">
-                                    {{add_product.name}} - {{add_product.price}}Tk.</option>
+                                    {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
                                 {% endfor %}
-                            </select>
+                            </select> -->
                         </div>
                     </div>
                     {% endif %}

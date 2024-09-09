@@ -18,21 +18,24 @@ class ResizedImageFieldFile(ImageFieldFile):
     def save(self, name, content, save=True):
         # Open the uploaded image
         img = Image.open(content)
-        
+
         # Resize the image to fit within the maximum size while maintaining the aspect ratio
         max_size = (800, 800)  # You can adjust this size as needed
         img.thumbnail(max_size, Image.Resampling.LANCZOS)  # Use LANCZOS resampling filter
-        
-        # Save the resized image to a BytesIO object with reduced quality
+
+        # Save the resized image to a BytesIO object with reduced quality, in WebP format
         img_io = BytesIO()
-        img.save(img_io, format=img.format, quality=100)  # Adjust quality here
+
+        # Ensure the file format is WebP
+        webp_name = f"{name.rsplit('.', 1)[0]}.webp"  # Change file extension to .webp
+        img.save(img_io, format="WEBP", quality=100)  # Save in WebP format with the desired quality
         img_io.seek(0)
-        
+
         # Create a SimpleUploadedFile with the resized image data
-        content = SimpleUploadedFile(name, img_io.read(), content.content_type)
-        
+        content = SimpleUploadedFile(webp_name, img_io.read(), content_type="image/webp")
+
         # Save the resized image using the parent class method
-        super().save(name, content, save)
+        super().save(webp_name, content, save)
 
 class ResizedImageField(ImageField):
     attr_class = ResizedImageFieldFile
@@ -109,7 +112,7 @@ class AddOnProduct(models.Model):
 
 
     def __str__(self) -> str:
-        return self.name
+        return f'{self.name}-{self.size}-{self.price}tk'
 
 class Product(models.Model):
     name=models.CharField(max_length=100)

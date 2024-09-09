@@ -576,15 +576,15 @@ def shop_grid(request,pk):
         
         cache_key = f"collection_category{pk}"
                 
-        categories = cache.get(cache_key)
+        categories =collection.productcategory_set.all()
         
-        if categories is None:
+        # if categories is None:
             
-            categories=collection.productcategory_set.all()
+        #     categories=collection.productcategory_set.all()
             
-            cache.set(cache_key,categories,timeout=60*20)
+        #     cache.set(cache_key,categories,timeout=60*20)
 
-            print('categories',categories)
+        #     print('categories',categories)
 
 
         context={
