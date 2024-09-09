@@ -5,7 +5,7 @@ from django.urls import resolve
 class PageVisitMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
         # List of view names you want to track
-        tracked_views = ['shop_details', 'home', 'products']
+        tracked_views = ['shop_details', 'home', 'products','shop_grid','cart']
 
         # Get the name of the current view
         current_view_name = resolve(request.path).url_name
