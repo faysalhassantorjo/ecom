@@ -444,7 +444,7 @@ def cart(request):
         print(e)
         return render(request, 'shop/404.html')
         
-    return render(request, 'shop/shopping-cart.html', context)
+    return render(request, 'shop/cart.html', context)
 
 def location_choice(request,pk):
     order=Order.objects.get(id=pk)
