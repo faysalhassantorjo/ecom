@@ -690,7 +690,6 @@ def shop_details(request,slug):
             'tags':lis,
             'can_review':can_review,
             'order':get_cart_total_items(request),
-            'visit_count':visit_count,
             'absolute_image_url': absolute_image_url,
         }
         user=request.user
