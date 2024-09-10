@@ -29,7 +29,142 @@
 </head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  .category-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .category-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-wrapper::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-card {
+    position: relative;
+    flex: 0 0 400px;
+    height: 500px;
+    margin-right: 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.4s ease, box-shadow 0.3s ease-in-out;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    border: 2px solid transparent;
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    padding: 5px;
+  }
+
+  .category-card img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    transition: transform 0.4s ease;
+  }
+
+  .category-card .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+    font-family: "Protest Guerrilla", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: clamp(2rem, 3vw, 5rem); /* Responsive font size */
+  }
+
+  .category-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    border: 2px solid #f74f06;
+  }
+
+  .category-card:hover img {
+    transform: scale(1.1);
+  }
+
+  .category-card:hover .card-overlay {
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0.9;
+  }
+
+  .category-card .card-overlay:after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    width: 60%;
+    height: 4px;
+    background-color: #f74f06;
+    transition: bottom 0.3s ease, width 0.3s ease;
+  }
+
+  .category-card:hover .card-overlay:after {
+    bottom: 10px;
+    width: 80%;
+  }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    padding: 20px;
+    border-radius: 40%;
+    cursor: pointer;
+    z-index: 10;
+    display: none;
+  }
+
+  .arrow-left {
+    left: 10px;
+  }
+
+  .arrow-right {
+    right: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .category-card {
+      flex: 0 0 300px;
+      height: 350px;
+    }
+    .card-overlay {
+      font-size: clamp(1rem, 4vw, 2rem); /* Responsive font for medium screens */
+    }
+  }
+
+  @media (max-width: 576px) {
+    .category-card {
+      flex: 0 0 300px;
+      height: 400px;
+    }
+    .card-overlay {
+      font-size: clamp(0.8rem, 5vw, 1.5rem); /* Responsive font for small screens */
+    }
+  }
+</style>
 
 <style>
   html,
@@ -423,9 +558,28 @@
     </div>
   </div>
 </section>
-
-
 <hr>
+
+<section>
+
+<div class="container-fluid mt-5 category-container">
+  <button class="arrow arrow-left">&lt;</button>
+  <button class="arrow arrow-right">&gt;</button>
+  <div class="category-wrapper">
+    {% for category in popular_category %}
+    <div class="category-card">
+      <a href="{% url 'products' pk=category.id %}">
+      <img src="{{category.imageURL}}" alt="Category">
+      <div class="card-overlay">{{category.name}}</div>
+    </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+</section>
+
+
+
 <section style="margin-top: 30px;">
   <style>
 
@@ -1014,7 +1168,57 @@ font-family: "Playfair Display", serif;
 
 
 
+<script>
+  const categoryWrapper = document.querySelector('.category-wrapper');
+  const arrowLeft = document.querySelector('.arrow-left');
+  const arrowRight = document.querySelector('.arrow-right');
+  const categoryCards = document.querySelectorAll('.category-card');
 
+  function updateArrows() {
+    const scrollLeft = categoryWrapper.scrollLeft;
+    const maxScrollLeft = categoryWrapper.scrollWidth - categoryWrapper.clientWidth;
+
+    if (scrollLeft > 0) {
+      arrowLeft.style.display = 'block';
+    } else {
+      arrowLeft.style.display = 'none';
+    }
+
+    if (scrollLeft < maxScrollLeft) {
+      arrowRight.style.display = 'block';
+    } else {
+      arrowRight.style.display = 'none';
+    }
+  }
+
+  arrowLeft.addEventListener('click', () => {
+    categoryWrapper.scrollBy({
+      left: -400,
+      behavior: 'smooth'
+    });
+  });
+
+  arrowRight.addEventListener('click', () => {
+    categoryWrapper.scrollBy({
+      left: 400,
+      behavior: 'smooth'
+    });
+  });
+
+
+    
+
+  categoryWrapper.addEventListener('scroll', updateArrows);
+
+  window.addEventListener('load', () => {
+    if (categoryCards.length > 0) {
+      updateArrows();
+    } else {
+      arrowLeft.style.display = 'none';
+      arrowRight.style.display = 'none';
+    }
+  });
+</script>
 
 
 

@@ -78,7 +78,7 @@ class ProductCategory(models.Model):
     name=models.CharField(max_length=100)
     collection=models.ManyToManyField(CollectionSet)
     image=ResizedImageField(upload_to='category/',blank=True,null=True)
-    size_chart=ResizedImageField(upload_to='sizechart/',blank=True,null=True)
+    is_popular = models.BooleanField(default=False)
 
     @property
     def imageURL(self):

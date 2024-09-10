@@ -205,7 +205,7 @@ def home(request):
         'new_arrival_products': 'new_arrival_products',
     }
 
-
+    popular_category = ProductCategory.objects.filter(is_popular = True)
     # Get data from cache
     top_rated_products = cache.get(cache_keys['top_rated_products'])
     hero_collections = CollectionSet.objects.filter(hero=True)
@@ -263,7 +263,8 @@ def home(request):
         'collectionsets':collection_sets,
         'discount_product':discount_products,
         'all_categories':all_categories[:10],
-        'new_arrivals':new_arrivals
+        'new_arrivals':new_arrivals,
+        'popular_category':popular_category
     }
 
     user=request.user
