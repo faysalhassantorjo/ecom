@@ -211,7 +211,7 @@ class Product(models.Model):
     @classmethod
     def get_new_arrivals(cls):
         # Get the current time and subtract 15 days from it
-        threshold_date = timezone.now() - timedelta(days=15)
+        threshold_date = timezone.now() - timedelta(days=30)
         # Filter products that arrived within the last 15 days
         return cls.objects.filter(arrive_at__gte=threshold_date)
 
