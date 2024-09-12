@@ -563,6 +563,8 @@ def order_success(request,pk):
     return render(request,'shop/orderSuccess.html',context)
 def shop_grid(request,pk):
     
+    context={}
+    
     try:
 
         userProfile = check_user(request)
@@ -575,9 +577,18 @@ def shop_grid(request,pk):
         
         collection=CollectionSet.objects.get(id=pk)
         
-        cache_key = f"collection_category{pk}"
-                
-        categories =collection.productcategory_set.all()
+        if collection.hero:
+            products = Product.objects.filter(collectionset = collection)
+            print("========================")
+            print(products)
+            print("========================")
+            context.update({'products':products})
+        else:
+            cache_key = f"collection_category{pk}"
+                    
+            categories =collection.productcategory_set.all()
+            
+            context.update({'categories':categories})
         
         # if categories is None:
             
@@ -588,13 +599,12 @@ def shop_grid(request,pk):
         #     print('categories',categories)
 
 
-        context={
-                # 'products':products,
-                'categories':categories,
+        context.update({
+
                 'x':True,
                 'collection':collection,
                 'order':order
-            }
+            })
         return render(request,'shop/shop2.html',context)
     except Exception as e:
         print(e)
@@ -658,24 +668,7 @@ def shop_details(request,slug):
 
         can_review = True
 
-        # if request.user.is_authenticated:
-        #     user = get_user(request)
-        #     order,c=Order.objects.get_or_create(user=user,complete=False)
-        #     # user_profile = UserProfile.objects.get(user=user)
-        #     user_orders = Order.objects.filter(user=user)
 
-        #     for order in user_orders:
-        #         order_items = OrderItem.objects.filter(order=order)
-        #         for order_item in order_items:
-        #             if order_item.product == product:
-        #                 can_review = True
-        #                 break
-        #         if can_review:
-        #             break
-
-        cate = product.productCategory.earliest('id')
-
-        print(cate)
 
         context={
             'product':product,
@@ -746,7 +739,7 @@ def order_status(request):
         order.status = status
         
         shippingAddress=ShippingAddress.objects.get(order = order)
-   
+        order.action_by = request.user
         order.save()
         
         if order.status == "Confirmed":

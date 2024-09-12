@@ -129,6 +129,7 @@ class Product(models.Model):
     main_price = models.IntegerField(default=0)
     discount=models.BooleanField(default=True,null=True,blank=False)
     productCategory = models.ManyToManyField(ProductCategory)
+    collectionset = models.ForeignKey(CollectionSet,on_delete=models.SET_NULL,null=True,blank=True)
     image=ResizedImageField(upload_to='product-image/',blank=True,null=True)
     image2=ResizedImageField(upload_to='product-image/',blank=True,null=True)
     image3=ResizedImageField(upload_to='product-image/',blank=True,null=True)
@@ -242,6 +243,7 @@ class Order(models.Model):
     location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
     totalbill= models.PositiveIntegerField(default=0)
     delivary_charge = models.PositiveIntegerField(default=False)
+    action_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
 
 
     def __str__(self):

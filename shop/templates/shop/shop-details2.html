@@ -340,6 +340,14 @@
                              {{product.update_price}}
                         </del>
                             {% endif %}</p>
+                            <span style="opacity: .8;">
+                                Category: &nbsp;
+                                {% for category in product.productCategory.all %}
+                                    {{ category.name }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    No categories found
+                                {% endfor %}
+                            </span>
                             <hr>
                             <p class="desc" >{{ product.description|safe }}</p>
                             <hr>
