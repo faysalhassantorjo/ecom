@@ -243,7 +243,8 @@ class Order(models.Model):
     location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
     totalbill= models.PositiveIntegerField(default=0)
     delivary_charge = models.PositiveIntegerField(default=False)
-    action_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    # action_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    status_changed_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
 
 
     def __str__(self):

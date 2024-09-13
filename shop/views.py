@@ -739,7 +739,7 @@ def order_status(request):
         order.status = status
         
         shippingAddress=ShippingAddress.objects.get(order = order)
-        order.action_by = request.user
+        order.status_changed_by = request.user
         order.save()
         
         if order.status == "Confirmed":
