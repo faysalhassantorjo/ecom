@@ -192,7 +192,7 @@ def visit_stats(request):
 
     return render(request, 'shop/visit_stats.html', context)
 def home(request):
-    new_arrivals = Product.get_new_arrivals()
+    new_arrivals = Product.get_new_arrivals().order_by('?')[:15]
 
     print('New Arrival Products are: ',new_arrivals)
     # send_html_email()
