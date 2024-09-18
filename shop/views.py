@@ -192,73 +192,71 @@ def visit_stats(request):
 
     return render(request, 'shop/visit_stats.html', context)
 def home(request):
-    new_arrivals = Product.get_new_arrivals().order_by('?')[:15]
 
-    print('New Arrival Products are: ',new_arrivals)
-    # send_html_email()
+    CACHE_TIMEOUT = 60 * 20
+
+    # Cache keys
     cache_keys = {
         'top_rated_products': 'top_rated_products',
         'hero_collections': 'hero_collections',
         'collection_sets': 'collection_sets',
         'discount_products': 'discount_products',
         'all_categories': 'all_categories',
-        'new_arrival_products': 'new_arrival_products',
+        'new_arrivals': 'new_arrivals',
+        'popular_category': 'popular_category'
     }
 
-    popular_category = ProductCategory.objects.filter(is_popular = True)
-    # Get data from cache
-    top_rated_products = cache.get(cache_keys['top_rated_products'])
-    hero_collections = cache.get(cache_keys['hero_collections'])
-    collection_sets = cache.get(cache_keys['collection_sets'])
-    discount_products = cache.get(cache_keys['discount_products'])
-    all_categories = cache.get(cache_keys['all_categories'])
-    new_arrival_products = cache.get(cache_keys['new_arrival_products'])
+    # Function to retrieve data from cache or query and store it
+    def get_cached_data(key, query_func, timeout=CACHE_TIMEOUT):
+        # Attempt to retrieve from cache
+        data = cache.get(key)
+        
+        # If not found, execute the query and set the cache
+        if data is None:
+            data = query_func()  # Execute the passed query function
+            cache.set(key, data, timeout)
+            print(f'Query occurred for {key}')
+        
+        return data
 
-    # If not in cache, query the database and store in cache
-    if not top_rated_products:
-        top_rated_products = Product.objects.filter(ratting__gt=2).order_by('?')
-        cache.set(cache_keys['top_rated_products'], top_rated_products, timeout=60*20)  
-        print('Query occured 1')
+    # Queries for each type of data
+    top_rated_products = get_cached_data(
+        cache_keys['top_rated_products'],
+        lambda: Product.objects.filter(ratting__gt=2).order_by('?')
+    )
 
-    if not hero_collections:
-        hero_collections = CollectionSet.objects.filter(hero=True)
-        cache.set(cache_keys['hero_collections'], hero_collections, timeout=60*60)  # Cache for 15 minutes
-        print('Query occured 2')
+    popular_category = get_cached_data(
+        cache_keys['popular_category'],
+        lambda: ProductCategory.objects.filter(is_popular=True)
+    )
 
-    if not collection_sets:
-        collection_sets = CollectionSet.objects.filter(hero=False)
-        cache.set(cache_keys['collection_sets'], collection_sets, timeout=60*20)  # Cache for 15 minutes
-        print('Query occured 3')
+    hero_collections = get_cached_data(
+        cache_keys['hero_collections'],
+        lambda: CollectionSet.objects.filter(hero=True),
+        timeout=60*60  # Cache for 60 minutes
+    )
 
-    if not discount_products:
-        discount_products = Product.objects.filter(discount_percent__gt=5)
-        cache.set(cache_keys['discount_products'], discount_products, timeout=60*20)  # Cache for 15 minutes
-        print('Query occured 4')
+    collection_sets = get_cached_data(
+        cache_keys['collection_sets'],
+        lambda: CollectionSet.objects.filter(hero=False)
+    )
 
-    if not all_categories:
-        all_categories = ProductCategory.objects.all().order_by('?')
-        cache.set(cache_keys['all_categories'], all_categories, timeout=60*20)  # Cache for 15 minutes
-        print('Query occured 5')
+    discount_products = get_cached_data(
+        cache_keys['discount_products'],
+        lambda: Product.objects.filter(discount_percent__gt=5)
+    )
 
-    if not new_arrival_products:
-        new_arrival_products = Product.objects.filter(new_arrival=True).order_by('?')
-        cache.set(cache_keys['new_arrival_products'], new_arrival_products, timeout=60*20)  # Cache for 15 minutes
-        print('Query occured 6')
+    all_categories = get_cached_data(
+        cache_keys['all_categories'],
+        lambda: ProductCategory.objects.all().order_by('?')
+    )
 
-
-    # for product in products:
-    #     rating=product.average_rating()
-    #     time_frame = timezone.now() - product.arrive_at
-    #     if  time_frame.days <= 10:
-    #         product.new_arrival=True
-    #         product.save()
-    #     else:
-    #         product.new_arrival=False
-    #         product.save()
-
+    new_arrivals = get_cached_data(
+        cache_keys['new_arrivals'],
+        lambda: Product.get_new_arrivals().order_by('?')[:15]
+    )
     context={
         'top_rated_product':top_rated_products,
-        'new_arrival_products':new_arrival_products[:8],
         'heroCollections':hero_collections,
         'collectionsets':collection_sets,
         'discount_product':discount_products,
@@ -578,26 +576,26 @@ def shop_grid(request,pk):
         collection=CollectionSet.objects.get(id=pk)
         
         if collection.hero:
+            
+            
             products = Product.objects.filter(collectionset = collection)
-            print("========================")
-            print(products)
-            print("========================")
+          
             context.update({'products':products})
         else:
             cache_key = f"collection_category{pk}"
                     
-            categories =collection.productcategory_set.all()
+            categories =cache.get(cache_key)
             
-            context.update({'categories':categories})
         
-        # if categories is None:
-            
-        #     categories=collection.productcategory_set.all()
-            
-        #     cache.set(cache_key,categories,timeout=60*20)
+            if categories is None:
+                
+                categories=collection.productcategory_set.all()
+                
+                cache.set(cache_key,categories,timeout=60*20)
 
-        #     print('categories',categories)
+                print('categories',categories)
 
+            context.update({'categories':categories})
 
         context.update({
 
@@ -643,48 +641,77 @@ def products(request,pk):
 from django.db.models import Q
 def shop_details(request,slug):
     try:
-        product=Product.objects.get(slug=slug)
-        product.average_rating
-        form=WriteReview()
-        reviews=Review.objects.filter(product=product)
+        
+        cache_key = f'product_{slug}'
+        related_cache_key = f'product_related_{slug}'
 
-        add_on_product = product.add_on_product.all()
-        add_on_product2 = product.add_on_product2.all()
-        add_on_product3 = product.add_on_product3.all()
+        # Attempt to get product and related data from cache
+        product = cache.get(cache_key)
+        related_data = cache.get(related_cache_key)
 
+        # If product is not in cache, query the database and cache it
+        if product is None:
+            product = Product.objects.get(slug=slug)
+            cache.set(cache_key, product, timeout=60*20)  # Cache for 20 minutes
+            print('Product query occurred')
 
-        product_categories=product.productCategory.all()
-  
+        # If related data is not in cache, query and cache related objects
+        if related_data is None:
+            # Query related data
+            reviews = Review.objects.filter(product=product)
+            add_on_product = product.add_on_product.all()
+            add_on_product2 = product.add_on_product2.all()
+            add_on_product3 = product.add_on_product3.all()
+            product_categories = product.productCategory.all()
+            relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
+            # Cache related data
+            related_data = {
+                'reviews': reviews,
+                'add_on_product': add_on_product,
+                'add_on_product2': add_on_product2,
+                'add_on_product3': add_on_product3,
+                'product_categories': product_categories,
+                'relatePro': relatePro,
+                'tags': product.tags.all(),
+            }
+            cache.set(related_cache_key, related_data, timeout=60*20)  # Cache for 20 minutes
+            print('Related data query occurred')
+
+        # Retrieve cached related data
+        reviews = related_data['reviews']
+        add_on_product = related_data['add_on_product']
+        add_on_product2 = related_data['add_on_product2']
+        add_on_product3 = related_data['add_on_product3']
+        product_categories = related_data['product_categories']
+        relatePro = related_data['relatePro']
+        tags = related_data['tags']
+
+        # Form for reviews
+        form = WriteReview()
+
+        # Star count based on average rating
         star_count = product.average_rating
 
-        lis=product.tags.all()
-        
-        
-            
-        absolute_image_url = request.build_absolute_uri(product.imageURL)
-
-        relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
-
+        # Check if user can review (adjust logic based on your requirements)
         can_review = True
 
-
-
-        context={
-            'product':product,
-            'form':form,
-            'reviews':reviews,
-            'star_count':star_count,
-            'relatedProduct':relatePro[:6],
-            'add_on_product':add_on_product,
-            'add_on_product2':add_on_product2,
-            'add_on_product3':add_on_product3,
-            'product_categories':product_categories,
-            'tags':lis,
-            'can_review':can_review,
-            'order':get_cart_total_items(request),
-            'absolute_image_url': absolute_image_url,
+        # Prepare the context for the template
+        context = {
+            'product': product,
+            'form': form,
+            'reviews': reviews,
+            'star_count': star_count,
+            'relatedProduct': relatePro[:6],
+            'add_on_product': add_on_product,
+            'add_on_product2': add_on_product2,
+            'add_on_product3': add_on_product3,
+            'product_categories': product_categories,
+            'tags': tags,
+            'can_review': can_review,
+            'order': get_cart_total_items(request),
         }
+
         user=request.user
         if user.is_authenticated:
             userProfile,created = UserProfile.objects.get_or_create(user  = user)

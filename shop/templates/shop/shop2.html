@@ -147,6 +147,9 @@
       color: #f74f06;
       /* Change icon color as needed */
     }
+    .heading{
+      font-size: 2rem;
+    }
   </style>
   <div class="preloader">
     <i class="fas fa-spinner fa-spin preloader-icon"></i>
@@ -240,9 +243,7 @@
 
 
   <div class="container-fluid mt-4" style="background-color: #a1a1a1;">
-    <div class="row text-center">
-      <h2 style="font-size: 2rem; color:#101720;">{{collection.name}}</h2>
-    </div>
+      <h2 class="heading text-center" style="color:#101720;">{{collection.name}}</h2>
   </div>
 
   {% if products %}
@@ -253,8 +254,7 @@
       }
   
       .scrollable-container {
-        max-height: 80vh; /* Adjust based on your needs */
-        overflow-y: auto;
+    
         padding: 15px;
       }
   
@@ -353,6 +353,9 @@
         }
         .stock-out-msg{
           font-size: 8px;
+        }
+        .heading{
+          font-size: 1.4rem;
         }
       }
     </style>
