@@ -613,7 +613,7 @@ from django.urls import reverse
 def go_to_admin_panel(request):
     return redirect(reverse('admin:index'))
 
-# @cache_page(60 * 20) 
+@cache_page(60 * 60) 
 def products(request,pk):
 
     cat=ProductCategory.objects.get(id=pk)
