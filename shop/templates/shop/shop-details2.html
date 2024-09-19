@@ -15,7 +15,7 @@
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
     <meta property="og:title" content="{{ product.name }}" />
     <!-- <meta property="og:description" content="{{ product.description }}" /> -->
-    <meta property="og:image" content="{{ product.imageURL }}" />
+    <meta property="og:image" content="{{ request.build_absolute_uri(product.imageURL) }}" />
 
 
     <meta property="og:image:alt" content="{{ product.name }}" />
