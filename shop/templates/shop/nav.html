@@ -405,7 +405,7 @@
 </nav>
 <!-- Navbar -->
 
-<section class="hero">
+<section class="hero" id="hero">
   <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
     <div class="carousel-inner">
       {% for collection in heroCollections %}
@@ -433,7 +433,6 @@
 </section>
 
 <hr>
-
 <section>
   <style>
     body {
@@ -442,15 +441,16 @@
 
     .scrollable-container {
       max-height: 80vh; /* Adjust based on your needs */
-      overflow-y: auto;
+      overflow-y: hidden; /* Start with overflow hidden */
       padding: 15px;
+      transition: overflow-y 0.3s ease; /* Smooth transition when enabling scrolling */
     }
 
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 15px;
-      justify-items: center; 
+      justify-items: center;
     }
 
     .product-card {
@@ -512,42 +512,44 @@
       font-weight: bold;
     }
 
-
-
     /* Ensure links have no underline */
     a {
       text-decoration: none;
       color: inherit;
     }
 
-    .product-name{
+    .product-name {
       font-size: 22px;
-      line-height: .5;
+      line-height: 0.5;
     }
-    .price{
+
+    .price {
       font-size: 16px;
       line-height: 1.2;
     }
+
     /* Media query for mobile */
     @media (max-width: 768px) {
       .product-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+
       .product-name {
         font-size: 14px;
       }
-      .price{
+
+      .price {
         font-size: 12px;
       }
-      .stock-out-msg{
+
+      .stock-out-msg {
         font-size: 8px;
       }
     }
   </style>
-  <div class="scrollable-container">
+
+  <div class="scrollable-container" id="scrollable-container">
     <div class="product-grid">
-      <!-- Product 1 -->
-   
       {% for product in new_arrivals %}
       <a href="{% url 'shop_details' slug=product.slug %}">
         <div class="product-card">
@@ -555,24 +557,34 @@
             <img src="{{product.imageURL}}" alt="Product Image" loading="lazy">
           </div>
 
-          <!-- Discount tag -->
           <div class="stock-out-msg">New</div>
 
-          <!-- Product details -->
           <div class="product-details">
-            <p class="product-name" > {{product.name}}</p>
+            <p class="product-name">{{product.name}}</p>
             <p class="price" style="font-family: 'Space Grotesk', sans-serif;">
               Tk. {{product.price}}
-   
             </p>
           </div>
         </div>
       </a>
       {% endfor %}
-
     </div>
   </div>
 </section>
+<script>
+  window.addEventListener('scroll', function () {
+    const scrollableContainer = document.getElementById('scrollable-container');
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const heroheight = document.getElementById('hero')
+    if (scrollTop>heroheight.offsetHeight ) {
+      scrollableContainer.style.overflowY = 'auto'; // Enable scrolling
+      console.log(scrollTop)
+    } else {
+      scrollableContainer.style.overflowY = 'hidden'; // Disable scrolling
+    }
+  });
+</script>
+
 <hr>
 
 <section>
