@@ -170,7 +170,7 @@ def register(request):
 from collections import Counter
 
 def visit_stats(request):
-    # Get all page visits
+    print('visit stats')
     
 
 
