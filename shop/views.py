@@ -189,23 +189,18 @@ def home(request):
         'discount_products': 'discount_products',
         'all_categories': 'all_categories',
         'new_arrivals': 'new_arrivals',
-        'popular_category': 'popular_category'
+        'popular_category': 'popular_category',
     }
 
-    # Function to retrieve data from cache or query and store it
     def get_cached_data(key, query_func, timeout=CACHE_TIMEOUT):
-        # Attempt to retrieve from cache
         data = cache.get(key)
-        
-        # If not found, execute the query and set the cache
         if data is None:
-            data = query_func()  # Execute the passed query function
+            data = query_func() 
             cache.set(key, data, timeout)
             print(f'Query occurred for {key}')
         
         return data
 
-    # Queries for each type of data
     top_rated_products = get_cached_data(
         cache_keys['top_rated_products'],
         lambda: Product.objects.filter(ratting__gt=2).order_by('?')

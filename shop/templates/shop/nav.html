@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" async>
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
-  
+
   <!-- Additional Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
+    rel="stylesheet">
 
   <!-- MDB -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
@@ -28,488 +31,672 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}">
   <link rel="stylesheet" href="{% static 'shop/css/home.css' %}">
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-0372CDLF47');
-</script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-0372CDLF47');
+  </script>
+
+  <style>
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -30%;
+      width: 30%;
+      height: 100%;
+      backdrop-filter: blur(20px);
+      background: none;
+      color: white;
+      padding-top: 60px;
+      transition: 0.3s;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar .set {
+      padding: 15px 20px;
+      text-decoration: none;
+      color: #f74f06;
+      display: block;
+      transition: 0.5s;
+      font-weight: bolder;
+      font-size: 1.2rem;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .overlay {
+      position: fixed;
+      display: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.623);
+      z-index: 500;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .menu-icon {
+      cursor: pointer;
+      font-size: 24px;
+      color: #fff;
+      border: 1px solid #ececec;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 5px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      font-size: 25px;
+      cursor: pointer;
+      color: white;
+      border: 1px solid #ececec;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .collection-list {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 50px;
+      margin-left: 30px;
+    }
+
+    .collection-list>li {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 8px;
+      /* border-radius: 5px; */
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    .collection-list .submenu {
+      display: none;
+      margin-top: 5px;
+      margin-left: 20px;
+      max-height: 0;
+      transition: max-height 0.9s ease;
+    }
+
+    .submenu.visible {
+      max-height: 500px;
+    }
+
+    .collection-list .submenu li {
+      font-size: 1rem;
+      padding: 5px 0;
+      text-decoration: none;
+
+    }
+
+    .fa-shopping-cart {
+      font-size: 23px;
+    }
 
 
+    @media (max-width: 768px) {
+      .sidebar {
+       width: 70%;
+       left: -70%;
+      }
 
+      .close-btn {
+        font-size: 1.3rem;
+      }
+
+      .collection-list>li {
+        font-size: 1.1rem;
+      }
+
+      .collection-list .submenu li {
+        font-size: .9rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #sidebar {
+        width: 100%;
+        left: -100%;
+      }
+
+      #sidebar.active {
+        left: 0;
+      }
+
+      .collection-list>li {
+        font-size: 1.2rem;
+      }
+
+      .collection-list .submenu li {
+        font-size: .9rem;
+      }
+
+      .fa-shopping-cart,
+      .fa-bars {
+        font-size: 18px;
+      }
+
+      .menu-icon {
+
+        font-size: 18px;
+
+        padding-left: 7px;
+        padding-right: 7px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-     <!-- Custom CSS -->
- 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg   c" style="box-shadow: none;" >
-  <!-- Container wrapper -->
-    
-    <div class="container navbar " style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
-    <!-- Toggle button -->
+  <!-- Custom CSS -->
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg c" style="box-shadow: none;">
+    <div class="container navbar" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;">
 
+      <!-- Menu Icon to trigger Sidebar -->
+      <span class="menu-icon" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </span>
 
-    <!-- Collapsible wrapper -->
-    <div class="" id="navbarSupportedContent">
-      <!-- Navbar brand -->
-      <a class="navbar-brand mt-2 mt-lg-0" href="#">
-        <img
-          src="{% static 'image/logo/logo2.png' %}"
-          height="55"
-          alt="logo"
-          loading="lazy"
-        />
+      <!-- Logo -->
+      <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
+        <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="logo" loading="lazy" />
       </a>
 
-    </div>
-    <!-- Collapsible wrapper -->
-   
-    <!-- Right elements -->
-    <div class="d-flex align-items-center">
-      <!-- Icon -->
-
-
-      <a class="text-reset me-3" href="{% url 'cart' %}">
-        <i class="fas fa-shopping-cart" style="font-size: 23px; border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff" ></i>
-        <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
-          {% if order.total_items %}
-          {{order.total_items}}
-          {% else %}
-          0
-          {% endif %}
-        </span>
-
-      </a>
-
-      <!-- Notifications -->
-   
-      <!-- Avatar -->
-      <div class="dropdown">
-        <a
-          data-mdb-dropdown-init
-          class="dropdown-toggle d-flex align-items-center hidden-arrow"
-          href="#"
-          id="navbarDropdownMenuAvatar"
-          role="button"
-          aria-expanded="false"
-        >
-          <img
-          src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
-            class="rounded-circle"
-            height="35"
-            alt="p"
-            loading="lazy"
-          />
-        </a>
-        <ul
-          class="dropdown-menu dropdown-menu-end"
-          aria-labelledby="navbarDropdownMenuAvatar"
-        >            
-        {% if user.is_authenticated %}
-          <li>
-            <a class="dropdown-item"  href="{% url 'profile' pk=userProfile.id %}">my order</a>
-          </li>
-          {% endif %}
- 
-          {% if user.is_superuser  %}
-          <li>
-            <a class="dropdown-item"  href="{% url 'viewOrder' %}">View Order</a>
-          </li>
-          <li>
-            <a class="dropdown-item"  href="{% url 'visit_stats' %}">visit stats</a>
-          </li>
-          {% endif %}
-          <li>
-            
-            {% if user.is_authenticated %}
-            <a class="dropdown-item"  href="{% url 'logout' %}">logout</a>
+      <!-- Cart and Profile Icons -->
+      <div class="d-flex align-items-center">
+        <a class="text-reset me-3" href="{% url 'cart' %}">
+          <i class="fas fa-shopping-cart"
+            style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
+          <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
+            {% if order.total_items %}
+            {{order.total_items}}
             {% else %}
-            <a class="dropdown-item"  href="{% url 'login' %}">login</a>
+            0
             {% endif %}
-          </li>
-        </ul>
+          </span>
+        </a>
+
+        <!-- Profile Dropdown -->
+        <div class="dropdown">
+          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
+              class="rounded-circle" height="30" alt="p" loading="lazy" />
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+            {% if user.is_authenticated %}
+            <li><a class="dropdown-item" href="{% url 'profile' pk=userProfile.id %}">my order</a></li>
+            {% endif %}
+            {% if user.is_superuser %}
+            <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>
+            <li><a class="dropdown-item" href="{% url 'visit_stats' %}">visit stats</a></li>
+            {% endif %}
+            <li>
+              {% if user.is_authenticated %}
+              <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
+              {% else %}
+              <a class="dropdown-item" href="{% url 'login' %}">login</a>
+              {% endif %}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <!-- Right elements -->
-  </div>
-  <!-- Container wrapper -->
-</nav>
-<!-- Navbar -->
+  </nav>
 
-<section class="hero" id="hero">
-  <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
-    <div class="carousel-inner">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+    <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" />
+
+    <ul class="collection-list">
       {% for collection in heroCollections %}
+      <a class="set" href="{% url 'shop_grid' pk=collection.id %}">
+        <li>
+          <span>
+            {{collection.name}}
+          </span>
+        </li>
+      </a>
+      {% endfor %}
+
+      {% for collection in collectionsets %}
+      <li>
+        <span onclick='toggleSubmenu("{{collection.id}}")'>
+          <span>
+            <i class="fa-solid fa-plus"></i> &nbsp;
+          </span>
+          {{collection.name}}
+        </span>
+        <ul class="submenu" id="{{collection.id}}">
+          {% for category in collection.productcategory_set.all %}
+          <a href="{% url 'products' pk=category.id %}">
+            <li style="font-weight: 100; list-style-type: none;">{{category.name}}</li>
+          </a>
+
+          {% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- JavaScript to toggle sidebar -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+    function toggleSubmenu(submenuId) {
+      const submenu = document.getElementById(submenuId);
+      submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+      submenu.classList.toggle("visible");
+
+    }
+  </script>
+
+
+  <!-- Navbar -->
+
+  <section class="hero" id="hero">
+    <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel" data-mdb-carousel-init>
+      <div class="carousel-inner">
+        {% for collection in heroCollections %}
         <a href="{% url 'shop_grid' pk=collection.id %}">
           <div class="carousel-item {% if forloop.first %}active{% endif %}" data-mdb-interval="10000">
             <!-- <img src="{{ collection.imageURL }}" class="d-block w-100 hero-image"  alt="Image Description"> -->
             <picture>
-              <source  media="(max-width: 767px)" srcset="{{ collection.mobileimageURL }}" class="mobile-image">
-              <img src="{{ collection.imageURL }}"  class="hero-image desktop-image">
-          </picture>
-              
+              <source media="(max-width: 767px)" srcset="{{ collection.mobileimageURL }}" class="mobile-image">
+              <img src="{{ collection.imageURL }}" class="hero-image desktop-image">
+            </picture>
+
           </div>
         </a>
-      {% endfor %}
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" data-mdb-target="#carouselExampleInterval" type="button"
+        data-mdb-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" data-mdb-target="#carouselExampleInterval" type="button"
+        data-mdb-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
     </div>
-    <button class="carousel-control-prev" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-  </div>
-</section>
+  </section>
 
-<hr>
-<section>
-  <div class="scrollable-container" id="scrollable-container">
-    <div class="product-grid">
-      {% for product in new_arrivals %}
-      <a href="{% url 'shop_details' slug=product.slug %}">
-        <div class="product-card">
-          <div class="img-container" style="overflow: hidden;">
-            <img src="{{product.imageURL}}" alt="Product Image" loading="lazy">
-          </div>
-
-          <div class="stock-out-msg">New</div>
-
-          <div class="product-details">
-            <p class="product-name">{{product.name}}</p>
-            <p class="price" style="font-family: 'Space Grotesk', sans-serif;">
-              Tk. {{product.price}}
-            </p>
-          </div>
-        </div>
-      </a>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-<script>
-  window.addEventListener('scroll', function () {
-    const scrollableContainer = document.getElementById('scrollable-container');
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const heroheight = document.getElementById('hero')
-    if (scrollTop>heroheight.offsetHeight ) {
-      scrollableContainer.style.overflowY = 'auto'; // Enable scrolling
-      console.log(scrollTop)
-    } else {
-      scrollableContainer.style.overflowY = 'hidden'; // Disable scrolling
-    }
-  });
-</script>
-
-<hr>
-
-<section>
-<div class="container-fluid mt-5 category-container">
-  <button class="arrow arrow-left">&lt;</button>
-  <button class="arrow arrow-right">&gt;</button>
-  <div class="category-wrapper">
-    {% for category in popular_category %}
-    <div class="category-card">
-      <a href="{% url 'products' pk=category.id %}">
-      <img src="{{category.imageURL}}" alt="Category">
-      <div class="card-overlay">{{category.name}}</div>
-    </a>
-    </div>
-    {% endfor %}
-  </div>
-</div>
-</section>
-
-
-
-<section style="margin-top: 30px;">
-  <style>
-
-    .swiper {
-      width: 100%;
- 
-    }
-
-    .swiper-slide {
-      background-position: center;
-      background-size: cover;
-      width: 300px;
-      height: 448px;
-    }
-
-    .swiper-slide img {
-      display: block;
-      width: 100%;
-    }
-    .top-ratting{
-   
-   height: 70px;
-   border-radius: 10px;
- }
-  </style>
-  <div class="heading text-center">
-    <h3>Top Selling Products</h3>
-    <h6>Grab these new items before they are gone!</h6>
-  </div>
-  <div class="swiper mySwiper" style="height: 450px;">
-    <div class="swiper-wrapper">
-      {% for product in top_rated_product %}
-      <div class="swiper-slide " style="border-radius: 6px; background: #0d0d0d;">
+  <hr>
+  <section>
+    <div class="scrollable-container" id="scrollable-container">
+      <div class="product-grid">
+        {% for product in new_arrivals %}
         <a href="{% url 'shop_details' slug=product.slug %}">
-        <div class="card  text-white"  style="height: 100%; width: 100%; background: #0d0d0d;">
-  
-          <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach" />
-    
-          <div class="card-img-overlay d-flex flex-column justify-content-between">
-            <div class="top-left p-3" style="position: absolute; top: 0; right: 0; ">
-                <h5 class="card-title " style="font-size: 1rem; color: #ffffff;">
-                  <span class="p-2" style="background-color: #f74f06; color: #0B1215; font-family: 'Space Grotesk', sans-serif;" > {{ product.ratting }}★</span>
-                   
-                </h5>
+          <div class="product-card">
+            <div class="img-container" style="overflow: hidden;">
+              <img src="{{product.imageURL}}" alt="Product Image" loading="lazy">
             </div>
-            <style>
-              .details{
-                -webkit-mask-image: linear-gradient(to bottom, black,transparent);
-                mask-image: linear-gradient(to bottom, black,transparent);
-              }
-            </style>
-            <div class="bottom p-3 " style="position: absolute; bottom: 0; left: 0; width: 100%; ">
-                <h5 class="card-title mb-0" style="font-size: 1.2rem; color: #ffffff;">
-                    {{ product.name }}
-                </h5>
-                <hr>
-                <p class="card-text mb-0" style="font-size:1.2rem; color: #ffffff;font-family: 'Space Grotesk', sans-serif;">
-                    {{ product.price }} Tk.
-                </p>
+
+            <div class="stock-out-msg">New</div>
+
+            <div class="product-details">
+              <p class="product-name">{{product.name}}</p>
+              <p class="price" style="font-family: 'Space Grotesk', sans-serif;">
+                Tk. {{product.price}}
+              </p>
             </div>
-        </div>
-        
-          
-        </div>
-      </a>
-      </div>
-  
-      {% endfor %}
-    </div>
-    <!-- <div class="swiper-pagination"></div> -->
-  </div>
-</section>
-
-
-<section>
-
-  <div class="container">
-    <div class="row">
-      {% for collection in collectionsets %}
-      <div class="col-12 col-lg-6 mb-4">
-        <a href="{% url 'shop_grid' pk=collection.id %}">
-        <div class="card bg-dark text-white t">
-          <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"  alt="Stony Beach" loading="lazy"/>
-          <div class="card-img-overlay text-center d-flex justify-content-center collection-heading" style="align-items: center;">
-            <!-- <span>{{collection.name}}</span> -->
-           
           </div>
-        </div>
-      </a>
+        </a>
+        {% endfor %}
       </div>
-      {% endfor %}
-  
     </div>
-  </div>
-
-</section>
-
-
-{% if top_rated_product %}
-<section>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-
+  </section>
   <script>
-    var swiper = new Swiper(".mySwiper", {
+    window.addEventListener('scroll', function () {
+      const scrollableContainer = document.getElementById('scrollable-container');
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const heroheight = document.getElementById('hero')
+      if (scrollTop > heroheight.offsetHeight) {
+        scrollableContainer.style.overflowY = 'auto'; // Enable scrolling
+        // console.log(scrollTop)
+      } else {
+        scrollableContainer.style.overflowY = 'hidden'; // Disable scrolling
+      }
+    });
+  </script>
+
+  <hr>
+
+  <section>
+    <div class="container-fluid mt-5 category-container">
+      <button class="arrow arrow-left">&lt;</button>
+      <button class="arrow arrow-right">&gt;</button>
+      <div class="category-wrapper">
+        {% for category in popular_category %}
+        <div class="category-card">
+          <a href="{% url 'products' pk=category.id %}">
+            <img src="{{category.imageURL}}" alt="Category">
+            <div class="card-overlay">{{category.name}}</div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+
+
+  <section style="margin-top: 30px;">
+    <style>
+      .swiper {
+        width: 100%;
+
+      }
+
+      .swiper-slide {
+        background-position: center;
+        background-size: cover;
+        width: 300px;
+        height: 448px;
+      }
+
+      .swiper-slide img {
+        display: block;
+        width: 100%;
+      }
+
+      .top-ratting {
+
+        height: 70px;
+        border-radius: 10px;
+      }
+    </style>
+    <div class="heading text-center">
+      <h3>Top Selling Products</h3>
+      <h6>Grab these new items before they are gone!</h6>
+    </div>
+    <div class="swiper mySwiper" style="height: 450px;">
+      <div class="swiper-wrapper">
+        {% for product in top_rated_product %}
+        <div class="swiper-slide " style="border-radius: 6px; background: #0d0d0d;">
+          <a href="{% url 'shop_details' slug=product.slug %}">
+            <div class="card  text-white" style="height: 100%; width: 100%; background: #0d0d0d;">
+
+              <img src="{{product.imageURL}}" class="card-img details" alt="Stony Beach" />
+
+              <div class="card-img-overlay d-flex flex-column justify-content-between">
+                <div class="top-left p-3" style="position: absolute; top: 0; right: 0; ">
+                  <h5 class="card-title " style="font-size: 1rem; color: #ffffff;">
+                    <span class="p-2"
+                      style="background-color: #f74f06; color: #0B1215; font-family: 'Space Grotesk', sans-serif;">
+                      {{product.ratting }}★</span>
+
+                  </h5>
+                </div>
+                <style>
+                  .details {
+                    -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+                    mask-image: linear-gradient(to bottom, black, transparent);
+                  }
+                </style>
+                <div class="bottom p-3 " style="position: absolute; bottom: 0; left: 0; width: 100%; ">
+                  <h5 class="card-title mb-0" style="font-size: 1.2rem; color: #ffffff;">
+                    {{ product.name }}
+                  </h5>
+                  <hr>
+                  <p class="card-text mb-0"
+                    style="font-size:1.2rem; color: #ffffff;font-family: 'Space Grotesk', sans-serif;">
+                    {{ product.price }} Tk.
+                  </p>
+                </div>
+              </div>
+
+
+            </div>
+          </a>
+        </div>
+
+        {% endfor %}
+      </div>
+      <!-- <div class="swiper-pagination"></div> -->
+    </div>
+  </section>
+
+
+  <section>
+
+    <div class="container">
+      <div class="row">
+        {% for collection in collectionsets %}
+        <div class="col-12 col-lg-6 mb-4">
+          <a href="{% url 'shop_grid' pk=collection.id %}">
+            <div class="card bg-dark text-white t">
+              <img src="{{collection.imageURL}}" class="card-img" width="100%" height="100%" style="object-fit: cover;"
+                alt="Stony Beach" loading="lazy" />
+              <div class="card-img-overlay text-center d-flex justify-content-center collection-heading"
+                style="align-items: center;">
+                <!-- <span>{{collection.name}}</span> -->
+
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+  </section>
+
+
+  {% if top_rated_product %}
+  <section>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+
+    <script>
+      var swiper = new Swiper(".mySwiper", {
         effect: "coverflow",
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
+        initialSlide: 1,
         coverflowEffect: {
-            rotate: 50,
-            stretch: 0,
-            depth: 100,
-            modifier: 1,
-            slideShadows: true,
+          rotate: 50,
+          stretch: 0,
+          depth: 300,
+          modifier: 1,
+          slideShadows: true,
         },
         autoplay: {  // Autoplay configuration
-            delay: 3000,  // Delay between slides in milliseconds (3 seconds)
-            disableOnInteraction: false,  // Continue autoplay after user interaction
+          delay: 3000,  // Delay between slides in milliseconds (3 seconds)
+          disableOnInteraction: false,  // Continue autoplay after user interaction
         },
         pagination: {
-            el: ".swiper-pagination",
+          el: ".swiper-pagination",
         },
-    });
-</script>
-</section>
-{% endif %}
-
-
-
-<!-- Footer -->
-<footer class="text-center text-lg-start text-muted" style="opacity: 1; background-color: #ececec; backdrop-filter: blur(10px);">
-  <!-- Section: Social media -->
-  <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
-    <!-- Left -->
-    <div class="me-5 d-none d-lg-block">
-      <span>Get connected with us on social networks:</span>
-    </div>
-    <!-- Left -->
-
-    <!-- Right -->
-    <div>
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-facebook-f"></i>
-      </a>
- 
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-google"></i>
-      </a>
-      <a href="" class="me-4 text-reset">
-        <i class="fab fa-instagram"></i>
-      </a>
-
-
-    </div>
-    <!-- Right -->
+      });
+    </script>
   </section>
-  <!-- Section: Social media -->
+  {% endif %}
 
-  <!-- Section: Links  -->
-  <section class="">
-    <div class="container text-center text-md-start mt-5">
-      <!-- Grid row -->
-      <div class="row mt-3">
-        <!-- Grid column -->
-        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-          <!-- Content -->
-          <h6 class="text-uppercase fw-bold mb-4">
-            <a class=" " href="#">
-              <img
-                src="{% static 'image/logo/logo2.png' %}"
-                height="55"
-                alt="logo"
-                loading="lazy"
-              />
-  
 
-            </a>    Longg
-          </h6>
-          <p>
-            Take Love "longg-লং"
-            Explore our collection and embrace a fusion of style, comfort, and elegance.
-          </p>
-        </div>
-        <!-- Grid column -->
 
-        <!-- Grid column -->
-
-        <!-- Grid column -->
-
-       
-
-        <!-- Grid column -->
-        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-             <!-- Links -->
-             <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
-             <p><i class="fas fa-home me-3"></i> Mohammadpur,zakir hossain road , Dhaka</p>
-             <p>
-               <i class="fas fa-envelope me-3"></i>
-               
-             longfashion2020@gmail.com
-             </p>
-             <p><i class="fas fa-phone me-3"></i> + 01323-426706</p>
-        </div>
-        <!-- Grid column -->
+  <!-- Footer -->
+  <footer class="text-center text-lg-start text-muted"
+    style="opacity: 1; background-color: #ececec; backdrop-filter: blur(10px);">
+    <!-- Section: Social media -->
+    <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+      <!-- Left -->
+      <div class="me-5 d-none d-lg-block">
+        <span>Get connected with us on social networks:</span>
       </div>
-      <!-- Grid row -->
+      <!-- Left -->
+
+      <!-- Right -->
+      <div>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-google"></i>
+        </a>
+        <a href="" class="me-4 text-reset">
+          <i class="fab fa-instagram"></i>
+        </a>
+
+
+      </div>
+      <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold mb-4">
+              <a class=" " href="#">
+                <img src="{% static 'image/logo/logo2.png' %}" height="55" alt="logo" loading="lazy" />
+
+
+              </a> Longg
+            </h6>
+            <p>
+              Take Love "longg-লং"
+              Explore our collection and embrace a fusion of style, comfort, and elegance.
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+
+
+
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold mb-4">Contact</h6>
+            <p><i class="fas fa-home me-3"></i> Mohammadpur,zakir hossain road , Dhaka</p>
+            <p>
+              <i class="fas fa-envelope me-3"></i>
+
+              longfashion2020@gmail.com
+            </p>
+            <p><i class="fas fa-phone me-3"></i> + 01323-426706</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+      </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+      © 2021 Copyright:
+      <a class="text-reset fw-bold" href="/">longgFashion.com</a>
     </div>
-  </section>
-  <!-- Section: Links  -->
-
-  <!-- Copyright -->
-  <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-    © 2021 Copyright:
-    <a class="text-reset fw-bold" href="/">longgFashion.com</a>
-  </div>
-  <!-- Copyright -->
-</footer>
-<!-- Footer -->
+    <!-- Copyright -->
+  </footer>
+  <!-- Footer -->
 
 
 
 
-<script>
-  const categoryWrapper = document.querySelector('.category-wrapper');
-  const arrowLeft = document.querySelector('.arrow-left');
-  const arrowRight = document.querySelector('.arrow-right');
-  const categoryCards = document.querySelectorAll('.category-card');
+  <script>
+    const categoryWrapper = document.querySelector('.category-wrapper');
+    const arrowLeft = document.querySelector('.arrow-left');
+    const arrowRight = document.querySelector('.arrow-right');
+    const categoryCards = document.querySelectorAll('.category-card');
 
-  function updateArrows() {
-    const scrollLeft = categoryWrapper.scrollLeft;
-    const maxScrollLeft = categoryWrapper.scrollWidth - categoryWrapper.clientWidth;
+    function updateArrows() {
+      const scrollLeft = categoryWrapper.scrollLeft;
+      const maxScrollLeft = categoryWrapper.scrollWidth - categoryWrapper.clientWidth;
 
-    if (scrollLeft > 0) {
-      arrowLeft.style.display = 'block';
-    } else {
-      arrowLeft.style.display = 'none';
+      if (scrollLeft > 0) {
+        arrowLeft.style.display = 'block';
+      } else {
+        arrowLeft.style.display = 'none';
+      }
+
+      if (scrollLeft < maxScrollLeft) {
+        arrowRight.style.display = 'block';
+      } else {
+        arrowRight.style.display = 'none';
+      }
     }
 
-    if (scrollLeft < maxScrollLeft) {
-      arrowRight.style.display = 'block';
-    } else {
-      arrowRight.style.display = 'none';
-    }
-  }
-
-  arrowLeft.addEventListener('click', () => {
-    categoryWrapper.scrollBy({
-      left: -350,
-      behavior: 'smooth'
+    arrowLeft.addEventListener('click', () => {
+      categoryWrapper.scrollBy({
+        left: -350,
+        behavior: 'smooth'
+      });
     });
-  });
 
-  arrowRight.addEventListener('click', () => {
-    categoryWrapper.scrollBy({
-      left: 350,
-      behavior: 'smooth'
+    arrowRight.addEventListener('click', () => {
+      categoryWrapper.scrollBy({
+        left: 350,
+        behavior: 'smooth'
+      });
     });
-  });
-
-
-    
-
-  categoryWrapper.addEventListener('scroll', updateArrows);
-
-  window.addEventListener('load', () => {
-    if (categoryCards.length > 0) {
-      updateArrows();
-    } else {
-      arrowLeft.style.display = 'none';
-      arrowRight.style.display = 'none';
-    }
-  });
-</script>
 
 
 
-<script
-type="text/javascript"
-src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
-></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    categoryWrapper.addEventListener('scroll', updateArrows);
+
+    window.addEventListener('load', () => {
+      if (categoryCards.length > 0) {
+        updateArrows();
+      } else {
+        arrowLeft.style.display = 'none';
+        arrowRight.style.display = 'none';
+      }
+    });
+  </script>
+
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 </body>
+
 </html>

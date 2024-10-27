@@ -123,6 +123,8 @@ class Product(models.Model):
     add_on_product2=models.ManyToManyField(AddOnProduct,related_name='ad_on_2',blank=True)
     add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3",blank=True)
     description=models.TextField(null=True,blank=True)
+    
+    desc = models.TextField(null=True,blank=True)
     price = models.IntegerField(default=0)
     unstitched_price = models.PositiveIntegerField(default=0)
     discount_percent=models.IntegerField(default=0)
