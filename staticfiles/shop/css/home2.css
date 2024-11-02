@@ -282,7 +282,7 @@
 
   .t {
     width: auto;
-    height: 600px;
+    /* height: 600px; */
     object-fit: contain;
   }
 
@@ -368,8 +368,8 @@
 
   @media (max-width: 768px) {
     .sidebar {
-      width: 70%; /* Make sidebar wider on smaller screens */
-      left: -70%;
+      width: 100%; /* Make sidebar wider on smaller screens */
+      left: -100%;
     }
 
     .category-card {
