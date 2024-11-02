@@ -629,6 +629,8 @@ def shop_details(request,slug):
         # Attempt to get product and related data from cache
         product = cache.get(cache_key)
         related_data = cache.get(related_cache_key)
+  
+        
 
         # If product is not in cache, query the database and cache it
         if product is None:
@@ -693,6 +695,15 @@ def shop_details(request,slug):
             'order': get_cart_total_items(request),
         }
 
+        hero_collections = cache.get('hero_collections')
+        collection_sets = cache.get('collection_sets')
+        if hero_collections and collection_sets:
+            context.update(
+                {
+                   'collectionsets':collection_sets,
+                   'heroCollections':hero_collections
+                }
+            )
         user=request.user
         if user.is_authenticated:
             userProfile,created = UserProfile.objects.get_or_create(user  = user)

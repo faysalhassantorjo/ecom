@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load static %}
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <meta property="og:type" content="product" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
@@ -25,25 +28,24 @@
 
 
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
+        rel="stylesheet">
 
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css"
-  rel="stylesheet"
-/>
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-0372CDLF47');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-0372CDLF47');
+    </script>
 
 
     <style>
@@ -51,22 +53,36 @@
             background-color: #0b1215;
             color: #ffffff;
             font-family: "Playfair Display", serif;
+            /* font-family: 'Atma', system-ui; */
+
         }
 
+        .hero-collection {
 
-        .html-div, p{
-            font-family: 'Atma', system-ui; font-weight: 300; font-style: normal;
-            opacity: .9; font-size: 1rem;
+            font-weight: 100;
+            font-style: normal;
         }
-        ::selection{
+
+        .html-div,
+        p {
+            font-family: 'Atma', system-ui;
+            font-weight: 300;
+            font-style: normal;
+            opacity: .9;
+            font-size: 1rem;
+        }
+
+        ::selection {
             background-color: #f74f06;
-            color:#fff;
+            color: #fff;
         }
+
         .product-img img {
             width: 100%;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
+
         .thumb-img img {
             width: 80px;
             height: auto;
@@ -74,26 +90,31 @@
             margin-right: 10px;
             border-radius: 4px;
             border: 2px solid #ffffff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
+
         .thumb-img img:hover {
             border-color: #f74f06;
             transform: scale(1.1);
         }
+
         .price {
             color: #f74f06;
             font-weight: bold;
             font-size: 26px;
         }
+
         .rating {
             font-size: 24px;
             color: #f8d64e;
         }
+
         .reviews-count {
             font-size: 16px;
             color: #bbbbbb;
         }
+
         .size-options label {
             font-weight: bold;
             margin-right: 10px;
@@ -104,223 +125,430 @@
             border: 2px solid transparent;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+
         .size-options input[type="radio"] {
             display: none;
         }
-        .size-options input[type="radio"]:checked + label {
+
+        .size-options input[type="radio"]:checked+label {
             background-color: #f74f06;
             border-color: #ffffff;
         }
+
         .size-options label:hover {
             background-color: #495057;
         }
+
         .btn-danger {
             background-color: #c13c03;
             border: none;
             padding: 12px 30px;
             font-size: 16px;
-            box-shadow: 0 4px 6px rgba(220,53,69,0.4);
+            box-shadow: 0 4px 6px rgba(220, 53, 69, 0.4);
         }
+
         .btn-danger:hover {
             background-color: #f74f06;
         }
-        .review-section, .recommended-products {
+
+        .review-section,
+        .recommended-products {
             margin-top: 40px;
         }
-        .review-section, .addon-section {
+
+        .review-section,
+        .addon-section {
             background-color: #343a40;
             backdrop-filter: blur(10px);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
         }
+
         .review-item {
             border-bottom: 1px solid #444;
             padding-bottom: 15px;
             margin-bottom: 15px;
         }
+
         .recommended-products img {
             width: 100%;
             border-radius: 8px;
             transition: transform 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
+
         .recommended-products img:hover {
             transform: scale(1.05);
         }
+
         .recommended-products .card {
             border: none;
             background-color: #1e1e1e;
         }
+
         .recommended-products .card-body {
             text-align: center;
         }
+
         .size-chart-link {
             color: #14d0c0;
             cursor: pointer;
             text-decoration: underline;
         }
     </style>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -30%;
+            width: 30%;
+            height: 100%;
+            backdrop-filter: blur(20px);
+            background: none;
+            color: white;
+            padding-top: 60px;
+            transition: 0.8s;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar .set {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #f74f06;
+            display: block;
+            transition: 0.5s;
+            font-weight: bolder;
+            font-size: 1.2rem;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .overlay {
+            position: fixed;
+            display: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.623);
+            z-index: 500;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #fff;
+            border: 1px solid #ececec;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-radius: 5px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            font-size: 25px;
+            cursor: pointer;
+            color: white;
+            border: 1px solid #ececec;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .collection-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 50px;
+            margin-left: 30px;
+        }
+
+        .collection-list>li {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            /* border-radius: 5px; */
+            font-weight: bold;
+            transition: background-color 0.2s ease;
+        }
+
+        .submenu {
+            display: none;
+            margin-top: 5px;
+            margin-left: 20px;
+            max-height: 0;
+        }
+
+        .submenu.visible {
+            max-height: 500px;
+        }
+
+        .collection-list .submenu li {
+            font-size: 1rem;
+            padding: 5px 0;
+            text-decoration: none;
+
+        }
+
+        .fa-shopping-cart {
+            font-size: 23px;
+        }
+
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70%;
+                left: -70%;
+            }
+
+            .close-btn {
+                font-size: 1.3rem;
+            }
+
+            .collection-list>li {
+                font-size: 1.1rem;
+            }
+
+            .collection-list .submenu li {
+                font-size: .9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #sidebar {
+                width: 100%;
+                left: -100%;
+            }
+
+            #sidebar.active {
+                left: 0;
+            }
+
+            .collection-list>li {
+                font-size: 1.2rem;
+            }
+
+            .collection-list .submenu li {
+                font-size: .9rem;
+            }
+
+            .fa-shopping-cart,
+            .fa-bars {
+                font-size: 18px;
+            }
+
+            .menu-icon {
+
+                font-size: 18px;
+
+                padding-left: 7px;
+                padding-right: 7px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <style>/* Styles for the logo */
+    <style>
+        /* Styles for the logo */
         .logo {
-            width: 50px; /* Adjust the size as needed */
+            width: 50px;
+            /* Adjust the size as needed */
             height: auto;
         }
-        
+
         /* Styles for the profile image */
         .profile-img {
-            width: 30px; /* Adjust the size as needed */
+            width: 30px;
+            /* Adjust the size as needed */
             height: 30px;
             border-radius: 50%;
             margin-right: 5px;
         }
-        
+
         /* Optional: adjust the navbar for better visibility */
         .navbar {
             padding: 0.5rem 1rem;
         }
-        
+
         .navbar-nav {
             align-items: center;
         }
 
-        .c{
+        .c {
             background-color: #0b121500;
         }
-        </style>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg  sticky-top c" style="box-shadow: none;" >
-    <!-- Container wrapper -->
-      
-      <div class="container navbar a" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
-      <!-- Toggle button -->
-  
-  
-      <!-- Collapsible wrapper -->
-      <div class="" id="navbarSupportedContent">
-        <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-lg-0" href="/">
-          <img
-            src="{% static 'image/logo/logo2.png' %}"
-            height="55"
-            alt="logo"
-            loading="lazy"
-          />
-        </a>
-  
-      </div>
-      <!-- Collapsible wrapper -->
-  
-      <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <!-- Icon -->
-  
-  
-        <a class="text-reset me-3" href="{% url 'cart' %}">
-          <i class="fas fa-shopping-cart" style="font-size: 23px; border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff" ></i>
-          <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
-            {% if order.total_items %}
-            {{order.total_items}}
-            {% else %}
-            0
-            {% endif %}
-          </span>
-  
-        </a>
-  
-        <!-- Notifications -->
-     
-        <!-- Avatar -->
-        <div class="dropdown">
-          <a
-            data-mdb-dropdown-init
-            class="dropdown-toggle d-flex align-items-center hidden-arrow"
-            href="#"
-            id="navbarDropdownMenuAvatar"
-            role="button"
-            aria-expanded="false"
-          >
-            <img
-            src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
-              class="rounded-circle"
-              height="35"
-              alt="p"
-              loading="lazy"
-            />
-          </a>
-          <ul
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdownMenuAvatar"
-          >            
-          {% if user.is_authenticated %}
-            <li>
-              <a class="dropdown-item"  href="{% url 'profile' pk=userProfile.id %}">my order</a>
-            </li>
-            {% endif %}
-  
-            {% if user.is_superuser  %}
-            <li>
-              <a class="dropdown-item"  href="{% url 'viewOrder' %}">View Order</a>
-            </li>
-            {% endif %}
-            <li>
-              
-              {% if user.is_authenticated %}
-              <a class="dropdown-item"  href="{% url 'logout' %}">logout</a>
-              {% else %}
-              <a class="dropdown-item"  href="{% url 'login' %}">login</a>
-              {% endif %}
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- Right elements -->
-    </div>
-    <!-- Container wrapper -->
-  </nav>
-  <!-- Navbar -->
-  {% if messages %}
+    </style>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg c" style="box-shadow: none;">
+        <div class="container navbar" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;">
 
-  <style>
-      .messages .message {
-          background-color: #f74f06;
-          /* Dark green background */
-          color: #ffffff;
-          /* Light text */
-          border: 1px solid #4caf50;
-          /* Green border */
-          padding: 15px;
-          /* Padding around the message */
-          margin-bottom: 20px;
-          /* Spacing between messages */
-          border-radius: 4px;
-          /* Rounded corners */
-          box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-          /* Shadow for depth */
-          position: fixed;
-          z-index: 10;
-      }
-  </style>
-  <div class="messages d-flex justify-content-center " style="margin-top:-10px;">
-      {% for message in messages %}
-      <div class="message" id="success-message">{{ message }}</div>
-      {% endfor %}
-  </div>
-  {% endif %}
-  
-  <script>
-  
-      var messageElement = document.getElementById("success-message");
-  
-      messageElement.style.display = "block";
-  
-      setTimeout(function () {
-          messageElement.style.display = "none";
-      }, 2000);
-  </script>
+            <!-- Menu Icon to trigger Sidebar -->
+            <span class="menu-icon" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </span>
+
+            <!-- Logo -->
+            <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
+                <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="logo" loading="lazy" />
+            </a>
+
+            <!-- Cart and Profile Icons -->
+            <div class="d-flex align-items-center">
+                <a class="text-reset me-3" href="{% url 'cart' %}">
+                    <i class="fas fa-shopping-cart"
+                        style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
+                    <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
+                        {% if order.total_items %}
+                        {{order.total_items}}
+                        {% else %}
+                        0
+                        {% endif %}
+                    </span>
+                </a>
+
+                <!-- Profile Dropdown -->
+                <div class="dropdown">
+                    <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                        id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                        <img src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
+                            class="rounded-circle" height="30" alt="p" loading="lazy" />
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                        {% if user.is_authenticated %}
+                        <li><a class="dropdown-item" href="{% url 'profile' pk=userProfile.id %}">my order</a></li>
+                        {% endif %}
+                        {% if user.is_superuser %}
+                        <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>
+                        <li><a class="dropdown-item" href="{% url 'visit_stats' %}">visit stats</a></li>
+                        {% endif %}
+                        <li>
+                            {% if user.is_authenticated %}
+                            <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
+                            {% else %}
+                            <a class="dropdown-item" href="{% url 'login' %}">login</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+        <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo"
+            loading="lazy" />
+
+        <ul class="collection-list">
+            {% for collection in heroCollections %}
+            <a class="set" href="{% url 'shop_grid' pk=collection.id %}">
+                <li>
+                    <span class="hero-collection">
+                        {{collection.name}}
+                    </span>
+                </li>
+            </a>
+            {% endfor %}
+
+            {% for collection in collectionsets %}
+            <li>
+                <span onclick='toggleSubmenu("{{collection.id}}")'>
+                    <span>
+                        <i class="fa-solid fa-plus"></i> &nbsp;
+                    </span>
+                    {{collection.name}}
+                </span>
+                <ul class="submenu" id="{{collection.id}}">
+                    {% for category in collection.productcategory_set.all %}
+                    <a href="{% url 'products' pk=category.id %}">
+                        <li style="font-weight: 100; list-style-type: none; color:#dbdbdb">{{category.name}}</li>
+                    </a>
+
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- JavaScript to toggle sidebar -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        function toggleSubmenu(submenuId) {
+            const submenu = document.getElementById(submenuId);
+            submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+            submenu.style.transition = "0.8s"
+            submenu.classList.toggle("visible");
+
+        }
+    </script>
+
+    <!-- Navbar -->
+    {% if messages %}
+
+    <style>
+        .messages .message {
+            background-color: #f74f06;
+            /* Dark green background */
+            color: #ffffff;
+            /* Light text */
+            border: 1px solid #4caf50;
+            /* Green border */
+            padding: 15px;
+            /* Padding around the message */
+            margin-bottom: 20px;
+            /* Spacing between messages */
+            border-radius: 4px;
+            /* Rounded corners */
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+            /* Shadow for depth */
+            position: fixed;
+            z-index: 10;
+        }
+    </style>
+    <div class="messages d-flex justify-content-center " style="margin-top:-10px;">
+        {% for message in messages %}
+        <div class="message" id="success-message">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <script>
+
+        var messageElement = document.getElementById("success-message");
+
+        messageElement.style.display = "block";
+
+        setTimeout(function () {
+            messageElement.style.display = "none";
+        }, 2000);
+    </script>
     <!-- Product Page Container -->
     <div class="container my-2">
         <div class="row">
@@ -331,13 +559,13 @@
                 </div>
                 <div class="thumb-img d-flex">
                     {% if product.imageURL2 %}
-                    <img src="{{product.imageURL2}}"  alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL2}}" alt="Product Image 1" onclick="changeImage(this.src)">
                     {% endif %}
                     {% if product.imageURL3 %}
-                    <img src="{{product.imageURL3}}"  alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL3}}" alt="Product Image 1" onclick="changeImage(this.src)">
                     {% endif %}
                     {% if product.imageURL4 %}
-                    <img src="{{product.imageURL4}}"  alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL4}}" alt="Product Image 1" onclick="changeImage(this.src)">
                     {% endif %}
                 </div>
             </div>
@@ -348,22 +576,23 @@
                     <h2 style="font-size: 2rem; text-transform: capitalize;"> {{product.name}}</h2>
 
                     <p class="price" style="font-size: 1.7rem;">Tk. <span id="product-price">{{product.price}}</span>
-                          {% if product.discount_percent %}
+                        {% if product.discount_percent %}
                         <del style="opacity: .8; font-size: 1rem;">
-                             {{product.update_price}}
+                            {{product.update_price}}
                         </del>
-                            {% endif %}</p>
-                            <span style="opacity: .8;">
-                                Category: &nbsp;
-                                {% for category in product.productCategory.all %}
-                                    {{ category.name }}{% if not forloop.last %}, {% endif %}
-                                {% empty %}
-                                    No categories found
-                                {% endfor %}
-                            </span>
-                            <hr>
-                            <p class="desc" >{{ product.description|safe }}</p>
-                            <hr>
+                        {% endif %}
+                    </p>
+                    <span style="opacity: .8;">
+                        Category: &nbsp;
+                        {% for category in product.productCategory.all %}
+                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                        No categories found
+                        {% endfor %}
+                    </span>
+                    <hr>
+                    <p class="desc">{{ product.description|safe }}</p>
+                    <hr>
                     <!-- Product Rating and Reviews -->
                     <div class="d-flex align-items-center">
                         <span class="rating">{{product.ratting}} ★</span>
@@ -373,10 +602,10 @@
 
                     {% if product.unstitched_price %}
                     <div class="unstiched mt-4">
-                        <button type="button" 
-                        id="unstiched-button" class="btn btn-dark"  style="font-size: 1.1rem; background-color: #343a40;">
+                        <button type="button" id="unstiched-button" class="btn btn-dark"
+                            style="font-size: 1.1rem; background-color: #343a40;">
                             Unstitched?
-                        </button> 
+                        </button>
                     </div>
                     {% endif %}
                     <form method="post" action="{% url 'update_item' %}" onsubmit="return validateForm()">
@@ -386,60 +615,64 @@
 
                         </div>
 
-                    <style>
-                        label{
-                            margin-top: 10px;
-                        }
-                    </style>
-                     
-                    <!-- Size Option as Radio Buttons -->
-                    <div class="size-options mt-3" style="border: 1px solid #484d50; padding: 10px">
-                        <p>Select Size  <span id = "Unstitched-info" style="background-color: #037288; font-size: .8rem;" ></span></p>
-        
-                        <input type="radio" id="36" name="size" value="36">
-                        <label for="36">36</label>
-                        <input type="radio" id="38" name="size" value="38">
-                        <label for="38">38</label>
-                        <input type="radio" id="40" name="size" value="40">
-                        <label for="40">40</label>
-                        <input type="radio" id="42" name="size" value="42">
-                        <label for="42">42</label>
-                        <input type="radio" id="44" name="size" value="44">
-                        <label for="44">44</label>
-                        
-                        
-                    </div>
-          
-                    <!-- Size Chart Link -->
-                    <p class="mt-4">
-                        <span class="size-chart-link" data-bs-toggle="modal" data-bs-target="#sizeChartModal">View Size Chart</span>
-                    </p>
+                        <style>
+                            label {
+                                margin-top: 10px;
+                            }
+                        </style>
 
-                    {% if add_on_product or add_on_product2 or add_on_product3 %}
-                    <div class="card addon-section">
-                        <div class="card-header text-light" style="font-size: 1.2rem;">
-                            Addons
-                            <p style="font-size: 1rem; opacity: .8; font-family: 'Atma', system-ui; font-weight: 300; font-style: normal;">
-                                আপনি চাইলে Product এর সাথে নিচের দেওয়া অ্যাড-অন মেনু থেকে ad-on product সিলেক্ট করে নিতে পারেন। সেক্ষেত্রে প্রোডাক্টের মূল্যের সাথে Add On মূল্যটি যোগ হবে।</p>
+                        <!-- Size Option as Radio Buttons -->
+                        <div class="size-options mt-3" style="border: 1px solid #484d50; padding: 10px">
+                            <p>Select Size <span id="Unstitched-info"
+                                    style="background-color: #037288; font-size: .8rem;"></span></p>
+
+                            <input type="radio" id="36" name="size" value="36">
+                            <label for="36">36</label>
+                            <input type="radio" id="38" name="size" value="38">
+                            <label for="38">38</label>
+                            <input type="radio" id="40" name="size" value="40">
+                            <label for="40">40</label>
+                            <input type="radio" id="42" name="size" value="42">
+                            <label for="42">42</label>
+                            <input type="radio" id="44" name="size" value="44">
+                            <label for="44">44</label>
+
+
                         </div>
-                        <div class="card-body d-flex">
-                            <select name="add_on_product" id="" class="form-control">
-                                <option class="text-dark" value="none" style="font-size: 1.1rem;">select</option>
 
-                                {% for add_product in add_on_product %}
-                                <option class="text-dark" value="{{add_product.id}}" style="font-size:.9rem;">
-                                    {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
-                                {% endfor %}
-                            </select>
-                            &nbsp;<select name="add_on_product2" id="" class="form-control">
-                                <option value="none" class="text-dark" style="font-size: 1.1rem;">select</option>
+                        <!-- Size Chart Link -->
+                        <p class="mt-4">
+                            <span class="size-chart-link" data-bs-toggle="modal" data-bs-target="#sizeChartModal">View
+                                Size Chart</span>
+                        </p>
 
-                                {% for add_product in add_on_product2 %}
-                                <option value="{{add_product.id}}" style="font-size: .9rem;">
-                                    {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
-                                {% endfor %}
-                            </select>
-                            <!-- <select name="add_on_product3" id="" class="form-control">
+                        {% if add_on_product or add_on_product2 or add_on_product3 %}
+                        <div class="card addon-section">
+                            <div class="card-header text-light" style="font-size: 1.2rem;">
+                                Addons
+                                <p
+                                    style="font-size: 1rem; opacity: .8; font-family: 'Atma', system-ui; font-weight: 300; font-style: normal;">
+                                    আপনি চাইলে Product এর সাথে নিচের দেওয়া অ্যাড-অন মেনু থেকে ad-on product সিলেক্ট করে
+                                    নিতে পারেন। সেক্ষেত্রে প্রোডাক্টের মূল্যের সাথে Add On মূল্যটি যোগ হবে।</p>
+                            </div>
+                            <div class="card-body d-flex">
+                                <select name="add_on_product" id="" class="form-control">
+                                    <option class="text-dark" value="none" style="font-size: 1.1rem;">select</option>
+
+                                    {% for add_product in add_on_product %}
+                                    <option class="text-dark" value="{{add_product.id}}" style="font-size:.9rem;">
+                                        {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
+                                    {% endfor %}
+                                </select>
+                                &nbsp;<select name="add_on_product2" id="" class="form-control">
+                                    <option value="none" class="text-dark" style="font-size: 1.1rem;">select</option>
+
+                                    {% for add_product in add_on_product2 %}
+                                    <option value="{{add_product.id}}" style="font-size: .9rem;">
+                                        {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <select name="add_on_product3" id="" class="form-control">
                                 <option value="none" style="font-size: 1.1rem;">-------</option>
 
                                 {% for add_product in add_on_product3 %}
@@ -447,31 +680,32 @@
                                     {{add_product.name}} - {{add_product.size}} - {{add_product.price}}Tk.</option>
                                 {% endfor %}
                             </select> -->
+                            </div>
                         </div>
-                    </div>
-                    {% endif %}
-                    <!-- Add to Cart Button -->
-                    <input type="text" name="action" value="add {{ product.slug }}" hidden>
+                        {% endif %}
+                        <!-- Add to Cart Button -->
+                        <input type="text" name="action" value="add {{ product.slug }}" hidden>
 
-                    <button type="submit" class="btn btn-danger btn-lg mt-3">Add to Cart</button>
+                        <button type="submit" class="btn btn-danger btn-lg mt-3">Add to Cart</button>
 
-                </form>
+                    </form>
 
                 </div>
             </div>
         </div>
 
 
-<!-- Review Section -->
+        <!-- Review Section -->
         <div class="row review-section" id="reviewSection" style="position: relative;">
             <div class="col-md-12">
                 <!-- Minimize/Maximize Button -->
 
 
-                <h4 style="text-align: center;">Customer Reviews <span style="opacity: .7;">({{ product.total_reviews }})                 <button id="toggleButton" class="btn btn-secondary" style="text-transform: lowercase;
+                <h4 style="text-align: center;">Customer Reviews <span style="opacity: .7;">
+                    ({{ product.total_reviews}}) <button id="toggleButton" class="btn btn-secondary" style="text-transform: lowercase;
                     font-size: 12px; padding: 3px;" onclick="toggleReviewSection()">
-                        See Reviews
-                    </button></span></h4>
+                            See Reviews
+                        </button></span></h4>
 
                 <div id="all-reviews" class="hidden-reviews">
                     {% for review in reviews %}
@@ -483,9 +717,10 @@
                     </div>
                     {% endfor %}
                 </div>
-                
+
                 <!-- Review Form -->
-                <form class="mt-4" method="POST" action="{% url 'writeReview' slug=product.slug %}" style="max-width: 600px; margin: auto; align-items: center;">
+                <form class="mt-4" method="POST" action="{% url 'writeReview' slug=product.slug %}"
+                    style="max-width: 600px; margin: auto; align-items: center;">
                     <hr>
                     <h5 class="text-center" style="opacity: .8; font-size: .8rem;">Leave a Review</h5>
                     <hr>
@@ -493,18 +728,17 @@
                     <!-- Username -->
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input required type="text" class="form-control" id="username" name="user_name"
-                        {% if request.user.is_authenticated %}
-                        value="{{ request.user.username }}"
-                        {% endif %}
-                        placeholder="Enter your name">
+                        <input required type="text" class="form-control" id="username" name="user_name" 
+                        {% if request.user.is_authenticated %} value="{{ request.user.username }}" {% endif %}
+                            placeholder="Enter your name">
                     </div>
                     <!-- Rating -->
                     <style>
-                    select option{
+                        select option {
                             color: #f8d64e;
                         }
-                        .form-label{
+
+                        .form-label {
                             color: #ffffff;
                         }
                     </style>
@@ -521,75 +755,73 @@
                     <!-- Review Text -->
                     <div class="mb-3">
                         <label for="reviewText" class="form-label">Your Review</label>
-                        <textarea class="form-control" name="content" id="reviewText" required rows="4" placeholder="Write your review here"></textarea>
+                        <textarea class="form-control" name="content" id="reviewText" required rows="4"
+                            placeholder="Write your review here"></textarea>
                     </div>
                     <button type="submit" class="btn btn-danger">Submit Review</button>
                 </form>
             </div>
         </div>
 
-<style>
-    .hidden-reviews {
-        display: none;
-    }
+        <style>
+            .hidden-reviews {
+                display: none;
+            }
 
-    .visible-reviews {
-        display: block;
-        transition: max-height 0.5s ease;
-    }
-</style>
+            .visible-reviews {
+                display: block;
+                transition: max-height 0.5s ease;
+            }
+        </style>
 
-<script>
-    function toggleReviewSection() {
-        const reviewSection = document.getElementById('all-reviews');
-        const toggleButton = document.getElementById('toggleButton');
+        <script>
+            function toggleReviewSection() {
+                const reviewSection = document.getElementById('all-reviews');
+                const toggleButton = document.getElementById('toggleButton');
 
-        if (reviewSection.classList.contains('hidden-reviews')) {
-            reviewSection.classList.remove('hidden-reviews');
-            reviewSection.classList.add('visible-reviews');
-            toggleButton.textContent = 'Hide Reviews';
-        } else {
-            reviewSection.classList.remove('visible-reviews');
-            reviewSection.classList.add('hidden-reviews');
-            toggleButton.textContent = 'See Reviews';
-        }
-    }
-</script>
-
-
+                if (reviewSection.classList.contains('hidden-reviews')) {
+                    reviewSection.classList.remove('hidden-reviews');
+                    reviewSection.classList.add('visible-reviews');
+                    toggleButton.textContent = 'Hide Reviews';
+                } else {
+                    reviewSection.classList.remove('visible-reviews');
+                    reviewSection.classList.add('hidden-reviews');
+                    toggleButton.textContent = 'See Reviews';
+                }
+            }
+        </script>
 
 
-        
-        
-    
-        
+
+
+
+
+
+
         <!-- Recommended Products Section -->
         <section class="related spad">
             <div class="container">
-        
-        
                 <style>
-            
                     .product-card {
                         box-shadow: 0 4px 8px rgb(207, 207, 207);
                         border-radius: 8px;
                         overflow: hidden;
                         text-align: center;
-                        min-width: 250px; /* Ensure each product card has a consistent width */
-                        margin-right: 20px; /* Spacing between cards */
-                        flex-shrink: 0; /* Prevents shrinking of the cards */
+                        min-width: 250px;
+                        margin-right: 20px;
+                        flex-shrink: 0;
                     }
-        
+                
                     .product-card img {
                         width: 100%;
                         height: auto;
                         object-fit: cover;
                     }
-        
+                
                     .product-details {
                         padding: 16px;
                     }
-        
+                
                     .product-name {
                         font-size: 20px;
                         font-weight: bold;
@@ -597,36 +829,39 @@
                         color: #fff;
                         font-family: "Playfair Display", serif;
                     }
-        
+                
                     .price {
                         margin: 8px 0;
                         font-size: 16px;
                         color: #e74c3c;
                         font-family: "Space Grotesk", sans-serif;
                     }
-        
+                
                     .original-price {
                         font-size: 10px;
                         color: #989898;
                         text-decoration: line-through;
                         font-family: "Space Grotesk", sans-serif;
                     }
-        
+                
                     .reco-container {
-                        overflow-x: auto;
-                        white-space: nowrap;
                         padding: 30px 0;
                         border-radius: 8px;
                     }
-        
+                
                     .reco {
-                        display: inline-flex;
+                        display: flex;
+                        overflow-x: auto;
+                        white-space: nowrap;
                         padding-left: 15px;
+                        scroll-snap-type: x mandatory; /* Enables snapping for smooth scrolling */
                     }
-        
+                
+                    .product-card {
+                        scroll-snap-align: start; /* Aligns each card to the start when scrolling */
+                    }
+                
                     .stock-out-msg {
-                        /* position: absolute; */
-                      
                         background-color: red;
                         color: white;
                         padding: 5px 10px;
@@ -636,28 +871,28 @@
                         border-radius: 3px;
                         font-family: "Space Grotesk", sans-serif;
                     }
-        
-                    /* Scrollbar customization */
-                    .reco-container::-webkit-scrollbar {
+                
+                    /* Custom scrollbar */
+                    .reco::-webkit-scrollbar {
                         height: 8px;
                     }
-        
-                    .reco-container::-webkit-scrollbar-thumb {
+                
+                    .reco::-webkit-scrollbar-thumb {
                         background-color: #ccc;
                         border-radius: 10px;
                     }
-        
-                    .reco-container::-webkit-scrollbar-track {
+                
+                    .reco::-webkit-scrollbar-track {
                         background-color: #f3f2ee;
                     }
                 </style>
-        
+                
                 <div class="reco-container">
                     {% if relatedProduct %}
                     <hr>
-                        <h3 class="related-title text-center">Related Product</h3>
-                        <hr>
-                        {% endif %}
+                    <h3 class="related-title text-center">Related Product</h3>
+                    <hr>
+                    {% endif %}
                     <div class="reco">
                         {% for product in relatedProduct %}
                         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
@@ -665,15 +900,16 @@
                                 <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
                                 {% if product.in_stock %}
                                 {% if product.discount_percent %}
-                                <div class="stock-out-msg" style="background-color: #f74f06;">{{product.discount_percent}}% Off
+                                <div class="stock-out-msg" style="background-color: #f74f06;">
+                                    {{product.discount_percent}}% Off
                                 </div>
                                 {% endif %}
                                 {% else %}
                                 <div class="stock-out-msg">Stock Out</div>
                                 {% endif %}
-        
+                
                                 <div class="product-details">
-                                    <p class="product-name">{{ product.name }} </p>
+                                    <p class="product-name">{{ product.name }}</p>
                                     <p class="price">Tk. {{ product.price }}</p>
                                     {% if product.discount_percent %}
                                     <p class="original-price">Tk. {{ product.update_price }}</p>
@@ -684,14 +920,20 @@
                         {% endfor %}
                     </div>
                 </div>
+                
+                
             </div>
         </section>
     </div>
     <style>
-        td, th{
+        td,
+        th {
             text-align: center;
         }
-        .modal-content, .modal, .modal-dialog{
+
+        .modal-content,
+        .modal,
+        .modal-dialog {
             backdrop-filter: blur(10px);
             background: none;
         }
@@ -702,178 +944,181 @@
             <div class="modal-content text-light">
                 <div class="modal-header">
                     <h5 class="modal-title" id="sizeChartModalLabel">Size Chart</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
-    
-              <div class="sizetable">
-                <!-- Three Piece Size Table -->
-                <div class="modal-body">
-                    <h5 class="text-center">Three Piece</h5>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-dark table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Chest (inches)</th>
-                                    <th>Waist (inches)</th>
-                                    <th>Length (inches)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>36</td>
-                                    <td>37</td>
-                                    <td>33</td>
-                                    <td>42</td>
-                                </tr>
-                                <tr>
-                                    <td>38</td>
-                                    <td>39</td>
-                                    <td>35</td>
-                                    <td>42</td>
-                                </tr>
-                                <tr>
-                                    <td>40</td>
-                                    <td>41</td>
-                                    <td>37</td>
-                                    <td>42</td>
-                                </tr>
-                                <tr>
-                                    <td>42</td>
-                                    <td>43</td>
-                                    <td>39</td>
-                                    <td>42</td>
-                                </tr>
-                                <tr>
-                                    <td>44</td>
-                                    <td>45</td>
-                                    <td>41</td>
-                                    <td>44</td>
-                                </tr>
-                                <tr>
-                                    <td>46</td>
-                                    <td>47</td>
-                                    <td>43</td>
-                                    <td>44</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            
-                <!-- Kurti Size Table -->
-                <div class="modal-body">
-                    <h5 class="text-center">Kurti</h5>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-dark table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Chest (inches)</th>
-                                    <th>Length (inches)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>36</td>
-                                    <td>37</td>
-                                    <td>38</td>
-                                </tr>
-                                <tr>
-                                    <td>38</td>
-                                    <td>39</td>
-                                    <td>40</td>
-                                </tr>
-                                <tr>
-                                    <td>40</td>
-                                    <td>41</td>
-                                    <td>40</td>
-                                </tr>
-                                <tr>
-                                    <td>42</td>
-                                    <td>43</td>
-                                    <td>40</td>
-                                </tr>
-                                <tr>
-                                    <td>44</td>
-                                    <td>45</td>
-                                    <td>40</td>
-                                </tr>
-                                <tr>
-                                    <td>46</td>
-                                    <td>47</td>
-                                    <td>40</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <h5 class="text-center">Short Kurti</h5>
-                    <hr>
-                    <div class="table-responsive">
-                        <table class="table table-dark table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Size</th>
-                                    <th>Chest (inches)</th>
-                                    <th>Length (inches)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>36</td>
-                                    <td>37</td>
-                                    <td>34</td>
-                                </tr>
-                                <tr>
-                                    <td>38</td>
-                                    <td>39</td>
-                                    <td>34</td>
-                                </tr>
-                                <tr>
-                                    <td>40</td>
-                                    <td>41</td>
-                                    <td>36</td>
-                                </tr>
-                                <tr>
-                                    <td>42</td>
-                                    <td>43</td>
-                                    <td>36</td>
-                                </tr>
-                                <tr>
-                                    <td>44</td>
-                                    <td>45</td>
-                                    <td>36</td>
-                                </tr>
-                                <tr>
-                                    <td>46</td>
-                                    <td>47</td>
-                                    <td>36</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Add some custom media queries for better responsiveness -->
-            <style>
-                @media (max-width: 576px) {
-                    .table th, .table td {
-                        font-size: 0.8rem;
-                    }
-                    
-                    h5 {
-                        font-size: 1rem;
-                    }
-                }
-            </style>
-            
 
-               
+                <div class="sizetable">
+                    <!-- Three Piece Size Table -->
+                    <div class="modal-body">
+                        <h5 class="text-center">Three Piece</h5>
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Chest (inches)</th>
+                                        <th>Waist (inches)</th>
+                                        <th>Length (inches)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>36</td>
+                                        <td>37</td>
+                                        <td>33</td>
+                                        <td>42</td>
+                                    </tr>
+                                    <tr>
+                                        <td>38</td>
+                                        <td>39</td>
+                                        <td>35</td>
+                                        <td>42</td>
+                                    </tr>
+                                    <tr>
+                                        <td>40</td>
+                                        <td>41</td>
+                                        <td>37</td>
+                                        <td>42</td>
+                                    </tr>
+                                    <tr>
+                                        <td>42</td>
+                                        <td>43</td>
+                                        <td>39</td>
+                                        <td>42</td>
+                                    </tr>
+                                    <tr>
+                                        <td>44</td>
+                                        <td>45</td>
+                                        <td>41</td>
+                                        <td>44</td>
+                                    </tr>
+                                    <tr>
+                                        <td>46</td>
+                                        <td>47</td>
+                                        <td>43</td>
+                                        <td>44</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Kurti Size Table -->
+                    <div class="modal-body">
+                        <h5 class="text-center">Kurti</h5>
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Chest (inches)</th>
+                                        <th>Length (inches)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>36</td>
+                                        <td>37</td>
+                                        <td>38</td>
+                                    </tr>
+                                    <tr>
+                                        <td>38</td>
+                                        <td>39</td>
+                                        <td>40</td>
+                                    </tr>
+                                    <tr>
+                                        <td>40</td>
+                                        <td>41</td>
+                                        <td>40</td>
+                                    </tr>
+                                    <tr>
+                                        <td>42</td>
+                                        <td>43</td>
+                                        <td>40</td>
+                                    </tr>
+                                    <tr>
+                                        <td>44</td>
+                                        <td>45</td>
+                                        <td>40</td>
+                                    </tr>
+                                    <tr>
+                                        <td>46</td>
+                                        <td>47</td>
+                                        <td>40</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <h5 class="text-center">Short Kurti</h5>
+                        <hr>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Chest (inches)</th>
+                                        <th>Length (inches)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>36</td>
+                                        <td>37</td>
+                                        <td>34</td>
+                                    </tr>
+                                    <tr>
+                                        <td>38</td>
+                                        <td>39</td>
+                                        <td>34</td>
+                                    </tr>
+                                    <tr>
+                                        <td>40</td>
+                                        <td>41</td>
+                                        <td>36</td>
+                                    </tr>
+                                    <tr>
+                                        <td>42</td>
+                                        <td>43</td>
+                                        <td>36</td>
+                                    </tr>
+                                    <tr>
+                                        <td>44</td>
+                                        <td>45</td>
+                                        <td>36</td>
+                                    </tr>
+                                    <tr>
+                                        <td>46</td>
+                                        <td>47</td>
+                                        <td>36</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add some custom media queries for better responsiveness -->
+                <style>
+                    @media (max-width: 576px) {
+
+                        .table th,
+                        .table td {
+                            font-size: 0.8rem;
+                        }
+
+                        h5 {
+                            font-size: 1rem;
+                        }
+                    }
+                </style>
+
+
+
             </div>
         </div>
     </div>
@@ -905,13 +1150,13 @@
                 inputField.name = "unstitched"
                 inputField.classList.add("form-control", "mt-2");
                 inputContainer.appendChild(inputField);
-                button.innerText = "Unstitched Price is  "+unstitchedPrice
+                button.innerText = "Unstitched Price is  " + unstitchedPrice
                 button.classList = ""
                 button.style.border = "none"
                 button.style.background = "#f74f06"
                 button.style.color = "#fff"
                 Unstitched_info.innerText = "Select a Random Size "
-                
+
 
             });
         });
@@ -925,21 +1170,20 @@
         }
     </script>
 
-<script>
-    function validateForm() {
-        var selectedSize = document.querySelector('input[name="size"]:checked');
-        if (!selectedSize) {
-            alert("Please select a size before adding to cart.");
-            return false;
+    <script>
+        function validateForm() {
+            var selectedSize = document.querySelector('input[name="size"]:checked');
+            if (!selectedSize) {
+                alert("Please select a size before adding to cart.");
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
-</script>
+    </script>
 
-<script
-type="text/javascript"
-src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
-></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

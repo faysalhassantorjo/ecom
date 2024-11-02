@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
+  {% load static %}
 
 <head>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" async>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
@@ -30,7 +31,7 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}">
-  <link rel="stylesheet" href="{% static 'shop/css/home.css' %}">
+  <link rel="stylesheet" href="{% static 'shop/css/home2.css' %}">
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
@@ -42,170 +43,6 @@
     gtag('config', 'G-0372CDLF47');
   </script>
 
-  <style>
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -30%;
-      width: 30%;
-      height: 100%;
-      backdrop-filter: blur(20px);
-      background: none;
-      color: white;
-      padding-top: 60px;
-      transition: 0.3s;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-
-    }
-
-    .sidebar.active {
-      left: 0;
-    }
-
-    .sidebar .set {
-      padding: 15px 20px;
-      text-decoration: none;
-      color: #f74f06;
-      display: block;
-      transition: 0.5s;
-      font-weight: bolder;
-      font-size: 1.2rem;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    .overlay {
-      position: fixed;
-      display: none;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.623);
-      z-index: 500;
-    }
-
-    .overlay.active {
-      display: block;
-    }
-
-    .menu-icon {
-      cursor: pointer;
-      font-size: 24px;
-      color: #fff;
-      border: 1px solid #ececec;
-      padding-left: 10px;
-      padding-right: 10px;
-      border-radius: 5px;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 50px;
-      right: 10px;
-      font-size: 25px;
-      cursor: pointer;
-      color: white;
-      border: 1px solid #ececec;
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-
-    .collection-list {
-      list-style-type: none;
-      padding: 0;
-      margin-top: 50px;
-      margin-left: 30px;
-    }
-
-    .collection-list>li {
-      margin-bottom: 15px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      padding: 8px;
-      /* border-radius: 5px; */
-      font-weight: bold;
-      transition: background-color 0.2s ease;
-    }
-
-    .collection-list .submenu {
-      display: none;
-      margin-top: 5px;
-      margin-left: 20px;
-      max-height: 0;
-      transition: max-height 0.9s ease;
-    }
-
-    .submenu.visible {
-      max-height: 500px;
-    }
-
-    .collection-list .submenu li {
-      font-size: 1rem;
-      padding: 5px 0;
-      text-decoration: none;
-
-    }
-
-    .fa-shopping-cart {
-      font-size: 23px;
-    }
-
-
-    @media (max-width: 768px) {
-      .sidebar {
-       width: 70%;
-       left: -70%;
-      }
-
-      .close-btn {
-        font-size: 1.3rem;
-      }
-
-      .collection-list>li {
-        font-size: 1.1rem;
-      }
-
-      .collection-list .submenu li {
-        font-size: .9rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      #sidebar {
-        width: 100%;
-        left: -100%;
-      }
-
-      #sidebar.active {
-        left: 0;
-      }
-
-      .collection-list>li {
-        font-size: 1.2rem;
-      }
-
-      .collection-list .submenu li {
-        font-size: .9rem;
-      }
-
-      .fa-shopping-cart,
-      .fa-bars {
-        font-size: 18px;
-      }
-
-      .menu-icon {
-
-        font-size: 18px;
-
-        padding-left: 7px;
-        padding-right: 7px;
-      }
-    }
-  </style>
 </head>
 
 <body>
@@ -317,6 +154,7 @@
     function toggleSubmenu(submenuId) {
       const submenu = document.getElementById(submenuId);
       submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+      submenu.style.transition = "0.8s"
       submenu.classList.toggle("visible");
 
     }
@@ -529,11 +367,11 @@
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
-        initialSlide: 1,
+        initialSlide: 0,
         coverflowEffect: {
           rotate: 50,
           stretch: 0,
-          depth: 300,
+          depth: 1000,
           modifier: 1,
           slideShadows: true,
         },
