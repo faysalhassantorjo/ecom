@@ -48,7 +48,7 @@
 <body>
   <!-- Custom CSS -->
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg c" style="box-shadow: none;">
+  <nav class="navbar navbar-expand-lg c" style="box-shadow: none; width: 100%; z-index: 1000;">
     <div class="container navbar" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;">
 
       <!-- Menu Icon to trigger Sidebar -->
@@ -58,7 +58,7 @@
 
       <!-- Logo -->
       <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
-        <img src="{% static 'image/logo/logo2.png' %}" height="80" alt="logo" loading="lazy" />
+        <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="logo" loading="lazy" />
       </a>
 
       <!-- Cart and Profile Icons -->
@@ -191,8 +191,7 @@
       </button>
     </div>
   </section>
-
-  <hr>
+{% if new_arrivals %}
   <section>
     <div class="scrollable-container" id="scrollable-container">
       <div class="product-grid">
@@ -217,6 +216,7 @@
       </div>
     </div>
   </section>
+  {% endif %}
   <script>
     window.addEventListener('scroll', function () {
       const scrollableContainer = document.getElementById('scrollable-container');
@@ -231,12 +231,11 @@
     });
   </script>
 
-  <hr>
 
   <section>
-    <div class="container-fluid mt-5 category-container">
-      <button class="arrow arrow-left" style="background-color: #f74f06;">&lt;</button>
-      <button class="arrow arrow-right" style="background-color: #f74f06;">&gt;</button>
+    <div class="container-fluid mt-1 category-container">
+      <button class="arrow arrow-left" style="background-color: #f74e067d;">&lt;</button>
+      <button class="arrow arrow-right" style="background-color: #f74e067d;">&gt;</button>
       <div class="category-wrapper">
         {% for category in popular_category %}
         <div class="category-card">
@@ -294,7 +293,7 @@
                 <div class="top-left p-3" style="position: absolute; top: 0; right: 0; ">
                   <h5 class="card-title " style="font-size: 1rem; color: #ffffff;">
                     <span class="p-2"
-                      style="background-color: #f74f06; color: #0B1215; font-family: 'Space Grotesk', sans-serif;">
+                      style="background-color: #ffffff71;backdrop-filter: blur(10px); color: #0B1215; font-family: 'Space Grotesk', sans-serif; border-radius: 4px;">
                       {{product.ratting }}★</span>
 
                   </h5>
@@ -306,11 +305,11 @@
                   }
                 </style>
                 <div class="bottom p-3 " style="position: absolute; bottom: 0; left: 0; width: 100%; ">
-                  <h5 class="card-title mb-0" style="font-size: 1.2rem; color: #ffffff;">
+                  <h5 class="card-title mb-0 text-center" style="font-size: 1.2rem; color: #ffffff;">
                     {{ product.name }}
                   </h5>
                   <hr>
-                  <p class="card-text mb-0"
+                  <p class="card-text mb-0 text-center"
                     style="font-size:1.2rem; color: #ffffff;font-family: 'Space Grotesk', sans-serif;">
                     {{ product.price }} Tk.
                   </p>
@@ -367,7 +366,7 @@
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: "auto",
-        initialSlide: 0,
+        initialSlide: 1,
         coverflowEffect: {
           rotate: 50,
           stretch: 0,
@@ -376,7 +375,7 @@
           slideShadows: true,
         },
         autoplay: {  // Autoplay configuration
-          delay: 3000,  // Delay between slides in milliseconds (3 seconds)
+          delay: 4000,  // Delay between slides in milliseconds (3 seconds)
           disableOnInteraction: false,  // Continue autoplay after user interaction
         },
         pagination: {
