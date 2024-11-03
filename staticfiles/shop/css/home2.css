@@ -173,7 +173,7 @@
     transition: background-color 0.3s ease, opacity 0.3s ease;
     font-family: "Protest Guerrilla", sans-serif;
     font-weight: 400;
-    font-size: clamp(2rem, 3vw, 5rem); /* Responsive font size */
+    font-size: clamp(5rem, 5vw, 7rem); /* Responsive font size */
   }
 
   .category-card:hover {
@@ -245,9 +245,7 @@
     font-size: 1.2rem;
   }
 
-  .fas {
-    font-size: 22px;
-  }
+
 
   /* Heading */
   .heading {
@@ -368,7 +366,7 @@
 
   @media (max-width: 768px) {
     .sidebar {
-      width: 100%; /* Make sidebar wider on smaller screens */
+      width: 100%; 
       left: -100%;
     }
 
@@ -384,6 +382,13 @@
     .menu-icon {
       font-size: 20px; /* Smaller icon size */
     }
+    /* .fa-shopping-cart{
+      font-size: 18px;
+    } */
+
+  .navbar-brand img {
+      margin-right: -20px;
+  }
   }
 
   @media (max-width: 576px) {
@@ -400,4 +405,7 @@
     .heading h3 {
       font-size: 1.5rem; /* Smaller heading on mobile */
     }
+    .navbar-brand img {
+      margin-right: -20px;
+  }
   }

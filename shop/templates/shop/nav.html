@@ -58,7 +58,7 @@
 
       <!-- Logo -->
       <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
-        <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="logo" loading="lazy" />
+        <img src="{% static 'image/logo/logo2.png' %}" height="80" alt="logo" loading="lazy" />
       </a>
 
       <!-- Cart and Profile Icons -->
@@ -235,8 +235,8 @@
 
   <section>
     <div class="container-fluid mt-5 category-container">
-      <button class="arrow arrow-left">&lt;</button>
-      <button class="arrow arrow-right">&gt;</button>
+      <button class="arrow arrow-left" style="background-color: #f74f06;">&lt;</button>
+      <button class="arrow arrow-right" style="background-color: #f74f06;">&gt;</button>
       <div class="category-wrapper">
         {% for category in popular_category %}
         <div class="category-card">
@@ -503,16 +503,18 @@
 
     arrowLeft.addEventListener('click', () => {
       categoryWrapper.scrollBy({
-        left: -350,
+        left: -screen.width,
         behavior: 'smooth'
       });
+      console.log(screen.width);
     });
 
     arrowRight.addEventListener('click', () => {
       categoryWrapper.scrollBy({
-        left: 350,
+        left: screen.width-30,
         behavior: 'smooth'
       });
+      console.log(screen.width);
     });
 
 
