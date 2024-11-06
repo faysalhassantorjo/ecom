@@ -276,10 +276,12 @@
         border-radius: 10px;
       }
     </style>
+    {% if top_rated_product %}
     <div class="heading text-center">
       <h3>Top Selling Products</h3>
       <h6>Grab these new items before they are gone!</h6>
     </div>
+    {% endif %}
     <div class="swiper mySwiper" style="height: 450px;">
       <div class="swiper-wrapper">
         {% for product in top_rated_product %}

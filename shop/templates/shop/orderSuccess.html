@@ -3,70 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
+    <title>Order Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Prata&display=swap" rel="stylesheet">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        body{
+            font-family: "Playfair Display", serif;
         }
-
-        .confirmation-container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
+        .product-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
         }
-
-        h1 {
-            color: #333;
+        .info-icon {
+            margin-right: 5px;
         }
-
-        p {
-            color: #555;
-        }
-
-        .order-details {
+        .status-container {
             margin-top: 20px;
         }
-
-        button {
-            background-color: #4caf50;
-            color: #fff;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        .bill-summary li {
+            list-style: none;
+            padding: 5px 0;
+        }
+        .total {
+            font-weight: bold;
+        }
+        
+        /* Responsive table styling for mobile */
+        @media (max-width: 768px) {
+            .table-responsive thead {
+                display: none;
+            }
+            .table-responsive td {
+                display: block;
+                width: 100%;
+                text-align: right;
+                position: relative;
+                padding-left: 50%;
+            }
+            .table-responsive td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 15px;
+                font-weight: bold;
+                text-align: left;
+            }
+            @media print {
+            .no-print {
+                display: none;
+            }
+        }
         }
     </style>
 </head>
 <body>
 
-<div class="confirmation-container">
-    <h1>Order Confirmed!</h1>
-    <p>Your order has been successfully placed.</p>
+<div class="container mt-5">
+    <div class="card order-card p-3 mt-1" id="{{ shippingaddress.order.order_id }}">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h5 class="card-title">Order: 
+                    <span style="background-color: #f74f06; padding: 3px; color: #ddd;">
+                        #{{ shippingaddress.order.order_id }}
+                    </span>
+                </h5>
+                <!-- <p class="date"><strong>Date:</strong> {{ shippingaddress.timestamp }} 
+                    <span>({{ shippingaddress.timestamp|timesince }} ago)</span>
+                </p> -->
+            </div>
+            
+            <hr>
 
-    <div class="order-details">
-        <p><strong>Order Number:</strong> #{{data.order.order_id}}</p>
-        <p><strong>Total Amount:</strong> TK. {{total}}</p>
-        <p><strong>Delivery Address:</strong> {{data.address}}</p>
+            <!-- Customer Info -->
+            <div class="row details-section">
+                <div class="col-md-6">
+                    <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{ shippingaddress.first_name }} {{ shippingaddress.last_name }}</p>
+                    <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{ shippingaddress.email }}</p>
+                    <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{ shippingaddress.phon }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{ shippingaddress.address }}</p>
+                    <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{ shippingaddress.address_note }}</p>
+                </div>
+            </div>
+
+            <!-- Product Table - Responsive -->
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">Image</th>
+                            <th class="text-center">Product Name</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Size</th>
+                            <th class="text-center">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orderItem in shippingaddress.order.order_items.all %}
+                        <tr>
+                            <td data-label="Image">
+                                <img src="{{ orderItem.product.imageURL }}" alt="product" class="product-img img-fluid">
+                                {% if not orderItem.is_stitched %}
+                                <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Product Name">{{ orderItem.product.name }}</td>
+                            <td data-label="Quantity">{{ orderItem.quantity }}</td>
+                            <td data-label="Size">{{ orderItem.size }}</td>
+                            <td data-label="Price">{{ orderItem.item_total }}</td>
+                        </tr>
+                        {% if orderItem.add_on_product.all %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Add On</th>
+                                                <th>Size</th>
+                                                <th>Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for add_on in orderItem.add_on_product.all %}
+                                            <tr>
+                                                <td>{{ add_on.name }}</td>
+                                                <td>{{ add_on.size }}</td>
+                                                <td>{{ add_on.price }} TK.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bill Summary -->
+            <div class="d-flex flex-column flex-md-row justify-content-between mt-4">
+                <ul class="bill-summary list-unstyled">
+                    <li><span>Product Bill:</span> {{ shippingaddress.order.get_total }}</li>
+                    <li><span>Delivery Charge:</span> {{ shippingaddress.order.delivary_charge }}</li>
+                    <li class="total" style="color: #f74f06;"><span>Total Bill:</span> {{ shippingaddress.order.get_total|add:shippingaddress.order.delivary_charge }}</li>
+                </ul>
+
+                <!-- Status Display -->
+                <!-- <div class="status-container no-print">
+                    <p>Status: <span style="background-color: rgb(0, 128, 0); color: #f1f1f1; padding: 5px; border-radius: 3px;">{{ shippingaddress.order.status }}</span></p>
+                </div> -->
+            </div>
+            <div class="mt-1">
+                <div class="alert alert-success text-center" role="alert">
+                  <h4 class="alert-heading">Order Successful!</h4>
+                  <p>Your order process has been successfully completed. We will contact you very soon via the phone number you provided.</p>
+                  <hr>
+                  <p class="mb-0">You can also reach us on our <a href="https://www.facebook.com/LONGGFASHION" class="alert-link" target="_blank">Facebook Page</a>. Please mention your Order ID There.</p>
+                </div>
+              </div>
+
+            <!-- Print Button -->
+            <div class="text-center no-print mt-3">
+                <button class="btn btn-info"  onclick="printDiv('{{ shippingaddress.order.order_id }}')">Print</button>
+                <a href="/"  class="btn btn-success">Continue Shopping</a>
+            </div>
+        </div>
     </div>
-
-    <button onclick="redirectToHomepage()">Continue Shopping</button>
 </div>
 
+<!-- JavaScript to handle printing -->
 <script>
-    function redirectToHomepage() {
-        // You can customize this function to redirect to your homepage or any other page.
-        window.location.href = "/";
+    function printDiv(orderId) {
+        var printContents = document.getElementById(orderId).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
     }
 </script>
 
+<!-- Bootstrap and Font Awesome JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

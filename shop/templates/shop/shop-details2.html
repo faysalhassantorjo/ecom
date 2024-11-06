@@ -591,11 +591,15 @@
                         {% endfor %}
                     </span>
                     <hr>
-                    <p class="desc">{{ product.description|safe }}</p>
+                    <p class="desc">{{ product.desc|linebreaksbr}}</p>
+                   
+
+                    
                     <hr>
                     <!-- Product Rating and Reviews -->
                     <div class="d-flex align-items-center">
-                        <span class="rating">{{product.ratting}} ★</span>
+                        <!-- <span class="rating">{{product.ratting}} ★</span> -->
+                        <span class="rating">{{product.average_rating}} ★</span>
 
                         <span class="reviews-count ms-2">({{ product.total_reviews }} Reviews)</span>
                     </div>

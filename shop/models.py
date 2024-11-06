@@ -153,6 +153,7 @@ class Product(models.Model):
 
             self.discount=False
             self.price = discounted_price
+            self.save()
             return discounted_price
         else:
             discount = float(self.main_price * (self.discount_percent / 100))
@@ -161,9 +162,9 @@ class Product(models.Model):
             return discount+self.price
 
 
-    def save(self, *args, **kwargs):
-        calculated_price = self.update_price()  
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     calculated_price = self.update_price()  
+    #     super().save(*args, **kwargs)
 
 
     @property
@@ -198,10 +199,14 @@ class Product(models.Model):
     def average_rating(self):
         reviews = Review.objects.filter(product=self)
         if reviews.exists():
-            s= sum([review.ratting for review in reviews]) / len(reviews)
-            self.ratting =s
-            self.save()
-            return round(s, 1)
+            avg = sum([review.ratting for review in reviews]) / len(reviews)
+            self.ratting = round(avg, 1)
+            try:
+                self.save()  # Save the updated rating
+                print(f"Updated rating for {self.name}: {self.ratting}")
+            except Exception as e:
+                print(f"Failed to save Product {self.id}: {e}")
+            return round(avg, 1)
         return 0
     def total_reviews(self):
         reviews = Review.objects.filter(product=self)

@@ -31,6 +31,7 @@ class ShippingAddressForm(forms.ModelForm):
 
         self.fields['address'].widget = forms.Textarea(attrs={'rows': 4})
         self.fields['email'].required = False
+        self.fields['address_note'].required = False
 
 
 class WriteReview(forms.ModelForm):

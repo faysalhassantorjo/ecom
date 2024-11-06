@@ -28,7 +28,7 @@ def send_html_email(shippingAddress):
     from_email = settings.EMAIL_HOST_USER
     # 'Jannatulferdospia77@gmail.com'
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com','Jannatulferdospia77@gmail.com']
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -46,7 +46,8 @@ def send_confermation_mail(shippingAddress):
     plain_message = strip_tags(html_message)
     from_email = settings.EMAIL_HOST_USER
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    # ,'faysalhassantorjo8@gmail.com'
+    recipient_list = [customr_email]
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -478,7 +479,7 @@ def order_cancel(request,pk):
         'form':form
     }
     return render(request,'shop/orderStatus.html',context)
-
+import time
 def checkout(request):
     userProfile = check_user(request)
     order =[]
@@ -501,6 +502,7 @@ def checkout(request):
     total=items.count()
 
     if request.method == 'POST':
+        time.sleep(10)
         form = ShippingAddressForm(request.POST)
         if form.is_valid():
             shipping_address = form.save(commit=False)  
@@ -536,7 +538,7 @@ def order_success(request,pk):
     total = data.order.get_total+data.order.delivary_charge
 
     context={
-        'data':data,
+        'shippingaddress':data,
         'total':total
     }
     return render(request,'shop/orderSuccess.html',context)
