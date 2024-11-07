@@ -28,7 +28,7 @@ def send_html_email(shippingAddress):
     from_email = settings.EMAIL_HOST_USER
     # 'Jannatulferdospia77@gmail.com'
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com','Jannatulferdospia77@gmail.com']
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -502,7 +502,6 @@ def checkout(request):
     total=items.count()
 
     if request.method == 'POST':
-        time.sleep(10)
         form = ShippingAddressForm(request.POST)
         if form.is_valid():
             shipping_address = form.save(commit=False)  
