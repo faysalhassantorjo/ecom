@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+    {% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Orders</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
     <style>
+        body{
+            font-family: "Faculty Glyphic", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
         .order-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
@@ -155,9 +166,22 @@
             }
         }
     </style>
+
 </head>
 <body>
-    <div class="container my-5">
+    <div class=" mt-3">
+        <!-- <img src="{% static 'image/logo/logo.jpg' %}" height="70" alt="Logo" class="logo">
+      </div>
+     -->
+      <!-- Back button -->
+      <div class="mb-3 container">
+        <a href="javascript:history.back()" class="btn btn-secondary">
+          &larr; Back
+        </a>
+      </div>
+      </div>
+    
+    <div class="container">
         <h1 class="text-center mb-4">View Orders</h1>
 
         <!-- Nav tabs -->
@@ -181,7 +205,7 @@
             <!-- Available Orders Section -->
             <div class="tab-pane fade show active" id="available" role="tabpanel" aria-labelledby="available-tab">
                 <h3 class="mb-4">Available Orders</h3>
-                
+        
                 <!-- Order Details Card -->
                 {% for shippingaddress in shippingAddresss %}
                 <div class="card order-card p-3 mt-1" id = "{{ shippingaddress.order.order_id }}">
@@ -190,7 +214,7 @@
                             <h5 class="card-title">Order: <span style="background-color: #f74f06; padding: 3px; color:#ddd">#{{ shippingaddress.order.order_id }}</span> </h5>
                             <p class="date"><strong>Date:</strong> {{shippingaddress.timestamp}} <span>({{shippingaddress.timestamp|timesince}} ago)</span></p>
                         </div>
-                        
+                   
                         <hr>
 
                         <!-- Customer Info -->
@@ -318,6 +342,28 @@
 
                            
                         </div>
+                        
+                        <div class="d-flex flex-wrap mt-2">
+                        <p style="font-size: .7rem;">Seen By &nbsp;&nbsp;</p>
+                            {% for user in shippingaddress.seen_by.all %}
+                                <div class="d-flex align-items-center me-3  ">
+                                    <!-- <i class="fas fa-user-circle me-2"></i> -->
+                                    
+                                    <span class="badge badge-info ml-1" style="font-weight: 100;">
+                                        <i class="fa-regular fa-circle-check " ></i>
+                                        {{ user.user.username }}
+                                    </span>
+                                </div>
+                            {% empty %}
+                                <div class="alert alert-info">
+                                    No users have seen this order yet.
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        
+                        
+
                         <div class="text-center no-print">
                             <button class="btn btn-dark text-center" style="font-size: 1.5rem;" onclick="printDiv('{{ shippingaddress.order.order_id }}')"> Print</button>
                         </div>
@@ -325,8 +371,8 @@
          
                     </div>
                 </div>
-                {% endfor %}
-              
+                {% endfor %} 
+     
             </div>
 
             <!-- Confirmed Orders Section -->

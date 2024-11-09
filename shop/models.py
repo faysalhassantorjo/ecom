@@ -103,7 +103,7 @@ class UserProfile(models.Model):
     join_at=models.DateTimeField(default=now,blank=True)
 
     def __str__(self):
-        return str(self.user)
+        return str(self.user.username)
 
 class AddOnProduct(models.Model):
     name=models.CharField(max_length=100)
@@ -309,6 +309,8 @@ class ShippingAddress(models.Model):
     phon=models.CharField(max_length=20)
     email=models.CharField(max_length=100)
     timestamp=models.DateTimeField(default=now,blank=True)
+    
+    seen_by = models.ManyToManyField(UserProfile, related_name="seen_orders", blank=True)
 
 
     def __str__(self):

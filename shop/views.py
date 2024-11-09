@@ -732,6 +732,7 @@ def shop_details(request,slug):
         })
 
 from .decorator import admin_only
+from django.db import transaction
 @admin_only
 def viewOrder(request):
 
@@ -740,6 +741,10 @@ def viewOrder(request):
     cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
     
     userProfile=get_user(request)
+    with transaction.atomic():  # Ensure atomic updates
+        for address in shippingAddress:
+            if userProfile not in address.seen_by.all():
+                address.seen_by.add(userProfile)
 
     context={
        'shippingAddresss': shippingAddress,
