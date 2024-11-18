@@ -103,7 +103,7 @@ class UserProfile(models.Model):
     join_at=models.DateTimeField(default=now,blank=True)
 
     def __str__(self):
-        return str(self.user.username)
+        return str(self.user)
 
 class AddOnProduct(models.Model):
     name=models.CharField(max_length=100)
@@ -331,7 +331,7 @@ class Review(models.Model):
 
     
     def __str__(self):
-        return str(f'{self.user} - {self.user_name} {self.product.name}' )
+        return str(f'{self.product.name}' )
     
 
 
