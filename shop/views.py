@@ -859,7 +859,7 @@ def addCollection(request):
             return HttpResponse("Form is not valid. Please check your inputs.")
 
 
-
+@admin_only
 def edit_product(request,slug):
     product = Product.objects.get(slug=slug)
 
