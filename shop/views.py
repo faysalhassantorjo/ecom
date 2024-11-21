@@ -860,20 +860,21 @@ def addCollection(request):
 
 
 
-def edit_product(request,pk,pk2):
-    product=Product.objects.get(id=pk)
+def edit_product(request,slug):
+    product = Product.objects.get(slug=slug)
 
     if request.method == 'POST':
         form=AddProduct(request.POST,request.FILES,instance=product)
 
         if form.is_valid():
             form.save()
-            return redirect('products',pk=pk2)
+            return redirect('shop_details',slug=slug)
     else:
         form=AddProduct(instance=product)
 
     context={
-        'form':form
+        'form':form,
+        'product':product
     }
     return render(request,'shop/editProduct.html',context)
 

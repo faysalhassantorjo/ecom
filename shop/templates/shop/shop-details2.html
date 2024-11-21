@@ -574,7 +574,20 @@
             <!-- Product Details -->
             <div class="col-md-6">
                 <div class="product-details p-4">
-                    <h2 style="font-size: 2rem; text-transform: capitalize;"> {{product.name}}</h2>
+                    <h2 style="font-size: 2rem; text-transform: capitalize;"> 
+                        {{product.name}}
+                        {% if request.user.is_superuser %}
+                        <a class="" 
+                        style="font-size: 1rem; text-transform: lowercase;text-decoration:underline;" href="{% url 'edit_product' slug=product.slug %}">
+                        Edit Product
+                        <span style="text-decoration: none; color:#f74f06">
+                         <i class="fa-regular fa-pen-to-square"></i>
+                        </span>
+                    </a>
+                        {% endif %}
+                    </h2>
+
+                  
 
                     <p class="price" style="font-size: 1.7rem;">Tk. <span id="product-price">{{product.price}}</span>
                         {% if product.discount_percent %}

@@ -54,15 +54,15 @@ class AddProduct(forms.ModelForm):
         tags = TagField()
         fields = [
             
-            'name',
-            'description',
+            # 'name',
+            'desc',
             'price',
             'unstitched_price',
             'productCategory',
-            'image',
-            'image2',
-            'image3',
-            'image4',
+            # 'image',
+            # 'image2',
+            # 'image3',
+            # 'image4',
             'tags',
             'in_stock'         
         ]

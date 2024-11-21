@@ -4,38 +4,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <!-- Add this in the head of your HTML file -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Edit Product</title>
 
-<!-- Add this at the end of your HTML file, just before the closing body tag -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+          crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+      
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: "Faculty Glyphic", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #0B1215;
 
+        }
+        h3 {
+            margin-top: 20px;
+            color: aliceblue; /* Dark text color */
+        }
+        p{
+            color:aliceblue
+        }
+        .form-container {
+            position: relative;
+            background-image: url("{{product.imageURL}}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: 10px;
+            overflow: hidden; /* To contain the overlay */
+            margin-top: 40px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            z-index: 1; /* Ensure it appears above the background but below content */
+        }
+        .form-container form {
+            position: relative;
+            z-index: 2; /* Bring the form content above the overlay */
+            padding: 30px;
+        }
+        .btn-outline-success {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .back-btn {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-
-
     <div class="container">
-        <div class="row">
-            <div class="col-lg-2"></div>
-            <div class="col-lg-8">
-                
-    <form method="post" action="" id="myform" class="mt-5" enctype="multipart/form-data">
-
-        {% csrf_token %}
+        <h3 class="text-center">Edit For: {{ product.name }}</h3>
     
-        {{form.as_p}}
-        <button type="submit" class="btn btn-outline-success">Done for This Product</button>
-    
-    </form>
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-12">
+                <div class="container">
+                    <a href="javascript:history.back()" class="btn btn-secondary back-btn">
+                      &larr; Back
+                    </a>
+                </div>
+                <div class="form-container">
+                    <form method="post" action="" id="myform" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success mt-4">Done for This Product</button>
+                    </form>
+                </div>
             </div>
-            <div class="col-lg-2"></div>
         </div>
     </div>
 
-    <script src="{% static 'shop/js/tiney.js'%}"></script>
-    
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" 
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" 
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" 
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" 
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" 
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" 
+            crossorigin="anonymous"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'shop/js/tiney.js' %}"></script>
 </body>
 </html>
