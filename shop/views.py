@@ -178,8 +178,21 @@ def visit_stats(request):
 
 
     return render(request, 'shop/visit_stats.html')
-def home(request):
 
+from django.db.models import Q
+def home(request):
+    
+    if request.method == "GET":
+        data= request.GET.get('data', None)
+        print('data is: ',data)
+        if data is not None:
+            products = Product.objects.filter(
+                Q(name__icontains = data) |
+                Q(tags__name__icontains = data)
+            )
+            print(products)
+        
+            return render ( request, 'shop/shop.html', {'products':set(products)})
     CACHE_TIMEOUT = 60 * 20
 
     # Cache keys
@@ -214,7 +227,7 @@ def home(request):
 
     hero_collections = get_cached_data(
         cache_keys['hero_collections'],
-        lambda: CollectionSet.objects.filter(hero=True),
+        lambda: CollectionSet.objects.filter(hero=True).order_by('-id'),
         timeout=60*60  # Cache for 60 minutes
     )
 
@@ -284,7 +297,7 @@ def create_order_item(request):
         add_product2=request.POST.get('add_on_product2',None)
         add_product3=request.POST.get('add_on_product3',None)
         
-        is_istiched = request.POST.get('unstitched', None)  # Retrieve 'unstitched' from POST request
+        is_istiched = request.POST.get('unstitched', None) 
         print("fasghasdfadag: ",is_istiched)
         if is_istiched is not None:
             if is_istiched.lower() == 'true':
@@ -681,6 +694,8 @@ def shop_details(request,slug):
         can_review = True
 
         # Prepare the context for the template
+        product = Product.objects.get(slug=slug)
+        
         context = {
             'product': product,
             'form': form,

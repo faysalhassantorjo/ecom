@@ -53,8 +53,8 @@ class AnonymousUser(models.Model):
 class CollectionSet(models.Model):
     name=models.CharField(max_length=100)
     hero=models.BooleanField(default=False)
-    image=ResizedImageField(upload_to='collectionset/',blank=True,null=True)
-    mobile_image = ResizedImageField(upload_to="collectionset/",blank=True,null=True)
+    image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
+    mobile_image = models.ImageField(upload_to="collectionset/",blank=True,null=True)
     @property
     def imageURL(self):
         try:
@@ -136,6 +136,7 @@ class Product(models.Model):
     image2=ResizedImageField(upload_to='product-image/',blank=True,null=True)
     image3=ResizedImageField(upload_to='product-image/',blank=True,null=True)
     image4=ResizedImageField(upload_to='product-image/',blank=True,null=True)
+    youtube_video_id = models.CharField(max_length=50,blank=True,null=True)
     arrive_at=models.DateTimeField(default=now,blank=True)
     new_arrival=models.BooleanField(default=False,blank=True)
     tags = TaggableManager()

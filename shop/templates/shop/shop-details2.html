@@ -703,12 +703,42 @@
                         {% endif %}
                         <!-- Add to Cart Button -->
                         <input type="text" name="action" value="add {{ product.slug }}" hidden>
-
+                        {% if product.in_stock %}
                         <button type="submit" class="btn btn-danger btn-lg mt-3">Add to Cart</button>
-
+                        {% else %}
+                        
+                        <span class="badge rounded-pill badge-danger">Sorry the product is not available now</span>
+                        {% endif %}
                     </form>
 
                 </div>
+                <style>
+                    iframe{
+                        width: 100%;
+                        height: 550px;
+                        border-radius: 10px;
+                        background-color: #037288;
+                    }
+                    .youtubeshorts{
+                        margin: auto;
+                        text-align: center;
+                        align-items: center;
+        
+                    }
+                </style>
+                {% if product.youtube_video_id %}
+                <div class="youtubeshorts mt-2">
+                    <iframe 
+
+                    src="https://www.youtube.com/embed/{{product.youtube_video_id}}?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&loop=1&playlist={{product.youtube_video_id}}" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+                </div>
+                {% endif %}
+
             </div>
         </div>
 

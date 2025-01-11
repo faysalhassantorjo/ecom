@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__
 # with open(os.path.join(BASE_DIR,'secret_key.txt')) as f:
 #     SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*','longg.up.railway.app','longgfashion.com']
 
 
@@ -98,7 +98,7 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 # }
 
 
-# =============================================================
+# # =============================================================
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -110,7 +110,7 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 #     }
 # }
 
-# =============================================================
+# # =============================================================
 
 
 
