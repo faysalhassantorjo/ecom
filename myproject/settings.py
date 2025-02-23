@@ -98,21 +98,6 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 # }
 
 
-# # =============================================================
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
-#         'USER': 'postgres',
-#         'PASSWORD': 'FQVhTgrtkEEJwPuHsmicUNSFUgMkZCzV',
-#         'HOST': 'junction.proxy.rlwy.net',  # Try this first
-#         'PORT': '21794',
-#     }
-# }
-
-# # =============================================================
-
-
 
 
 DATABASES = {
@@ -127,7 +112,6 @@ DATABASES = {
 }
 # pg_restore --dbname="postgresql://postgres:okQCvXHXVqKGdnqzdQsHvUXOMvmzNtLs@junction.proxy.rlwy.net:53927/railway" --clean --verbose "D:/mysqldata/db_for_new.sql"
 CSRF_TRUSTED_ORIGINS = [
-    'https://longg.up.railway.app',
     'https://longgfashion.com'
 ]
 

@@ -28,7 +28,7 @@ def send_html_email(shippingAddress):
     from_email = settings.EMAIL_HOST_USER
     # 'Jannatulferdospia77@gmail.com'
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com','Jannatulferdospia77@gmail.com']
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -752,20 +752,20 @@ from django.db import transaction
 def viewOrder(request):
 
     shippingAddress=ShippingAddress.objects.filter(order__status = "Pending").order_by('-timestamp')
-    confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed").order_by('-timestamp')
-    cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
+    # confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed").order_by('-timestamp')
+    # cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
     
-    userProfile=get_user(request)
-    with transaction.atomic():  # Ensure atomic updates
-        for address in shippingAddress:
-            if userProfile not in address.seen_by.all():
-                address.seen_by.add(userProfile)
+    # userProfile=get_user(request)
+    # # with transaction.atomic():  # Ensure atomic updates
+    # #     for address in shippingAddress:
+    # #         if userProfile not in address.seen_by.all():
+    # #             address.seen_by.add(userProfile)
 
     context={
        'shippingAddresss': shippingAddress,
-       'confirmed_order': confrimed_order,
-       'canceled_order': cancelled_order,
-       'userProfile':userProfile
+    #    'confirmed_order': confrimed_order,
+    #    'canceled_order': cancelled_order,
+    #    'userProfile':userProfile
     }
     return render(request,'shop/viewOrder2.html',context)
 
