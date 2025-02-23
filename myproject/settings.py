@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__
 # with open(os.path.join(BASE_DIR,'secret_key.txt')) as f:
 #     SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com','longgfashion.onrender.com']
+DEBUG = False
+ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -112,18 +112,28 @@ DATABASES = {
 }
 # pg_restore --dbname="postgresql://postgres:okQCvXHXVqKGdnqzdQsHvUXOMvmzNtLs@junction.proxy.rlwy.net:53927/railway" --clean --verbose "D:/mysqldata/db_for_new.sql"
 
-CSRF_TRUSTED_ORIGINS = ['https://longgfashion.com', 'https://www.longgfashion.com']
+CSRF_TRUSTED_ORIGINS = ['https://longgfashion.com', 'https://www.longgfashion.com', 'longgfashion.onrender.com','longgfashion.com']
 
 SECURE_SSL_REDIRECT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# settings.py
 
+# Disable HTTPS settings when DEBUG is True
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+else:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
