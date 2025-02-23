@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__
 #     SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com']
+ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com','longgfashion.onrender.com']
 
 
 # Application definition
