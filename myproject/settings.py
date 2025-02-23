@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__
 #     SECRET_KEY = f.read().strip()
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-ALLOWED_HOSTS = ['*','longg.up.railway.app','longgfashion.com']
+ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com']
 
 
 # Application definition
@@ -111,9 +111,16 @@ DATABASES = {
     }
 }
 # pg_restore --dbname="postgresql://postgres:okQCvXHXVqKGdnqzdQsHvUXOMvmzNtLs@junction.proxy.rlwy.net:53927/railway" --clean --verbose "D:/mysqldata/db_for_new.sql"
-CSRF_TRUSTED_ORIGINS = [
-    'https://longgfashion.com'
-]
+
+CSRF_TRUSTED_ORIGINS = ['https://longgfashion.com', 'https://www.longgfashion.com']
+
+
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
