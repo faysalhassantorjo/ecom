@@ -14,31 +14,60 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 
+from cloudinary.models import CloudinaryField
+from cloudinary_storage.storage import MediaCloudinaryStorage
+
 class ResizedImageFieldFile(ImageFieldFile):
     def save(self, name, content, save=True):
-        # Open the uploaded image
+        # Open the image
         img = Image.open(content)
 
-        # Resize the image to fit within the maximum size while maintaining the aspect ratio
-        max_size = (800, 800)  # You can adjust this size as needed
-        img.thumbnail(max_size, Image.Resampling.LANCZOS)  # Use LANCZOS resampling filter
+        # Preserve the color profile (if any)
+        if hasattr(img, "info") and "icc_profile" in img.info:
+            icc_profile = img.info.get("icc_profile")
+        else:
+            icc_profile = None
 
-        # Save the resized image to a BytesIO object with reduced quality, in WebP format
+        # Convert to RGB if necessary (prevents color loss issues)
+        if img.mode not in ["RGB", "L"]:  # "L" is for grayscale
+            img = img.convert("RGB")
+
+        # Resize settings
+        max_size = (1200, 1200)
+        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+        # Convert to WebP and compress
         img_io = BytesIO()
+        webp_name = f"{name.rsplit('.', 1)[0]}.webp"  # Change extension to .webp
 
-        # Ensure the file format is WebP
-        webp_name = f"{name.rsplit('.', 1)[0]}.webp"  # Change file extension to .webp
-        img.save(img_io, format="WEBP", quality=100)  # Save in WebP format with the desired quality
+        # Save as WebP with high quality and preserve ICC profile if available
+        img.save(
+            img_io,
+            format="WEBP",
+            quality=100,  # Adjust quality as needed (80-100 is a good range)
+            lossless=False,  # Use lossless=False for better compression while maintaining quality
+            icc_profile=icc_profile  # Preserve the ICC profile
+        )
         img_io.seek(0)
 
-        # Create a SimpleUploadedFile with the resized image data
-        content = SimpleUploadedFile(webp_name, img_io.read(), content_type="image/webp")
+        # Create a new SimpleUploadedFile with processed data
+        content = SimpleUploadedFile(
+            webp_name,
+            img_io.read(),
+            content_type="image/webp"
+        )
 
-        # Save the resized image using the parent class method
+        # Save using the parent class's save method
         super().save(webp_name, content, save)
 
-class ResizedImageField(ImageField):
+# Custom ImageField using Cloudinary storage
+class ResizedImageField(models.ImageField):
     attr_class = ResizedImageFieldFile
+
+    def __init__(self, *args, **kwargs):
+        # Force storage to Cloudinary
+        kwargs["storage"] = MediaCloudinaryStorage()  # Cloudinary storage backend
+        super().__init__(*args, **kwargs)
 
 
 class AnonymousUser(models.Model):
@@ -53,8 +82,20 @@ class AnonymousUser(models.Model):
 class CollectionSet(models.Model):
     name=models.CharField(max_length=100)
     hero=models.BooleanField(default=False)
-    image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
-    mobile_image = models.ImageField(upload_to="collectionset/",blank=True,null=True)
+    # image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
+    # mobile_image = models.ImageField(upload_to="collectionset/",blank=True,null=True)
+
+    image = ResizedImageField(
+        upload_to="collectionset/",  # Folder in Cloudinary
+        blank=True,
+        null=True
+    )
+    
+    mobile_image = ResizedImageField(
+        upload_to="collectionset/",  # Folder in Cloudinary
+        blank=True,
+        null=True
+    )    
     @property
     def imageURL(self):
         try:
@@ -100,6 +141,7 @@ class ProductCategory(models.Model):
 class UserProfile(models.Model):
     
     user=models.OneToOneField(User,on_delete=models.SET_NULL,null=True)
+    is_anonymous = models.BooleanField(default=False)
     join_at=models.DateTimeField(default=now,blank=True)
 
     def __str__(self):

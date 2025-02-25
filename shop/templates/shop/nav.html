@@ -89,6 +89,7 @@
             {% if user.is_superuser %}
             <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>
             <li><a class="dropdown-item" href="{% url 'visit_stats' %}">visit stats</a></li>
+            <li><a class="dropdown-item" href="{% url 'product_add' %}">Add Product</a></li>
             {% endif %}
             <li>
               {% if user.is_authenticated %}

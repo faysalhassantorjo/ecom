@@ -28,7 +28,7 @@ def send_html_email(shippingAddress):
     from_email = settings.EMAIL_HOST_USER
     # 'Jannatulferdospia77@gmail.com'
     customr_email = shippingAddress.email
-    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com']
+    recipient_list = [customr_email,'faysalhassantorjo8@gmail.com','Jannatulferdospia77@gmail.com']
     print('customer mail ', customr_email)
     email = EmailMessage(
         subject,
@@ -103,17 +103,15 @@ def get_user(request):
     user =None
     if request.user.is_authenticated:
         user=request.user
+        userprofile, created = UserProfile.objects.get_or_create(user=user)
     else:
         u=create_anonymous_user(request)
         user,c=User.objects.get_or_create(username=u)
-    try:
-        userprofile, created = UserProfile.objects.get_or_create(user=user)
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
+        userprofile, created = UserProfile.objects.get_or_create(user=user,is_anonymous = True)
     return userprofile
 from django.contrib.auth import authenticate, login
 
-def user_login(request):
+def user_login(request,product_path=None):
     if request.method == 'POST':
             username = request.POST['username']
             password = request.POST['password']
@@ -252,7 +250,7 @@ def home(request):
     )
     context={
         'top_rated_product':top_rated_products,
-        'heroCollections':hero_collections,
+        'heroCollections': CollectionSet.objects.filter(hero=True).order_by('-id'),
         'collectionsets':collection_sets,
         'discount_product':discount_products,
         'all_categories':all_categories[:10],
@@ -286,7 +284,8 @@ def home(request):
 import json
 from django.http import JsonResponse
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
+# @login_required(login_url='/login/')
 def create_order_item(request):
 
     if request.method == 'POST':
@@ -528,6 +527,11 @@ def checkout(request):
             order.totalbill=subtotal
             order.save()
             send_html_email(shipping_address)
+            
+            user = userProfile.user
+            if userProfile.is_anonymous:  
+                userProfile.delete()
+                user.delete()
             return redirect('order_success',pk=shipping_address.id)
 
     else:
@@ -634,6 +638,7 @@ def products(request,pk):
     return render(request,'shop/shop.html',context) 
 
 from django.db.models import Q
+
 def shop_details(request,slug):
     try:
         
@@ -755,17 +760,17 @@ def viewOrder(request):
     # confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed").order_by('-timestamp')
     # cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
     
-    # userProfile=get_user(request)
-    # # with transaction.atomic():  # Ensure atomic updates
-    # #     for address in shippingAddress:
-    # #         if userProfile not in address.seen_by.all():
-    # #             address.seen_by.add(userProfile)
+    userProfile=get_user(request)
+    with transaction.atomic():  # Ensure atomic updates
+        for address in shippingAddress:
+            if userProfile not in address.seen_by.all():
+                address.seen_by.add(userProfile)
 
     context={
        'shippingAddresss': shippingAddress,
     #    'confirmed_order': confrimed_order,
     #    'canceled_order': cancelled_order,
-    #    'userProfile':userProfile
+       'userProfile':userProfile
     }
     return render(request,'shop/viewOrder2.html',context)
 
@@ -831,8 +836,9 @@ def writeReview(request, slug):
     return redirect('shop_details', slug=slug)        
 
     
-    
+@admin_only
 def product_add(request):
+    print('add product')
     form2=AddCategory(request.POST, request.FILES)
     form3=AddCollection(request.POST, request.FILES)
     if request.method == 'POST':
