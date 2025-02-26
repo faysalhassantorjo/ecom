@@ -246,11 +246,11 @@ def home(request):
 
     new_arrivals = get_cached_data(
         cache_keys['new_arrivals'],
-        lambda: Product.get_new_arrivals().order_by('?')[:15]
+        lambda: Product.get_new_arrivals().order_by('?')[:10]
     )
     context={
         'top_rated_product':top_rated_products,
-        'heroCollections': CollectionSet.objects.filter(hero=True).order_by('-id'),
+        'heroCollections': hero_collections,
         'collectionsets':collection_sets,
         'discount_product':discount_products,
         'all_categories':all_categories[:10],
