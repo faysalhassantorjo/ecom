@@ -58,6 +58,7 @@ class AddProduct(forms.ModelForm):
             'desc',
             'price',
             'unstitched_price',
+            'collectionset',
             'productCategory',
             'image',
             'image2',

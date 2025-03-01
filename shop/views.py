@@ -253,7 +253,7 @@ def home(request):
         'heroCollections': hero_collections,
         'collectionsets':collection_sets,
         'discount_product':discount_products,
-        'all_categories':all_categories[:10],
+        'all_categories':all_categories[:8],
         'new_arrivals':new_arrivals,
         'popular_category':popular_category
     }
