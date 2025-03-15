@@ -49,34 +49,45 @@ class OrderCancel(forms.ModelForm):
         fields = ['cancel_reason']
 
 class AddProduct(forms.ModelForm):
+    tags = TagField(widget=forms.TextInput(attrs={
+        'class': 'form-control', 
+        'placeholder': 'Enter tags (comma-separated)'
+    }))
+
     class Meta:
         model = Product
-        tags = TagField()
         fields = [
-            
-            'name',
-            'desc',
-            'price',
-            'unstitched_price',
-            'collectionset',
-            'productCategory',
-            'image',
-            'image2',
-            'image3',
-            'image4',
-            'tags',
-            'in_stock'         
+            'name', 'desc', 'price', 'unstitched_price', 'collectionset', 'productCategory', 'image', 'image2', 'image3', 'image4',
+            'youtube_video_id', 'new_arrival', 'tags', 'in_stock'
         ]
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product name'}),
+            'desc': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter product description'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter price'}),
+            'unstitched_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter unstitched price'}),
+            'collectionset': forms.Select(attrs={'class': 'form-select'}),
+            'productCategory': forms.SelectMultiple(attrs={'class': 'form-select'}),  # Supports multiple categories
+            'youtube_video_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'YouTube Video ID'}),
+            'new_arrival': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'in_stock': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
 
 class AddCategory(forms.ModelForm):
     class Meta:
         model = ProductCategory
-        fields = [
-            'name',
-            'collection',
-            'image',          
-        ]
+        fields = ['name', 'collection', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category name'}),
+            'collection': forms.SelectMultiple(attrs={'class': 'form-select'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+        }
+
 class AddCollection(forms.ModelForm):
     class Meta:
         model = CollectionSet
         fields = ['name', 'hero', 'image']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter collection name'}),
+            'hero': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter hero name'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+        }

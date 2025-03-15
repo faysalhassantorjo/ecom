@@ -246,7 +246,7 @@ def home(request):
 
     new_arrivals = get_cached_data(
         cache_keys['new_arrivals'],
-        lambda: Product.get_new_arrivals().order_by('?')[:10]
+        lambda: Product.get_new_arrivals().order_by('?')[:8]
     )
     context={
         'top_rated_product':top_rated_products,
@@ -843,10 +843,13 @@ def product_add(request):
     form3=AddCollection(request.POST, request.FILES)
     if request.method == 'POST':
         form=AddProduct(request.POST,request.FILES)
-
         if form.is_valid():
             form.save()
+            messages.success(request,"Product Added Successfully!")
             return redirect('product_add')
+        else:
+            messages.error(request,"Some Error Occured!")
+            
     else:
         form=AddProduct()
 
@@ -864,9 +867,12 @@ def addCategory(request):
         form=AddCategory(request.POST,request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request,"Category Added Successfully!")
             return redirect('product_add')
         else:
-            return HttpResponse("Form is not valid. Please check your inputs.")
+            messages.error(request,"Some Error Occured!")
+            return redirect('product_add')
+        
 
 
 from django.http import HttpResponse
