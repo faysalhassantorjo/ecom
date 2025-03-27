@@ -753,12 +753,14 @@ def shop_details(request,slug):
 
 from .decorator import admin_only
 from django.db import transaction
+from datetime import timedelta
 @admin_only
 def viewOrder(request):
+    two_weeks_ago = timezone.now() - timedelta(weeks=2)
 
-    shippingAddress=ShippingAddress.objects.filter(order__status = "Pending").order_by('-timestamp')
-    # confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed").order_by('-timestamp')
-    # cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled").order_by('-timestamp')
+    shippingAddress=ShippingAddress.objects.filter(order__status = "Pending",).order_by('-timestamp')
+    confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
+    cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
     
     userProfile=get_user(request)
     with transaction.atomic():  # Ensure atomic updates
@@ -768,8 +770,8 @@ def viewOrder(request):
 
     context={
        'shippingAddresss': shippingAddress,
-    #    'confirmed_order': confrimed_order,
-    #    'canceled_order': cancelled_order,
+       'confirmed_order': confrimed_order,
+       'canceled_order': cancelled_order,
        'userProfile':userProfile
     }
     return render(request,'shop/viewOrder2.html',context)
