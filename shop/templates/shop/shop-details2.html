@@ -415,7 +415,7 @@
                 <a class="text-reset me-3" href="{% url 'cart' %}">
                     <i class="fas fa-shopping-cart"
                         style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
-                    <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
+                    <span class="badge rounded-pill badge-notification bg-danger" id="cart_items" style="font-size: 10px;">
                         {% if order.total_items %}
                         {{order.total_items}}
                         {% else %}
@@ -511,7 +511,6 @@
     </script>
 
     <!-- Navbar -->
-    {% if messages %}
 
     <style>
         .messages .message {
@@ -531,27 +530,16 @@
             /* Shadow for depth */
             position: fixed;
             z-index: 10;
+            display: none;
         }
     </style>
     <div class="messages d-flex justify-content-center " style="margin-top:-10px;">
-        {% for message in messages %}
-        <div class="message" id="success-message">{{ message }}</div>
-        {% endfor %}
+        <div class="message" id="success-message"></div>
     </div>
-    {% endif %}
 
-    <script>
 
-        var messageElement = document.getElementById("success-message");
-
-        messageElement.style.display = "block";
-
-        setTimeout(function () {
-            messageElement.style.display = "none";
-        }, 2000);
-    </script>
     <!-- Product Page Container -->
-    <div class="container my-2">
+    <div class="container my-4">
         <div class="row">
             <!-- Product Images -->
             <div class="col-md-6">
@@ -559,6 +547,7 @@
                     <img id="mainImage" src="{{product.imageURL}}" alt="Prouct image" class="mb-3">
                 </div>
                 <div class="thumb-img d-flex">
+                    <img src="{{product.imageURL}}" alt="Product Image 1" onclick="changeImage(this.src)">
                     {% if product.imageURL2 %}
                     <img src="{{product.imageURL2}}" alt="Product Image 1" onclick="changeImage(this.src)">
                     {% endif %}
@@ -571,8 +560,21 @@
                 </div>
             </div>
 
+            <style>
+                .details-section::-webkit-scrollbar {
+                    display: none;
+                }
+                .details-section{
+                     -ms-overflow-style: none;  /* IE and Edge */
+                    scrollbar-width: none;  /* Firefox */
+                }
+                  #loading {
+        transition: opacity 0.3s ease;
+    }
+            </style>
+
             <!-- Product Details -->
-            <div class="col-md-6">
+            <div class="col-md-6 details-section" >
                 <div class="product-details p-4">
                     <h2 style="font-size: 2rem; text-transform: capitalize;"> 
                         {{product.name}}
@@ -626,7 +628,7 @@
                         </button>
                     </div>
                     {% endif %}
-                    <form method="post" action="{% url 'update_item' %}" onsubmit="return validateForm()">
+                    <form method="post" id="updateForm">
                         {% csrf_token %}
 
                         <div id="form_c">
@@ -642,7 +644,7 @@
                         <!-- Size Option as Radio Buttons -->
                         <div class="size-options mt-3" style="border: 1px solid #484d50; padding: 10px">
                             <p>Select Size <span id="Unstitched-info"
-                                    style="background-color: #037288; font-size: .8rem;"></span></p>
+                                    style="background-color: #f74e069a; font-size: .8rem;"></span></p>
 
                             <input type="radio" id="36" name="size" value="36">
                             <label for="36">36</label>
@@ -654,6 +656,8 @@
                             <label for="42">42</label>
                             <input type="radio" id="44" name="size" value="44">
                             <label for="44">44</label>
+                            <input type="radio" id="46" name="size" value="46">
+                            <label for="46">46</label>
 
 
                         </div>
@@ -710,6 +714,7 @@
                         <span class="badge rounded-pill badge-danger">Sorry the product is not available now</span>
                         {% endif %}
                     </form>
+
 
                 </div>
                 <style>
@@ -821,31 +826,6 @@
                 transition: max-height 0.5s ease;
             }
         </style>
-
-        <script>
-            function toggleReviewSection() {
-                const reviewSection = document.getElementById('all-reviews');
-                const toggleButton = document.getElementById('toggleButton');
-
-                if (reviewSection.classList.contains('hidden-reviews')) {
-                    reviewSection.classList.remove('hidden-reviews');
-                    reviewSection.classList.add('visible-reviews');
-                    toggleButton.textContent = 'Hide Reviews';
-                } else {
-                    reviewSection.classList.remove('visible-reviews');
-                    reviewSection.classList.add('hidden-reviews');
-                    toggleButton.textContent = 'See Reviews';
-                }
-            }
-        </script>
-
-
-
-
-
-
-
-
         <!-- Recommended Products Section -->
         <section class="related spad">
             <div class="container">
@@ -1173,24 +1153,42 @@
 
 
 
+<!-- Fullscreen Loading Overlay -->
+<div id="loading" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(50, 50, 50, 0.184);
+    backdrop-filter: blur(10px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+">
+    <i class="fas fa-spinner fa-spin fa-4x mb-3" style="color: #f74f06;"></i>
+    <strong class="text-light fs-5">Updating Cart...</strong>
+</div>
+
+
+
 
 
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Get the elements
             const button = document.getElementById("unstiched-button");
             const priceElement = document.getElementById("product-price");
 
             const inputContainer = document.getElementById("form_c")
-            // The unstitched price (you'll replace this with the actual value from your server or context)
             const unstitchedPrice = "{{ product.unstitched_price }}";
 
             const Unstitched_info = document.getElementById("Unstitched-info")
 
-            // Add click event listener to the button
+            if(button){
             button.addEventListener("click", function () {
-                // Update the price element's text content
                 priceElement.textContent = `${unstitchedPrice}`;
                 const inputField = document.createElement("input");
                 inputField.type = "hidden";
@@ -1206,27 +1204,75 @@
                 Unstitched_info.innerText = "Select a Random Size "
 
 
-            });
+            });}
+
+            const form = document.getElementById("updateForm");
+
+            var messageElement = document.getElementById("success-message");
+
+
+
+            form.addEventListener("submit", async function (e) {
+                        e.preventDefault();
+                        const size = form.querySelector('input[name="size"]:checked');
+                        if (!size) {
+                                alert("Please select a size.");
+                                return;
+                            }
+                        const formData = new FormData(form);
+                        const loadingElement = document.getElementById("loading");
+                        loadingElement.style.display = "block";
+                        loadingElement.style.display = "flex";
+                        fetch("/update_item/", {
+                            method: 'POST',   
+                            body: formData
+                        })
+                            .then(response => {
+                                loadingElement.style.display = "none"; 
+                                if (!response.ok) throw new Error("Network response was not ok");
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log("Success:", data);
+                                messageElement.style.display = "block";
+                                messageElement.innerText = data.message
+
+                                let cart_items = document.getElementById('cart_items');
+                                let currentCount = parseInt(cart_items.innerText) || 0; // fallback to 0 if NaN
+                                cart_items.innerText = currentCount + 1;
+
+
+                                form.reset();
+                                setTimeout(function () {
+                                    messageElement.style.display = "none";
+                                }, 2000);
+                            })
+                            .catch(error => {
+                                loadingElement.style.display = "none"; 
+                                console.error("Fetch error:", error);
+                                alert("Something went wrong.");
+                            });
+                        });
         });
 
-    </script>
 
-
-    <script>
         function changeImage(src) {
             document.getElementById('mainImage').src = src;
         }
-    </script>
+               function toggleReviewSection() {
+                const reviewSection = document.getElementById('all-reviews');
+                const toggleButton = document.getElementById('toggleButton');
 
-    <script>
-        function validateForm() {
-            var selectedSize = document.querySelector('input[name="size"]:checked');
-            if (!selectedSize) {
-                alert("Please select a size before adding to cart.");
-                return false;
+                if (reviewSection.classList.contains('hidden-reviews')) {
+                    reviewSection.classList.remove('hidden-reviews');
+                    reviewSection.classList.add('visible-reviews');
+                    toggleButton.textContent = 'Hide Reviews';
+                } else {
+                    reviewSection.classList.remove('visible-reviews');
+                    reviewSection.classList.add('hidden-reviews');
+                    toggleButton.textContent = 'See Reviews';
+                }
             }
-            return true;
-        }
     </script>
 
     <script type="text/javascript"

@@ -80,7 +80,7 @@ class AnonymousUser(models.Model):
 
 
 class CollectionSet(models.Model):
-    name=models.CharField(max_length=100)
+    name=models.CharField(max_length=255)
     hero=models.BooleanField(default=False)
     # image=models.ImageField(upload_to='collectionset/',blank=True,null=True)
     # mobile_image = models.ImageField(upload_to="collectionset/",blank=True,null=True)

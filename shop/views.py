@@ -285,7 +285,9 @@ import json
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-# @login_required(login_url='/login/')
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def create_order_item(request):
 
     if request.method == 'POST':
@@ -306,7 +308,7 @@ def create_order_item(request):
         else:
             is_istiched = True
 
-
+        print('------>',size,actionanddata)
             
         print('hello this is : ',is_istiched)
         if add_product or add_product2 or add_product3:
@@ -384,7 +386,9 @@ def create_order_item(request):
         if cart:
             return redirect('cart')
 
-        return redirect('shop_details',slug=productId)
+        # return redirect('shop_details',slug=productId)
+        return JsonResponse({'status': 'success', 'message': 'Item added to cart'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 from .form import ShippingAddressForm
 def createOrder(request):
@@ -761,7 +765,7 @@ def viewOrder(request):
     shippingAddress=ShippingAddress.objects.filter(order__status = "Pending",).order_by('-timestamp')
     confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
     cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
-    
+    print(confrimed_order)
     userProfile=get_user(request)
     with transaction.atomic():  # Ensure atomic updates
         for address in shippingAddress:
