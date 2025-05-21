@@ -124,7 +124,9 @@
         <div class="cart-item row">
             <div class="col-md-4">
                 <img src="{{item.product.imageURL}}" height="100" width="100" alt="Product 2">
+                <p style="font-size: .8rem;">{{item.customization_note}}</p>
             </div>
+    
             <div class="col-md-4">
                 <ul class="cart-item-details">
                     <li><strong> {{item.product.name}}</strong></li>
@@ -192,6 +194,7 @@
                     <input type="text" name="action" value="delete {{ item.product.slug }}" hidden>
                     <input type="text" name="from" value="cart" hidden>
                     <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
+                    <input type="text" name="customization_note" value="{{item.customization_note}}" hidden>
 
                     <button type="submit" class="btn btn-danger">
                         <i class="fa-solid fa-trash"></i>

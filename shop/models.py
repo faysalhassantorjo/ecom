@@ -184,6 +184,7 @@ class Product(models.Model):
     tags = TaggableManager()
     in_stock=models.BooleanField(default=True,blank=True)
     ratting = models.FloatField(default=0)
+    customization_possible =  models.BooleanField(default=False, blank=True, null=True)
     def __str__(self):
         return str(f'{self.name} ')
 
@@ -333,6 +334,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
     size=models.CharField(max_length=10,blank=True,null=True)
     is_stitched = models.BooleanField(default=True)
+    customization_note = models.TextField(null=True, blank=True)
     @property
     def item_total(self):
         add_on = self.add_on_product.all()

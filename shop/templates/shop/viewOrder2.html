@@ -371,6 +371,10 @@
                                             {% if not orderItem.is_stitched %}
                                             <div class="unstitched-badge">Unstitched</div>
                                             {% endif %}
+                                            {% if orderItem.customization_note %}
+                                            <p>{{orderItem.customization_note}}</p>
+                                            {% endif %}
+
                                         </td>
                                         <td data-label="Product">{{orderItem.product.name}}</td>
                                         <td data-label="Qty">{{orderItem.quantity}}</td>
@@ -533,6 +537,7 @@
                                             {% if not orderItem.is_stitched %}
                                             <div class="unstitched-badge">Unstitched</div>
                                             {% endif %}
+                                            
                                         </td>
                                         <td data-label="Product">{{orderItem.product.name}}</td>
                                         <td data-label="Qty">{{orderItem.quantity}}</td>
@@ -706,8 +711,9 @@
                                             {% if not orderItem.is_stitched %}
                                             <div class="unstitched-badge">Unstitched</div>
                                             {% endif %}
+                                            <p>{{orderItem.customization_note}}</p>
                                         </td>
-                                        <td data-label="Product">{{orderItem.product.name}}</td>
+                                        <td data-label="Product">{{orderItem.product}}</td>
                                         <td data-label="Qty">{{orderItem.quantity}}</td>
                                         <td data-label="Size">{{orderItem.size|default:"-"}}</td>
                                         <td data-label="Price">{{orderItem.item_total}} TK</td>

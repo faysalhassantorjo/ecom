@@ -292,6 +292,7 @@ def create_order_item(request):
 
     if request.method == 'POST':
         size = request.POST.get('size', None)
+        customization_note = request.POST.get('customization_note', None)
         actionanddata = request.POST.get('action', None)
         cart = request.POST.get('from', None)
         add_product=request.POST.get('add_on_product',None)
@@ -308,9 +309,6 @@ def create_order_item(request):
         else:
             is_istiched = True
 
-        print('------>',size,actionanddata)
-            
-        print('hello this is : ',is_istiched)
         if add_product or add_product2 or add_product3:
             print(add_product)
             try: 
@@ -343,7 +341,7 @@ def create_order_item(request):
         product = Product.objects.get(slug=productId)
         order, c = Order.objects.get_or_create(user=userprofile, complete=False)
 
-        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size,is_stitched = is_istiched)
+        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size,is_stitched = is_istiched,customization_note=customization_note )
         
         if add_product or add_product2 or add_product3:
             try: 
@@ -530,7 +528,7 @@ def checkout(request):
             order.status="Pending"
             order.totalbill=subtotal
             order.save()
-            send_html_email(shipping_address)
+            # send_html_email(shipping_address)
             
             user = userProfile.user
             if userProfile.is_anonymous:  

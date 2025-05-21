@@ -707,6 +707,14 @@
                         {% endif %}
                         <!-- Add to Cart Button -->
                         <input type="text" name="action" value="add {{ product.slug }}" hidden>
+                        
+                        {% if product.customization_possible %}
+                         <div class="form-group">
+                            <label for="exampleFormControlTextarea1" class="p-2">Customization Note</label>
+                            <textarea class="form-control " name="customization_note"  rows="3"></textarea>
+                        </div>
+                        {% endif %}
+
                         {% if product.in_stock %}
                         <button type="submit" class="btn btn-danger btn-lg mt-3">Add to Cart</button>
                         {% else %}

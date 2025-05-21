@@ -117,7 +117,13 @@
                                 <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
                                 {% endif %}
                             </td>
-                            <td data-label="Product Name">{{ orderItem.product.name }}</td>
+                            <td data-label="Product Name">
+                                {{ orderItem.product.name }}
+                                <br>
+                                {% if orderItem.customization_note %}
+                                <p style="opacity: .8;">{{orderItem.customization_note}}</p>
+                                {% endif %}
+                            </td>
                             <td data-label="Quantity">{{ orderItem.quantity }}</td>
                             <td data-label="Size">{{ orderItem.size }}</td>
                             <td data-label="Price">{{ orderItem.item_total }}</td>
