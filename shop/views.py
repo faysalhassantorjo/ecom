@@ -528,7 +528,7 @@ def checkout(request):
             order.status="Pending"
             order.totalbill=subtotal
             order.save()
-            # send_html_email(shipping_address)
+            send_html_email(shipping_address)
             
             user = userProfile.user
             if userProfile.is_anonymous:  
