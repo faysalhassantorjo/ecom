@@ -10,6 +10,7 @@ class PostAdmin(admin.ModelAdmin):
     # list_display = ("name",)
     # prepopulated_fields = {"slug": ("name",)}
     # exclude =('_ratting',)
+    search_fields = ['name', 'slug']
     class Media:
         js= ('tineyInject.js',)
 
@@ -20,6 +21,8 @@ admin.site.register(AnonymousUser)
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
       list_display = [field.name for field in Order._meta.fields]
+      search_fields = ['order_id', 'user__user__username', 'status']
+
 admin.site.register(ProductCategory)
 admin.site.register(ShippingAddress)
 admin.site.register(Review)

@@ -371,14 +371,19 @@
             </div>
 
             <!-- Discount tag -->
+             {% if product.new_arrival %}
             <div class="stock-out-msg">New</div>
-
+            {% elif product.discount_percent %}
+            <div class="stock-out-msg">-{{product.discount_percent}}%</div>
+            {% endif %}
             <!-- Product details -->
             <div class="product-details">
               <p class="product-name"> {{product.name}}</p>
-              <p class="price" style="font-family: 'Space Grotesk', sans-serif;">
+              <p class="price">
                 Tk. {{product.price}}
-
+                {% if product.discount_percent %}
+                <del>{{product.update_price}}</del>
+                {% endif %}
               </p>
             </div>
           </div>

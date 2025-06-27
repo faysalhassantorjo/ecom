@@ -236,7 +236,7 @@ def home(request):
 
     discount_products = get_cached_data(
         cache_keys['discount_products'],
-        lambda: Product.objects.filter(discount_percent__gt=5)
+        lambda: Product.objects.filter(discount_percent__gt=5).order_by('?')[:8]
     )
 
     all_categories = get_cached_data(
@@ -248,11 +248,13 @@ def home(request):
         cache_keys['new_arrivals'],
         lambda: Product.get_new_arrivals().order_by('?')[:8]
     )
+    
+    print('discount products:',discount_products)
     context={
         'top_rated_product':top_rated_products,
-        'heroCollections': hero_collections,
+        'heroCollections': CollectionSet.objects.filter(hero=True).order_by('-id'),
         'collectionsets':collection_sets,
-        'discount_product':discount_products,
+        'discount_products':discount_products,
         'all_categories':all_categories[:8],
         'new_arrivals':new_arrivals,
         'popular_category':popular_category

@@ -104,8 +104,6 @@
     </div>
   </nav>
   <style>
-
-
     #searchOverlay.active {
       display: flex;
     }
@@ -132,8 +130,9 @@
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <span class="close-btn" onclick="toggleSidebar()">&times;</span>
-    <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" /><br>
-    
+    <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo"
+      loading="lazy" /><br>
+
     <form action="{% url 'home' %}" method="get">
       <div id="searchOverlay">
         <input type="text" id="searchInput" name="data" placeholder="Type to search...">
@@ -244,64 +243,101 @@
 
 
   <section>
+    <div class="container py-5">
+      <div class="row">
+        <!-- Product Card 1 -->
+        {% if discount_products %}
+        <div class="heading text-center">
+          <h3>Discount Products</h3>
+        </div>
+        {% endif %}
+        {% for product in discount_products %}
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+          <a href="{% url 'shop_details' slug=product.slug %}">
+            <div class="product-card" style="position: relative;">
+              <span class="badge bg-danger" style="position: absolute; top: 10px; left: 10px; z-index: 2; font-size: 1rem;">
+                {{product.discount_percent}}% off
+              </span>
+              <div class="product-image" style='background-image: url("{{product.imageURL}}")'>
+                <div class="product-overlay text-center">
+                  <h5 class="mb-1" style="opacity: .9;">{{product.name}}</h5>
+                  <!-- <h6 class="mb-0">TK. {{product.price }}</h6> -->
+                  <h4 class="mb-0">TK. {{product.price }} <del
+                      style="opacity: .8; font-size: 1rem;">
+                      {{product.update_price}}
+                    </del></h4>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section>
     <style>
       .product-card {
-          position: relative;
-          margin-bottom: 1rem;
-          border-radius: 8px;
-          overflow: hidden;
-          transition: transform 0.3s ease;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+        position: relative;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
       }
 
       .product-card:hover {
-          transform: translateY(-5px);
+        transform: translateY(-5px);
       }
 
       .product-image {
-          height: 450px;
-          background-size: cover;
-          background-position: center;
-          position: relative;
+        height: 450px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
       }
 
       .product-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1rem;
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.897) 20%, transparent);
-          color: white;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.897) 20%, transparent);
+        color: white;
       }
 
       @media (max-width: 768px) {
-          .product-image {
-              height: 200px;
-          }
+        .product-image {
+          height: 200px;
+        }
       }
-  </style>
+    </style>
     <div class="container py-5">
       <div class="row">
-          <!-- Product Card 1 -->
-          <div class="heading text-center">
-            <h3>New Arrivals</h3>
-          </div>
-          {% for product in new_arrivals %}
-          <div class="col-6 col-md-4 col-lg-3 mb-4">
-            <a href="{% url 'shop_details' slug=product.slug %}">
-              <div class="product-card">
-                  <div class="product-image" style='background-image: url("{{product.imageURL}}")'>
-                      <div class="product-overlay text-center">
-                          <h4 class="mb-1">{{product.name}}</h4>
-                          <!-- <h6 class="mb-0">TK. {{product.price }}</h6> -->
-                      </div>
-                  </div>
+        <!-- Product Card 1 -->
+        {% if new_arrivals %}
+        <div class="heading text-center">
+          <h3>New Arrivals</h3>
+        </div>
+        {% endif %}
+        {% for product in new_arrivals %}
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+          <a href="{% url 'shop_details' slug=product.slug %}">
+            <div class="product-card">
+              <div class="product-image" style='background-image: url("{{product.imageURL}}")'>
+                <div class="product-overlay text-center">
+                  <h4 class="mb-1">{{product.name}}</h4>
+                  <!-- <h6 class="mb-0">TK. {{product.price }}</h6> -->
+                </div>
               </div>
-            </a>
-          </div>      
-          {% endfor %}
-  </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
   </section>
 
   <section style="margin-top: 30px;">
