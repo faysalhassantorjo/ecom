@@ -15,6 +15,12 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
     rel="stylesheet">
+  <!-- Page Title (SEO & Browser tab) -->
+  <title>longg-লং</title>
+
+  <!-- Meta Description (SEO) -->
+  <meta name="description" content='  Take Love "longg-লং"
+              Explore our collection and embrace a fusion of style, comfort, and elegance.' />
 
   <!-- MDB -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
@@ -62,7 +68,9 @@
 
       <!-- Cart and Profile Icons -->
       <div class="d-flex align-items-center">
-
+        {% if user.is_superuser %}
+        <a class="btn btn-info btn-sm me-2" href="{% url 'viewOrder' %}">View Order</a>
+        {% endif %}
         <a class="text-reset me-3" href="{% url 'cart' %}">
           <i class="fas fa-shopping-cart"
             style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
@@ -74,6 +82,7 @@
             {% endif %}
           </span>
         </a>
+
 
         <!-- Profile Dropdown -->
         <div class="dropdown">
