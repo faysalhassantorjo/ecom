@@ -84,7 +84,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
             {% if user.is_authenticated %}
-            <li><a class="dropdown-item" href="{% url 'profile' pk=userProfile.id %}">my order</a></li>
+            <li><a class="dropdown-item" href="{% url 'profile' pk=user.userprofile.id %}">my order</a></li>
             {% endif %}
             {% if user.is_superuser %}
             <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>

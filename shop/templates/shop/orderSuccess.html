@@ -68,12 +68,12 @@
 <body>
 
 <div class="container mt-5">
-    <div class="card order-card p-3 mt-1" id="{{ shippingaddress.order.order_id }}">
+    <div class="card order-card p-3 mt-1" id="{{ shippingaddress.order.id }}">
         <div class="card-body">
             <div class="d-flex justify-content-between">
                 <h5 class="card-title">Order: 
                     <span style="background-color: #f74f06; padding: 3px; color: #ddd;">
-                        #{{ shippingaddress.order.order_id }}
+                        #{{ shippingaddress.order.id }}
                     </span>
                 </h5>
                 <!-- <p class="date"><strong>Date:</strong> {{ shippingaddress.timestamp }} 
@@ -183,7 +183,7 @@
 
             <!-- Print Button -->
             <div class="text-center no-print mt-3">
-                <button class="btn btn-info"  onclick="printDiv('{{ shippingaddress.order.order_id }}')">Print</button>
+                <button class="btn btn-info"  onclick="printDiv('{{ shippingaddress.order.id }}')">Print</button>
                 <a href="/"  class="btn btn-success">Continue Shopping</a>
             </div>
         </div>

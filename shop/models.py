@@ -148,22 +148,18 @@ class UserProfile(models.Model):
         return str(self.user)
 
 class AddOnProduct(models.Model):
-    name=models.CharField(max_length=100)
+    title=models.CharField(max_length=100)
     price=models.PositiveIntegerField(default=0)
-    size = models.CharField(max_length=10,null=True,blank=True)
+    size = models.CharField(max_length = 50)
+    def __str__(self):
+        return str(f'{self.title} ')
 
-
-    def __str__(self) -> str:
-        return f'{self.name}-{self.size}-{self.price}tk'
 
 class Product(models.Model):
     name=models.CharField(max_length=100)
     slug = AutoSlugField(populate_from='name',unique=True,null=True,default=None)
 
     product_code=models.CharField(max_length=100,null=True,blank=True)
-    add_on_product=models.ManyToManyField(AddOnProduct,blank=True)
-    add_on_product2=models.ManyToManyField(AddOnProduct,related_name='ad_on_2',blank=True)
-    add_on_product3=models.ManyToManyField(AddOnProduct,related_name="ad_on_3",blank=True)
     description=models.TextField(null=True,blank=True)
     
     desc = models.TextField(null=True,blank=True)
@@ -266,7 +262,7 @@ class Product(models.Model):
         threshold_date = timezone.now() - timedelta(days=30)
         # Filter products that arrived within the last 15 days
         return cls.objects.filter(arrive_at__gte=threshold_date)
-
+import uuid
 class Order(models.Model):
     STATUS_CHOICES = [
         ('not_confirm','not_confirm'),
@@ -281,13 +277,19 @@ class Order(models.Model):
         ('inside_dhaka', 'Inside Dhaka'),
         ('outside_dhaka', 'Outside Dhaka'),
     ]
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False
+        )
 
     user=models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    sesssion_id = models.CharField(max_length=50, blank=True, null=True)
     items = models.ManyToManyField('Product', through='OrderItem')
     created_at=models.DateTimeField(default=now,blank=True)
     complete=models.BooleanField(default=False,blank=True)
-    order_id=models.CharField(max_length=20,null=True,blank=True)
+    # order_id=models.CharField(max_length=20,null=True,blank=True)
     coupon=models.BooleanField(default=False,null=True,blank=True)
     coupon_percentange=models.PositiveIntegerField(default=0,null=True,blank=True)
     cancel_reason=models.TextField(null=True,blank=True)
@@ -330,20 +332,20 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
     quantity=models.IntegerField(default=0)
-    add_on_product= models.ManyToManyField(AddOnProduct)
     order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
     size=models.CharField(max_length=10,blank=True,null=True)
     is_stitched = models.BooleanField(default=True)
     customization_note = models.TextField(null=True, blank=True)
     @property
     def item_total(self):
-        add_on = self.add_on_product.all()
-        total_add_on = sum(add_pro.price for add_pro in add_on)
+        # add_on = self.add_on_product.all()
+        # total_add_on = sum(add_pro.price for add_pro in add_on)
         if  self.is_stitched:
             total=self.product.price*self.quantity
         else:  
             total=self.product.unstitched_price*self.quantity
-        return total+(total_add_on*self.quantity)
+        # return total+(total_add_on*self.quantity)
+        return total
 
 class ShippingAddress(models.Model):
     order=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
@@ -355,7 +357,6 @@ class ShippingAddress(models.Model):
     email=models.CharField(max_length=100)
     timestamp=models.DateTimeField(default=now,blank=True)
     
-    seen_by = models.ManyToManyField(UserProfile, related_name="seen_orders", blank=True)
 
 
     def __str__(self):
@@ -394,4 +395,12 @@ class PageVisit(models.Model):
 
     def __str__(self):
         return f"{self.view_name} ({self.url}) - {self.count} visits"
-    
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.title

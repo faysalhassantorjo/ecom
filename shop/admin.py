@@ -28,7 +28,7 @@ admin.site.register(ShippingAddress)
 admin.site.register(Review)
 admin.site.register(CollectionSet)
 admin.site.register(Cuppon)
-admin.site.register(AddOnProduct)
+# admin.site.register(AddOn)
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):

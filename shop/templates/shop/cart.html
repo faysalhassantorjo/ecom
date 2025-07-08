@@ -123,8 +123,10 @@
 
         <div class="cart-item row">
             <div class="col-md-4">
-                <img src="{{item.product.imageURL}}" height="100" width="100" alt="Product 2">
+                <img src="{{item.product.imageURL}}" height="100" width="100" style="border-radius: 10px;" alt="Product 2">
+                {% if item.customization_note %}
                 <p style="font-size: .8rem;">{{item.customization_note}}</p>
+                {% endif %}
             </div>
     
             <div class="col-md-4">
@@ -147,13 +149,13 @@
                     </li>
                 </ul>
                 <!-- Add-on Product -->
-                <ul class="cart-item-details add-on-product">
+                <!-- <ul class="cart-item-details add-on-product">
                     {% for add_on in item.add_on_product.all %}
 
                     <li><em>+ Add-on: {{ add_on.name }} qty({{item.quantity}}) size: {{add_on.size}} (<i
                                 class="fa-solid fa-bangladeshi-taka-sign"></i>{{add_on.price}})</em></li>
                     {% endfor %}
-                </ul>
+                </ul> -->
             </div>
             <div class="col-md-3 d-flex flex-column justify-content-between">
                 <div class="qty d-flex justify-content-center">
@@ -164,6 +166,7 @@
                         <input type="text" name="action" value="remove {{ item.product.slug }}" hidden>
                         <input type="text" name="from" value="cart" hidden>
                         <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
+                        <input type="text" name="item_id", hidden value="{{item.id}}">
 
                         <button type="submit" class="btn btn-outline-light">
                             <i class="fa fa-minus"></i>
@@ -177,6 +180,7 @@
                         <input type="text" name="from" value="cart" hidden>
                         <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
 
+                        <input type="text" name="item_id", hidden value="{{item.id}}">
 
                         <button type="submit" class="btn btn-outline-light">
                             <i class="fa fa-plus"></i>
@@ -195,6 +199,7 @@
                     <input type="text" name="from" value="cart" hidden>
                     <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
                     <input type="text" name="customization_note" value="{{item.customization_note}}" hidden>
+                        <input type="text" name="item_id", hidden value="{{item.id}}">
 
                     <button type="submit" class="btn btn-danger">
                         <i class="fa-solid fa-trash"></i>

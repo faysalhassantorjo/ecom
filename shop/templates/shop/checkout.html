@@ -8,9 +8,10 @@
     <!-- Fonts and Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Prata&display=swap" rel="stylesheet">
+
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" />
     <link rel="stylesheet" href="{% static 'shop/css/style.css' %}" type="text/css">
@@ -22,7 +23,9 @@
         body {
             background-color: #0b1215;
             color: #e0e0e0;
-             font-family: "Playfair Display", serif;
+                  font-family: "Raleway", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
         }
 
         a {
@@ -56,7 +59,6 @@
 
         /* Navbar */
         .navbar {
-            background-color: #0b1215;
             border-radius: 10px;
         }
 
@@ -130,7 +132,7 @@
             font-size: 24px;
             color: #ff3b18;
             margin-bottom: 20px;
-            font-family: 'Anton', sans-serif;
+            /* font-family: 'Anton', sans-serif; */
             text-align: center;
         }
 
@@ -277,7 +279,7 @@
 </div>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg">
+<nav class="">
     <div class="container navbar p-2">
         <a class="navbar-brand mt-2 mt-lg-0" href="/">
             <img src="{% static 'image/logo/logo.jpg' %}" alt="logo" loading="lazy" />
@@ -311,12 +313,12 @@
                 <div class="row">
                     <div class="col-lg-8 col-md-12">
                         <h6 class="checkout__title">Billing Details</h6>
-
+<!-- 
                         <div class="checkout__input">
-                            <p>Have a coupon? 
+                            <p style="font-weight: 100;">Have a coupon? 
                                 <a href="{% url 'cart' %}" style="color: #bb86fc;">Click here</a> to enter your code
                             </p>
-                        </div>
+                        </div> -->
 
                         <div class="row">
                             <div class="col-lg-6 col-md-6 mb-3">
@@ -362,15 +364,15 @@
                     <div class="col-lg-4 col-md-12">
                         <div class="checkout__order">
                             <h4 class="order__title">Your Order</h4>
-                            <div class="checkout__order__products">Product <span>Total</span></div>
-                            <ul class="checkout__total__products">
+                            <!-- <div class="checkout__order__products">Product <span>Total</span></div> -->
+                            <ul class="checkout__total__products" style="font-weight: 200;">
                                 {% for item in items %}
                                 <li>{{forloop.counter}}. {{item.product.name}} <span>TK. {{item.item_total}}</span></li>
                                 {% endfor %}
                             </ul>
 
                             <ul class="checkout__total__all">
-                                <li>Total Items {{order.total_items}}</span></li>
+                                <!-- <li>Total Items {{order.total_items}}</span></li> -->
                                 <li>Total <span>TK. {{order.get_total}}</span></li>
                                 {% if order.location == "inside_dhaka" %}
                                     <li>Delivery <span>TK. 80</span></li>

@@ -18,6 +18,7 @@
             font-family: "Ubuntu", sans-serif;
             background-color: #f8f9fa;
         }
+
         
         .order-card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -33,7 +34,7 @@
         
         .product-img {
             width: auto;
-            height: 60px;
+            height: 100px;
             object-fit: cover;
             border-radius: 4px;
         }
@@ -217,7 +218,7 @@
             
             .product-img {
                 width: auto;
-                height: 50px;
+                height: 60px;
             }
 
             .flex-container {
@@ -327,7 +328,7 @@
                     <div class="card-body">
                         <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
                             <h5 class="card-title mb-2 mb-md-0">
-                                Order: <span class="badge bg-orange">#{{ shippingaddress.order.order_id }}</span>
+                                Order: <span class="badge bg-orange" style="color: #495057;">{{ shippingaddress.order.id }}</span>
                             </h5>
                             <p class="date text-muted mb-0">
                                 <i class="far fa-calendar-alt me-1"></i>
@@ -341,7 +342,12 @@
                         <!-- Customer Info -->
                         <div class="row details-section mb-4">
                             <div class="col-md-6 mb-3 mb-md-0">
-                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
+                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong>
+                                     {{shippingaddress.first_name}} {{shippingaddress.last_name}}
+                                     {%if shippingaddress.order.user %}
+                                     <span  class="badge bg-info" title="Authenticated User">{{shippingaddress.order.user}}</span>
+                                     {% endif %}
+                                    </p>
                                 <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
                                 <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
                             </div>
@@ -352,57 +358,65 @@
                         </div>
 
                         <!-- Product Table -->
-                        <div class="table-responsive mb-4">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="text-center">Image</th>
-                                        <th class="text-center">Product</th>
-                                        <th class="text-center">Qty</th>
-                                        <th class="text-center">Size</th>
-                                        <th class="text-center">Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for orderItem in shippingaddress.order.order_items.all %}
-                                    <tr>
-                                        <td data-label="Image">
-                                            <img src="{{orderItem.product.imageURL}}" alt="{{orderItem.product.name}}" class="product-img">
-                                            {% if not orderItem.is_stitched %}
-                                            <div class="unstitched-badge">Unstitched</div>
-                                            {% endif %}
-                                            {% if orderItem.customization_note %}
-                                            <p>{{orderItem.customization_note}}</p>
-                                            {% endif %}
-
-                                        </td>
-                                        <td data-label="Product">{{orderItem.product.name}}</td>
-                                        <td data-label="Qty">{{orderItem.quantity}}</td>
-                                        <td data-label="Size">{{orderItem.size|default:"-"}}</td>
-                                        <td data-label="Price">{{orderItem.item_total}} TK</td>
-                                    </tr>
-                                    {% if orderItem.add_on_product.all %}
-                                    <tr>
-                                        <td colspan="5" class="p-0">
-                                            <div class="p-2 bg-light">
-                                                <p class="mb-2"><strong>Add On Products:</strong></p>
-                                                <table class="addon-table">
-                                                    {% for add_on in orderItem.add_on_product.all %}
-                                                    <tr>
-                                                        <td>{{ add_on.name }}</td>
-                                                        <td>{{add_on.size|default:"-"}}</td>
-                                                        <td>{{add_on.price}} TK</td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="text-center">Image</th>
+                            <th class="text-center">Product Name</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Size</th>
+                            <th class="text-center">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orderItem in shippingaddress.order.order_items.all %}
+                        <tr>
+                            <td data-label="Image">
+                                <img src="{{ orderItem.product.imageURL }}" alt="product" class="product-img img-fluid">
+                                {% if not orderItem.is_stitched %}
+                                <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Product Name" style=" width: 30%;">
+                                {{ orderItem.product.name }}
+                                <br>
+                                {% if orderItem.customization_note %}
+                                <p style="opacity: .8;">{{orderItem.customization_note}}</p>
+                                {% endif %}
+                            </td>
+                            <td data-label="Quantity" style="width: 10%;">{{ orderItem.quantity }}</td>
+                            <td data-label="Size" style="width: 10%;">{{ orderItem.size }}</td>
+                            <td data-label="Price">{{ orderItem.item_total }}</td>
+                        </tr>
+                        {% if orderItem.add_on_product.all %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Add On</th>
+                                                <th>Size</th>
+                                                <th>Price</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for add_on in orderItem.add_on_product.all %}
+                                            <tr>
+                                                <td>{{ add_on.name }}</td>
+                                                <td>{{ add_on.size }}</td>
+                                                <td>{{ add_on.price }} TK.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
 
                         <!-- Bill Summary and Status -->
                         <div class="flex-container">

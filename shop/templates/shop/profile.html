@@ -34,7 +34,7 @@
         <table class="table table-striped table-bordered table-hover text-center">
           <thead class="thead-dark">
             <tr>
-              <th>Order Id</th>
+              <th>#Order Id</th>
               <th>Order Status</th>
               <th>Order Items</th>
               <th>Total</th>
@@ -45,7 +45,7 @@
             {% for order in orders %}
               {% if order.status != 'not_confirm' %}
                 <tr>
-                  <td>#{{ order.order_id }}</td>
+                  <td style="width: 20%;">{{ order.id }}</td>
                   <td>{{ order.status }}</td>
                   <td>
                     {% for item in order.order_items.all %}

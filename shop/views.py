@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,AddOnProduct,PageVisit
+from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,PageVisit
 import json
 from django.http import JsonResponse
 from django.contrib.sessions.models import Session
@@ -73,6 +73,7 @@ def get_cart_total_items(request):
     if userProfile:
         try:
             order=Order.objects.get(user=userProfile,complete=False)
+            
         except:
             order=[]
     return order
@@ -85,41 +86,62 @@ def create_anonymous_user(request):
     anonymous_user,c = AnonymousUser.objects.get_or_create(session_key=session_key)
     return anonymous_user
 
-def check_user(request):
-    request.session.save()
-    session_key = request.session.session_key
+# def check_user(request):
+#     request.session.save()
+#     session_key = request.session.session_key
     
-    if request.user.is_authenticated:
-        userProfile= UserProfile.objects.get(user = request.user)
-        return userProfile
+#     if request.user.is_authenticated:
+#         userProfile= UserProfile.objects.get(user = request.user)
+#         return userProfile
     
-    try:
-        userProfile = UserProfile.objects.get(user__username = session_key)
-    except:
-        userProfile = None
-    return userProfile
+#     try:
+#         userProfile = UserProfile.objects.get(user__username = session_key)
+#     except:
+#         userProfile = None
+#     return userProfile
 
-def get_user(request):
-    user =None
-    if request.user.is_authenticated:
-        user=request.user
-        userprofile, created = UserProfile.objects.get_or_create(user=user)
-    else:
-        u=create_anonymous_user(request)
-        user,c=User.objects.get_or_create(username=u)
-        userprofile, created = UserProfile.objects.get_or_create(user=user,is_anonymous = True)
-    return userprofile
+# def get_user(request):
+#     user =None
+#     if request.user.is_authenticated:
+#         user=request.user
+#         userprofile, created = UserProfile.objects.get_or_create(user=user)
+#     else:
+#         u=create_anonymous_user(request)
+#         user,c=User.objects.get_or_create(username=u)
+#         userprofile, created = UserProfile.objects.get_or_create(user=user,is_anonymous = True)
+#     return userprofile
 from django.contrib.auth import authenticate, login
 
-def user_login(request,product_path=None):
+def user_login(request):
     if request.method == 'POST':
             username = request.POST['username']
             password = request.POST['password']
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
+                order_id = request.session.get('order',None)
+                session_id = get_session_id(request)
+                order_items=None
+                if order_id:
+                    session_order = Order.objects.filter(sesssion_id = session_id).first()
+                    order_items = session_order.order_items.all()
+                    print('order items are : ', order_items)
+                else:
+                    print('no order is FOund')
+                    
                 login(request, user)
-                return redirect('home')  # Redirect to homepage or dashboard after login
+                if order_items:
+                    user =UserProfile.objects.get(user=request.user)
+                    prev_order,c = Order.objects.get_or_create(user=user,complete=False)
+                    
+                    for item in order_items:
+                        item.order = prev_order
+                        item.save()
+                    session_order.delete()
+                    
+                next_url = request.GET.get('next') or '/'
+                print('next url', next_url)
+                return redirect(next_url)
             else:
                 messages.error(request, 'Invalid username or password')
 
@@ -179,7 +201,8 @@ def visit_stats(request):
 
 from django.db.models import Q
 def home(request):
-    
+
+
     if request.method == "GET":
         data= request.GET.get('data', None)
         print('data is: ',data)
@@ -252,7 +275,7 @@ def home(request):
     print('discount products:',discount_products)
     context={
         'top_rated_product':top_rated_products,
-        'heroCollections': CollectionSet.objects.filter(hero=True).order_by('-id'),
+        'heroCollections': hero_collections,
         'collectionsets':collection_sets,
         'discount_products':discount_products,
         'all_categories':all_categories[:8],
@@ -260,22 +283,24 @@ def home(request):
         'popular_category':popular_category
     }
 
-    user=request.user
-    if user.is_authenticated:
-        userProfile,created = UserProfile.objects.get_or_create(user  = user)
-        context.update({'userProfile':userProfile})
 
     try:
-        userProfile = check_user(request)
         order =[]
-        if userProfile:
+        userProfile=None
+        if request.user.is_authenticated:
             try:
+                userProfile,created = UserProfile.objects.get_or_create(user  = request.user)
+                
                 order=Order.objects.get(user=userProfile,complete=False)
             except:
                 order=[]
+        else:
+            session_id = get_session_id(request)
+            order= Order.objects.filter(sesssion_id = session_id, complete=False).first()
+            
         items=OrderItem.objects.filter(order=order)
         
-        context.update({'order':order,'items':items})
+        context.update({'order':order,'items':items,'userProfile':userProfile})
     except Exception as e:
         print(e)
 
@@ -289,6 +314,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
+def get_session_id(request):
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
+    return session_key
+
+
 @csrf_exempt
 def create_order_item(request):
 
@@ -297,12 +330,10 @@ def create_order_item(request):
         customization_note = request.POST.get('customization_note', None)
         actionanddata = request.POST.get('action', None)
         cart = request.POST.get('from', None)
-        add_product=request.POST.get('add_on_product',None)
-        add_product2=request.POST.get('add_on_product2',None)
-        add_product3=request.POST.get('add_on_product3',None)
         
         is_istiched = request.POST.get('unstitched', None) 
-        print("fasghasdfadag: ",is_istiched)
+        item_id = request.POST.get('item_id', None) 
+        
         if is_istiched is not None:
             if is_istiched.lower() == 'true':
                 is_istiched = True
@@ -311,56 +342,34 @@ def create_order_item(request):
         else:
             is_istiched = True
 
-        if add_product or add_product2 or add_product3:
-            print(add_product)
-            try: 
-                if add_product:
-                    add_on_product = AddOnProduct.objects.get(id=int(add_product))
-            
-            except:
-                print('No add on get 1')
-
-            try: 
-
-                add_on_product2 = AddOnProduct.objects.get(id=int(add_product2))
-
-            except:
-                print('No add on get 2')
-            try: 
-
-
-                add_on_product3= AddOnProduct.objects.get(id=int(add_product3))
-            except:
-                print('No add on get 3')
-
-
-        userprofile = get_user(request)
+      
 
         splited_data=actionanddata.split()
         productId=(splited_data[1])
         action=splited_data[0]
 
         product = Product.objects.get(slug=productId)
-        order, c = Order.objects.get_or_create(user=userprofile, complete=False)
-
-        orderItem, created = OrderItem.objects.get_or_create(product=product, order=order, size=size,is_stitched = is_istiched,customization_note=customization_note )
         
-        if add_product or add_product2 or add_product3:
-            try: 
-                orderItem.add_on_product.add(add_on_product)
+        if request.user.is_authenticated:
+            userprofile = UserProfile.objects.get(user=request.user)
+        
+            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
+        
+        else:
+            session_id = get_session_id(request)
+            order,c = Order.objects.get_or_create(sesssion_id=session_id, complete=False)
 
-            except:
-                print("No add on selected 1")
-            
-            try:
-                orderItem.add_on_product.add(add_on_product2)
-            except:
-                print("No add on selected 2")
-            
-            try: 
-                orderItem.add_on_product.add(add_on_product3)
-            except:
-                print("No add on selected 3")
+        if item_id:
+            orderItem=OrderItem.objects.get(id=item_id)
+        else:
+            orderItem, _ = OrderItem.objects.get_or_create(
+                    product=product,
+                    order=order,
+                    size=size,
+                    is_stitched = is_istiched,
+                    customization_note=customization_note 
+            )
+        
 
         if action == 'add':
             orderItem.quantity += 1
@@ -371,42 +380,54 @@ def create_order_item(request):
             print('product removed')
         elif action == 'delete':
             orderItem.quantity = 0
-            print('product deleted')
         print('is product is istiched?',is_istiched)
         orderItem.size = size
         orderItem.save()
         order.status = 'not_confirm'
         order.totalbill=order.total
             
-        if orderItem.quantity == 0:
+        if orderItem.quantity <= 0:
+            print(orderItem.product.name)
             orderItem.delete()
+            print('product deletedhjfdashjhdj')
+            
         order.save()
-        
 
         if cart:
             return redirect('cart')
-
-        # return redirect('shop_details',slug=productId)
+        
+        request.session['order'] = str(order.id)
+        
         return JsonResponse({'status': 'success', 'message': 'Item added to cart'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 from .form import ShippingAddressForm
 def createOrder(request):
 
-    
-    
 
     return JsonResponse("Order done", safe=False)
 
 def cart(request):
-    userProfile = check_user(request)
+    # userProfile = check_user(request)
     order = None
     
-    if userProfile:
+    if request.user.is_authenticated:
         try:
-            order = Order.objects.get(user=userProfile, complete=False)
-        except Order.DoesNotExist:
+            u = UserProfile.objects.get(user=request.user)
+            order = Order.objects.get(
+                user = u,
+                complete = False
+            )
+        except Exception as e:
             order = None
+            print('error',e)
+    else:
+        try:
+            session_id = get_session_id(request)
+            order = Order.objects.get(sesssion_id =session_id,complete =False )
+        except Exception as e:
+            order = None
+            print('error',e)
     
     try:
         coupons = Cuppon.objects.all()
@@ -431,10 +452,9 @@ def cart(request):
         
         print('get_order')
         
-    
+        print("orders: ", order)
         context = {
             'order': order,
-            'userProfile': userProfile,
             'saves': saves
         }
     except Exception as e:
@@ -465,9 +485,6 @@ def location_choice(request,pk):
 def profile(request,pk):
     user=UserProfile.objects.get(id=pk)
     orders=Order.objects.filter(user=user,complete=True).order_by('-created_at')
-    print(user)
-    print(orders)
-
     
         
     context={
@@ -497,62 +514,50 @@ def order_cancel(request,pk):
     return render(request,'shop/orderStatus.html',context)
 import time
 def checkout(request):
-    userProfile = check_user(request)
-    order =[]
-    if userProfile:
-        try:
-            order=Order.objects.get(user=userProfile,complete=False)
-        except:
-            order=[]
-    try:
-        if order.total_items == 0:
-            return render(request,'shop/404.html',{'e':"Your Cart Have 0 product. Add Product in your Cart."})
-            
-    except Exception:
-        return render(request,'shop/404.html',{'e':"You Don't Have any Order. Add Product in your Cart."})
-        
-    
-    subtotal = order.get_total+order.delivary_charge
+    order = None
 
-    items=OrderItem.objects.filter(order=order)
-    total=items.count()
+    if request.user.is_authenticated:
+        u = UserProfile.objects.get(user=request.user)
+        order = Order.objects.filter(user=u, complete=False).first()
+    else:
+        session_id = get_session_id(request)
+        order = Order.objects.filter(sesssion_id=session_id, complete=False).first()
+
+    if not order:
+        return render(request, 'shop/404.html', {'e': "You don't have any order. Add products to your cart."})
+
+    if order.total_items == 0:
+        return render(request, 'shop/404.html', {'e': "Your cart is empty. Add products to your cart."})
+
+    subtotal = order.get_total + order.delivary_charge
+    items = OrderItem.objects.filter(order=order)
+    total = items.count()
 
     if request.method == 'POST':
         form = ShippingAddressForm(request.POST)
         if form.is_valid():
-            shipping_address = form.save(commit=False)  
-            shipping_address.order=order
+            shipping_address = form.save(commit=False)
+            shipping_address.order = order
             shipping_address.save()
-            print("shipping Address: ",shipping_address.id)
-            order_id = int(datetime.datetime.now().timestamp())
-            order.order_id=order_id
-            order.complete=True
-            order.status="Pending"
-            order.totalbill=subtotal
+            order.complete = True
+            order.status = "Pending"
+            order.totalbill = subtotal
             order.save()
-            send_html_email(shipping_address)
-            
-            user = userProfile.user
-            if userProfile.is_anonymous:  
-                userProfile.delete()
-                user.delete()
-            return redirect('order_success',pk=shipping_address.id)
-
+            request.session['order'] = 'None'
+            return redirect('order_success', pk=shipping_address.id)
     else:
         form = ShippingAddressForm()
 
-    
-
-    context={
-        'total':total,
-        'items':items,
-        'order':order,
-        'form':form,
-        'userProfile':userProfile,
-        'subtotal':subtotal
+    context = {
+        'total': total,
+        'items': items,
+        'order': order,
+        'form': form,
+        'subtotal': subtotal
     }
- 
-    return render(request,'shop/checkout.html',context)
+
+    return render(request, 'shop/checkout.html', context)
+
 def order_success(request,pk):
     data=ShippingAddress.objects.get(id=pk)
     total = data.order.get_total+data.order.delivary_charge
@@ -649,34 +654,29 @@ def shop_details(request,slug):
         cache_key = f'product_{slug}'
         related_cache_key = f'product_related_{slug}'
 
-        # Attempt to get product and related data from cache
         product = cache.get(cache_key)
         related_data = cache.get(related_cache_key)
   
         
 
-        # If product is not in cache, query the database and cache it
         if product is None:
             product = Product.objects.get(slug=slug)
-            cache.set(cache_key, product, timeout=60*20)  # Cache for 20 minutes
-            print('Product query occurred')
+            cache.set(cache_key, product, timeout=60*20)  
 
-        # If related data is not in cache, query and cache related objects
         if related_data is None:
-            # Query related data
             reviews = Review.objects.filter(product=product)
-            add_on_product = product.add_on_product.all()
-            add_on_product2 = product.add_on_product2.all()
-            add_on_product3 = product.add_on_product3.all()
+            # add_on_product = product.add_on_product.all()
+            # add_on_product2 = product.add_on_product2.all()
+            # add_on_product3 = product.add_on_product3.all()
             product_categories = product.productCategory.all()
             relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
             # Cache related data
             related_data = {
                 'reviews': reviews,
-                'add_on_product': add_on_product,
-                'add_on_product2': add_on_product2,
-                'add_on_product3': add_on_product3,
+                # 'add_on_product': add_on_product,
+                # 'add_on_product2': add_on_product2,
+                # 'add_on_product3': add_on_product3,
                 'product_categories': product_categories,
                 'relatePro': relatePro,
                 'tags': product.tags.all(),
@@ -686,9 +686,9 @@ def shop_details(request,slug):
 
         # Retrieve cached related data
         reviews = related_data['reviews']
-        add_on_product = related_data['add_on_product']
-        add_on_product2 = related_data['add_on_product2']
-        add_on_product3 = related_data['add_on_product3']
+        # add_on_product = related_data['add_on_product']
+        # add_on_product2 = related_data['add_on_product2']
+        # add_on_product3 = related_data['add_on_product3']
         product_categories = related_data['product_categories']
         relatePro = related_data['relatePro']
         tags = related_data['tags']
@@ -696,13 +696,9 @@ def shop_details(request,slug):
         # Form for reviews
         form = WriteReview()
 
-        # Star count based on average rating
         star_count = product.average_rating
 
-        # Check if user can review (adjust logic based on your requirements)
-        can_review = True
-
-        # Prepare the context for the template
+    
         product = Product.objects.get(slug=slug)
         
         context = {
@@ -711,13 +707,11 @@ def shop_details(request,slug):
             'reviews': reviews,
             'star_count': star_count,
             'relatedProduct': relatePro[:6],
-            'add_on_product': add_on_product,
-            'add_on_product2': add_on_product2,
-            'add_on_product3': add_on_product3,
+            # 'add_on_product': add_on_product,
+            # 'add_on_product2': add_on_product2,
+            # 'add_on_product3': add_on_product3,
             'product_categories': product_categories,
             'tags': tags,
-            'can_review': can_review,
-            'order': get_cart_total_items(request),
         }
 
         hero_collections = cache.get('hero_collections')
@@ -729,20 +723,18 @@ def shop_details(request,slug):
                    'heroCollections':hero_collections
                 }
             )
-        user=request.user
-        if user.is_authenticated:
-            userProfile,created = UserProfile.objects.get_or_create(user  = user)
-            context.update({'userProfile':userProfile})
 
         try:
-            userProfile = check_user(request)
-            order =[]
-            if userProfile:
-                try:
-                    order=Order.objects.get(user=userProfile,complete=False)
-                except:
-                    order=[]
-            items=OrderItem.objects.filter(order=order)
+           
+            if request.user.is_authenticated:
+                upro = UserProfile.objects.get(user=request.user)
+                order = Order.objects.filter(user_id = upro, complete = False).first()
+                print("user",request.user)
+                print('userprofile',request.user.userprofile)
+            else:
+                session_id = get_session_id(request)
+                order = Order.objects.filter(sesssion_id = session_id,complete=False).first()
+            items=order.order_items.all()
             
             context.update({'order':order,'items':items})
         except Exception as e:
@@ -766,17 +758,12 @@ def viewOrder(request):
     confrimed_order = ShippingAddress.objects.filter(order__status = "Confirmed", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
     cancelled_order = ShippingAddress.objects.filter(order__status = "Cancelled", order__created_at__gte=two_weeks_ago).order_by('-timestamp')
     print(confrimed_order)
-    userProfile=get_user(request)
-    with transaction.atomic():  # Ensure atomic updates
-        for address in shippingAddress:
-            if userProfile not in address.seen_by.all():
-                address.seen_by.add(userProfile)
+   
 
     context={
        'shippingAddresss': shippingAddress,
        'confirmed_order': confrimed_order,
        'canceled_order': cancelled_order,
-       'userProfile':userProfile
     }
     return render(request,'shop/viewOrder2.html',context)
 
