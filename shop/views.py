@@ -22,7 +22,7 @@ from django.utils.html import strip_tags
 from django.conf import settings
 
 def send_html_email(shippingAddress):
-    subject = f'Order Being Processed #{shippingAddress.order.order_id}'
+    subject = f'Order Being Processed {shippingAddress.order.id}'
     html_message = render_to_string('shop/mail.html', {'shippingaddress': shippingAddress})
     plain_message = strip_tags(html_message)
     from_email = settings.EMAIL_HOST_USER
@@ -544,6 +544,8 @@ def checkout(request):
             order.totalbill = subtotal
             order.save()
             request.session['order'] = 'None'
+            send_html_email(shipping_address)
+            
             return redirect('order_success', pk=shipping_address.id)
     else:
         form = ShippingAddressForm()
@@ -573,14 +575,15 @@ def shop_grid(request,pk):
     
     try:
 
-        userProfile = check_user(request)
-        order =[]
-        if userProfile:
-            try:
-                order=Order.objects.get(user=userProfile,complete=False)
-            except:
-                order=[]
+        if request.user.is_authenticated:
+            userprofile = UserProfile.objects.get(user=request.user)
         
+            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
+        
+        else:
+            session_id = get_session_id(request)
+            order,c = Order.objects.get_or_create(sesssion_id=session_id, complete=False)
+
         collection=CollectionSet.objects.get(id=pk)
         
         if collection.hero:
