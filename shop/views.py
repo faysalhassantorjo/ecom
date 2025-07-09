@@ -291,7 +291,7 @@ def home(request):
             try:
                 userProfile,created = UserProfile.objects.get_or_create(user  = request.user)
                 
-                order=Order.objects.get(user=userProfile,complete=False)
+                order=Order.objects.filter(user=userProfile,complete=False).first()
             except:
                 order=[]
         else:
@@ -578,11 +578,11 @@ def shop_grid(request,pk):
         if request.user.is_authenticated:
             userprofile = UserProfile.objects.get(user=request.user)
         
-            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
+            order= Order.objects.filter(user=userprofile, complete=False).first()
         
         else:
             session_id = get_session_id(request)
-            order,c = Order.objects.get_or_create(sesssion_id=session_id, complete=False)
+            order = Order.objects.filter(sesssion_id=session_id, complete=False).filter()
 
         collection=CollectionSet.objects.get(id=pk)
         
