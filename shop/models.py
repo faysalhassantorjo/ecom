@@ -66,7 +66,7 @@ class ResizedImageField(models.ImageField):
 
     def __init__(self, *args, **kwargs):
         # Force storage to Cloudinary
-        kwargs["storage"] = MediaCloudinaryStorage()  # Cloudinary storage backend
+        # kwargs["storage"] = MediaCloudinaryStorage()  # Cloudinary storage backend
         super().__init__(*args, **kwargs)
 
 
@@ -284,7 +284,7 @@ class Order(models.Model):
         )
 
     user=models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_confirm')
     sesssion_id = models.CharField(max_length=50, blank=True, null=True)
     items = models.ManyToManyField('Product', through='OrderItem')
     created_at=models.DateTimeField(default=now,blank=True)

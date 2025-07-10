@@ -21,7 +21,7 @@ admin.site.register(AnonymousUser)
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
       list_display = [field.name for field in Order._meta.fields]
-      search_fields = ['order_id', 'user__user__username', 'status']
+      search_fields = ['id', 'user__user__username', 'status','complete']
 
 admin.site.register(ProductCategory)
 admin.site.register(ShippingAddress)

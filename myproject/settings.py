@@ -27,9 +27,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__'
-# with open(os.path.join(BASE_DIR,'secret_key.txt')) as f:
-#     SECRET_KEY = f.read().strip()
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = False
 ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1']
 
@@ -42,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary',
-    'cloudinary_storage',
+    # 'cloudinary',
+    # 'cloudinary_storage',
     'django.contrib.staticfiles',
     'shop',
     'taggit'
@@ -52,14 +50,14 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-     'MEDIA_IMAGE_OPTIMIZATION': True,
-    'IMAGES_RESOLUTIONS': [('small', 400), ('medium', 800), ('large', 1200)],
-}
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# CLOUDINARY_STORAGE = {
+#     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+#     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+#     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+#      'MEDIA_IMAGE_OPTIMIZATION': True,
+#     'IMAGES_RESOLUTIONS': [('small', 400), ('medium', 800), ('large', 1200)],
+# }
+# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
