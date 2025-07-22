@@ -13,10 +13,10 @@ services:
         value: lonng-redis:6379
       - key: REDIS_PORT
         value: 6379
-      - key: DATABASE_URL
-        sync: false
-      - key: SECRET_KEY
-        generateValue: true
+      # - key: DATABASE_URL
+      #   sync: false
+      # - key: SECRET_KEY
+      #   generateValue: true
     ports:
       - 8000
 

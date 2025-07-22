@@ -119,28 +119,28 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_Tcsfb0lZQe1h',
-        'HOST': 'ep-tiny-sound-a5scfm13-pooler.us-east-2.aws.neon.tech',
-        'PORT': '5432',  # Default PostgreSQL port
-        'OPTIONS': {
-            'sslmode': 'require',  # Required for Neon databases
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'neondb',
+#         'USER': 'neondb_owner',
+#         'PASSWORD': 'npg_Tcsfb0lZQe1h',
+#         'HOST': 'ep-tiny-sound-a5scfm13-pooler.us-east-2.aws.neon.tech',
+#         'PORT': '5432',  # Default PostgreSQL port
+#         'OPTIONS': {
+#             'sslmode': 'require',  # Required for Neon databases
+#         },
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
