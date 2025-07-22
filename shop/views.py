@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,PageVisit
 import json
 from django.http import JsonResponse
@@ -41,7 +41,7 @@ def send_html_email(shippingAddress):
     print('Email send done')
 
 def send_confermation_mail(shippingAddress):
-    subject = f'Order Confirmed #{shippingAddress.order.order_id}'
+    subject = f'Order Confirmed #{shippingAddress.order.id}'
     html_message = render_to_string('shop/order-comfrim-mail.html', {'shippingaddress': shippingAddress})
     plain_message = strip_tags(html_message)
     from_email = settings.EMAIL_HOST_USER
@@ -67,49 +67,7 @@ def get_ip(request):
         ip = request.META.get('REMOTE_ADDR', '')
     return ip
 
-def get_cart_total_items(request):
-    userProfile = check_user(request)
-    order =[]
-    if userProfile:
-        try:
-            order=Order.objects.get(user=userProfile,complete=False)
-            
-        except:
-            order=[]
-    return order
 
-def create_anonymous_user(request):
-    request.session.save()
-    # session_key = get_ip(request)
-    session_key = request.session.session_key
-    print(session_key)
-    anonymous_user,c = AnonymousUser.objects.get_or_create(session_key=session_key)
-    return anonymous_user
-
-# def check_user(request):
-#     request.session.save()
-#     session_key = request.session.session_key
-    
-#     if request.user.is_authenticated:
-#         userProfile= UserProfile.objects.get(user = request.user)
-#         return userProfile
-    
-#     try:
-#         userProfile = UserProfile.objects.get(user__username = session_key)
-#     except:
-#         userProfile = None
-#     return userProfile
-
-# def get_user(request):
-#     user =None
-#     if request.user.is_authenticated:
-#         user=request.user
-#         userprofile, created = UserProfile.objects.get_or_create(user=user)
-#     else:
-#         u=create_anonymous_user(request)
-#         user,c=User.objects.get_or_create(username=u)
-#         userprofile, created = UserProfile.objects.get_or_create(user=user,is_anonymous = True)
-#     return userprofile
 from django.contrib.auth import authenticate, login
 
 def user_login(request):
@@ -178,135 +136,100 @@ def register(request):
     else: return render(request, 'shop/register.html')
     return render(request, 'shop/register.html')
 
-# def cart_items(request):
-   
-#     userprofile=get_user(request)
-#     try:
-#         order=Order.objects.get(user=userprofile,complete=False)
-#         items=OrderItem.objects.filter(order=order)
-    
-#         return items
-#     except:
-#         return []
+
 from collections import Counter
 
 def visit_stats(request):
     print('visit stats2')
-    
-
-
-
-
     return render(request, 'shop/visit_stats.html')
 
+
+cache_time = 60 *10
 from django.db.models import Q
 def home(request):
-
-
     if request.method == "GET":
-        data= request.GET.get('data', None)
-        print('data is: ',data)
+        data = request.GET.get('data', None)
+        print('data is:', data)
         if data is not None:
             products = Product.objects.filter(
-                Q(name__icontains = data) |
-                Q(tags__name__icontains = data)
+                Q(name__icontains=data) |
+                Q(tags__name__icontains=data)
             )
             print(products)
-        
-            return render ( request, 'shop/shop.html', {'products':set(products)})
-    CACHE_TIMEOUT = 60 * 20
+            return render(request, 'shop/shop.html', {'products': set(products)})
 
-    # Cache keys
-    cache_keys = {
-        'top_rated_products': 'top_rated_products',
-        'hero_collections': 'hero_collections',
-        'collection_sets': 'collection_sets',
-        'discount_products': 'discount_products',
-        'all_categories': 'all_categories',
-        'new_arrivals': 'new_arrivals',
-        'popular_category': 'popular_category',
-    }
+    # ✅ Cached top-rated products
+    top_rated_products = cache.get('top_rated_products')
+    if top_rated_products is None:
+        top_rated_products = Product.objects.filter(ratting__gt=2).order_by('?')
+        cache.set('top_rated_products', top_rated_products,cache_time)  # 5 min
 
-    def get_cached_data(key, query_func, timeout=CACHE_TIMEOUT):
-        data = cache.get(key)
-        if data is None:
-            data = query_func() 
-            cache.set(key, data, timeout)
-            print(f'Query occurred for {key}')
-        
-        return data
+    # ✅ Cached popular categories
+    popular_category = cache.get('popular_category')
+    if popular_category is None:
+        popular_category = ProductCategory.objects.filter(is_popular=True)
+        cache.set('popular_category', popular_category, cache_time)
 
-    top_rated_products = get_cached_data(
-        cache_keys['top_rated_products'],
-        lambda: Product.objects.filter(ratting__gt=2).order_by('?')
-    )
+    # ✅ Cached hero collections
+    hero_collections = cache.get('hero_collections')
+    if hero_collections is None:
+        hero_collections = CollectionSet.objects.filter(hero=True).order_by('-id')
+        cache.set('hero_collections', hero_collections, cache_time)
 
-    popular_category = get_cached_data(
-        cache_keys['popular_category'],
-        lambda: ProductCategory.objects.filter(is_popular=True)
-    )
+    # ✅ Cached non-hero collections
+    collection_sets = cache.get('collection_sets')
+    if collection_sets is None:
+        collection_sets = CollectionSet.objects.filter(hero=False)
+        cache.set('collection_sets', collection_sets, cache_time)
 
-    hero_collections = get_cached_data(
-        cache_keys['hero_collections'],
-        lambda: CollectionSet.objects.filter(hero=True).order_by('-id'),
-        timeout=60*60  # Cache for 60 minutes
-    )
+    # ✅ Cached discount products
+    discount_products = cache.get('discount_products')
+    if discount_products is None:
+        discount_products = Product.objects.filter(discount_percent__gt=5).order_by('?')[:8]
+        cache.set('discount_products', discount_products, cache_time)
 
-    collection_sets = get_cached_data(
-        cache_keys['collection_sets'],
-        lambda: CollectionSet.objects.filter(hero=False)
-    )
+    # ✅ Cached all categories
+    all_categories = cache.get('all_categories')
+    if all_categories is None:
+        all_categories = ProductCategory.objects.all().order_by('?')
+        cache.set('all_categories', all_categories, cache_time)
 
-    discount_products = get_cached_data(
-        cache_keys['discount_products'],
-        lambda: Product.objects.filter(discount_percent__gt=5).order_by('?')[:8]
-    )
+    # ✅ Cached new arrivals
+    new_arrivals = cache.get('new_arrivals')
+    if new_arrivals is None:
+        new_arrivals = Product.get_new_arrivals().order_by('?')[:8]
+        cache.set('new_arrivals', new_arrivals, cache_time)
 
-    all_categories = get_cached_data(
-        cache_keys['all_categories'],
-        lambda: ProductCategory.objects.all().order_by('?')
-    )
-
-    new_arrivals = get_cached_data(
-        cache_keys['new_arrivals'],
-        lambda: Product.get_new_arrivals().order_by('?')[:8]
-    )
-    
-    print('discount products:',discount_products)
-    context={
-        'top_rated_product':top_rated_products,
+    context = {
+        'top_rated_product': top_rated_products,
         'heroCollections': hero_collections,
-        'collectionsets':collection_sets,
-        'discount_products':discount_products,
-        'all_categories':all_categories[:8],
-        'new_arrivals':new_arrivals,
-        'popular_category':popular_category
+        'collectionsets': collection_sets,
+        'discount_products': discount_products,
+        'all_categories': all_categories[:8],
+        'new_arrivals': new_arrivals,
+        'popular_category': popular_category
     }
-
 
     try:
-        order =[]
-        userProfile=None
+        order = []
+        userProfile = None
         if request.user.is_authenticated:
             try:
-                userProfile,created = UserProfile.objects.get_or_create(user  = request.user)
-                
-                order=Order.objects.filter(user=userProfile,complete=False).first()
+                userProfile, created = UserProfile.objects.get_or_create(user=request.user)
+                order = Order.objects.filter(user=userProfile, complete=False).first()
             except:
-                order=[]
+                order = []
         else:
             session_id = get_session_id(request)
-            order= Order.objects.filter(sesssion_id = session_id, complete=False).first()
-            
-        items=OrderItem.objects.filter(order=order)
-        
-        context.update({'order':order,'items':items,'userProfile':userProfile})
+            order = Order.objects.filter(sesssion_id=session_id, complete=False).first()
+
+        items = OrderItem.objects.filter(order=order)
+
+        context.update({'order': order, 'items': items, 'userProfile': userProfile})
     except Exception as e:
         print(e)
 
-
-
-    return render(request,'shop/nav.html',context)
+    return render(request, 'shop/nav.html', context)
 
 import json
 from django.http import JsonResponse
@@ -321,7 +244,6 @@ def get_session_id(request):
         session_key = request.session.session_key
     return session_key
 
-
 @csrf_exempt
 def create_order_item(request):
 
@@ -330,7 +252,6 @@ def create_order_item(request):
         customization_note = request.POST.get('customization_note', None)
         actionanddata = request.POST.get('action', None)
         cart = request.POST.get('from', None)
-        
         is_istiched = request.POST.get('unstitched', None) 
         item_id = request.POST.get('item_id', None) 
         
@@ -399,18 +320,11 @@ def create_order_item(request):
         request.session['order'] = str(order.id)
         
         return JsonResponse({'status': 'success', 'message': 'Item added to cart'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
-
-from .form import ShippingAddressForm
-def createOrder(request):
-
-
-    return JsonResponse("Order done", safe=False)
-
-def cart(request):
-    # userProfile = check_user(request)
-    order = None
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})    
     
+from .form import ShippingAddressForm
+def cart(request):
+    order = None
     if request.user.is_authenticated:
         try:
             u = UserProfile.objects.get(user=request.user)
@@ -443,16 +357,11 @@ def cart(request):
                         order.coupon_percentage = c.percent
                         order.save()
 
-        print('My get_total', order.get_total if order else 0)
-        print('My total bill:', order.totalbill if order else 0)
-        
+  
         saves = 0
         if order and order.coupon:
             saves = abs(order.total - order.get_total)
-        
-        print('get_order')
-        
-        print("orders: ", order)
+            
         context = {
             'order': order,
             'saves': saves
@@ -495,9 +404,7 @@ def profile(request,pk):
     return render(request,'shop/profile.html',context)
 
 def order_cancel(request,pk):
-    # order=Order.objects.get(id=pk)
-    # order.status='Cancelled'
-    # order.save()
+
     order=Order.objects.get(id=pk)
     if request.method == 'POST':
         form = OrderCancel(request.POST,instance=order)
@@ -544,8 +451,8 @@ def checkout(request):
             order.totalbill = subtotal
             order.save()
             request.session['order'] = 'None'
-            send_html_email(shipping_address)
-            
+            # send_html_email(shipping_address)
+            request.session.flush()
             return redirect('order_success', pk=shipping_address.id)
     else:
         form = ShippingAddressForm()
@@ -569,6 +476,8 @@ def order_success(request,pk):
         'total':total
     }
     return render(request,'shop/orderSuccess.html',context)
+
+import time
 def shop_grid(request,pk):
     
     context={}
@@ -577,9 +486,7 @@ def shop_grid(request,pk):
 
         if request.user.is_authenticated:
             userprofile = UserProfile.objects.get(user=request.user)
-        
-            order= Order.objects.filter(user=userprofile, complete=False).first()
-        
+            order= Order.objects.filter(user=userprofile, complete=False).first()     
         else:
             session_id = get_session_id(request)
             order = Order.objects.filter(sesssion_id=session_id, complete=False).filter()
@@ -587,25 +494,18 @@ def shop_grid(request,pk):
         collection=CollectionSet.objects.get(id=pk)
         
         if collection.hero:
-            
-            
-            products = Product.objects.filter(collectionset = collection)
-          
+            cache_key =f'hero_collection_{collection.id}'
+            products = cache.get(cache_key)     
+            if not products:
+                products = Product.objects.filter(collectionset = collection)
+                cache.set(cache_key,products,timeout=60*1)
             context.update({'products':products})
         else:
-            cache_key = f"collection_category{pk}"
-                    
-            categories =cache.get(cache_key)
-            
-        
+            cache_key = f"collection_category{pk}"                  
+            categories =cache.get(cache_key) 
             if categories is None:
-                
                 categories=collection.productcategory_set.all()
-                
-                cache.set(cache_key,categories,timeout=60*20)
-
-                print('categories',categories)
-
+                cache.set(cache_key,categories,timeout=60*5)
             context.update({'categories':categories})
 
         context.update({
@@ -618,6 +518,7 @@ def shop_grid(request,pk):
     except Exception as e:
         print(e)
         return render(request,'shop/404.html')
+
 
 from django.urls import reverse
 
@@ -632,9 +533,8 @@ def products(request,pk):
     cache_key = f'product_category_{pk}'
     products = cache.get(cache_key) 
     if products is None:
-        
         products=cat.product_set.all().order_by('?')
-        cache.set(cache_key,products,timeout=60*30)
+        cache.set(cache_key,products,timeout=cache_time)
         print('product query occured')
 
 
@@ -656,42 +556,30 @@ def shop_details(request,slug):
         
         cache_key = f'product_{slug}'
         related_cache_key = f'product_related_{slug}'
-
         product = cache.get(cache_key)
         related_data = cache.get(related_cache_key)
   
-        
 
         if product is None:
             product = Product.objects.get(slug=slug)
-            cache.set(cache_key, product, timeout=60*20)  
+            cache.set(cache_key, product, timeout=cache_time)  
 
         if related_data is None:
             reviews = Review.objects.filter(product=product)
-            # add_on_product = product.add_on_product.all()
-            # add_on_product2 = product.add_on_product2.all()
-            # add_on_product3 = product.add_on_product3.all()
             product_categories = product.productCategory.all()
             relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct().order_by('?')[:4]
 
             # Cache related data
             related_data = {
                 'reviews': reviews,
-                # 'add_on_product': add_on_product,
-                # 'add_on_product2': add_on_product2,
-                # 'add_on_product3': add_on_product3,
                 'product_categories': product_categories,
                 'relatePro': relatePro,
                 'tags': product.tags.all(),
             }
-            cache.set(related_cache_key, related_data, timeout=60*20)  # Cache for 20 minutes
-            print('Related data query occurred')
+            cache.set(related_cache_key, related_data, timeout=cache_time)  # Cache for 20 minutes
 
-        # Retrieve cached related data
         reviews = related_data['reviews']
-        # add_on_product = related_data['add_on_product']
-        # add_on_product2 = related_data['add_on_product2']
-        # add_on_product3 = related_data['add_on_product3']
+       
         product_categories = related_data['product_categories']
         relatePro = related_data['relatePro']
         tags = related_data['tags']
@@ -710,9 +598,6 @@ def shop_details(request,slug):
             'reviews': reviews,
             'star_count': star_count,
             'relatedProduct': relatePro[:6],
-            # 'add_on_product': add_on_product,
-            # 'add_on_product2': add_on_product2,
-            # 'add_on_product3': add_on_product3,
             'product_categories': product_categories,
             'tags': tags,
         }
@@ -732,7 +617,6 @@ def shop_details(request,slug):
             if request.user.is_authenticated:
                 upro = UserProfile.objects.get(user=request.user)
                 order = Order.objects.filter(user_id = upro, complete = False).first()
-                print("user",request.user)
                 print('userprofile',request.user.userprofile)
             else:
                 session_id = get_session_id(request)
@@ -753,6 +637,7 @@ def shop_details(request,slug):
 from .decorator import admin_only
 from django.db import transaction
 from datetime import timedelta
+
 @admin_only
 def viewOrder(request):
     two_weeks_ago = timezone.now() - timedelta(weeks=2)
@@ -846,7 +731,7 @@ def product_add(request):
         else:
             messages.error(request,"Some Error Occured!")
             
-    else:
+    else: 
         form=AddProduct()
 
     context={

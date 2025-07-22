@@ -1,0 +1,27 @@
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name : lonng_app
+
+    command: python manage.py runserver 0.0.0.0:8000
+
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      # - celery
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DOCKER_HOST=unix:///var/run/docker.sock
+  redis:
+      image: redis:latest
+      container_name: ecom_redis
+      ports:
+        - "6379:6379"

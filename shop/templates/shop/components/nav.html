@@ -1,0 +1,154 @@
+{% load static %}
+<style>
+  .menu-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: #fff;
+    border: 1px solid #ececec;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+  }
+</style>
+<div class="navbar"
+  style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  background-color: #182327a5;">
+  <!-- Menu Icon to trigger Sidebar -->
+  <span class="menu-icon" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+  </span>
+
+  <!-- Logo -->
+  <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
+    <img src="{% static 'image/logo/logo2.png' %}" height="50" alt="logo" loading="lazy" />
+  </a>
+
+  <!-- Cart and Profile Icons -->
+  <div class="d-flex align-items-center">
+    {% if user.is_superuser %}
+    <a class="btn btn-info btn-sm me-2" href="{% url 'viewOrder' %}">View Order</a>
+    {% endif %}
+    <a class="text-reset me-3" href="{% url 'cart' %}">
+      <i class="fas fa-shopping-cart" style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
+      <span class="badge rounded-pill badge-notification bg-danger" id="cart_items" style="font-size: 10px;">
+        {% if order.total_items %}
+        {{order.total_items}}
+        {% else %}
+        0
+        {% endif %}
+      </span>
+    </a>
+
+
+    <!-- Profile Dropdown -->
+    <div class="dropdown">
+      <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+        id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+        <img src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain" class="rounded-circle"
+          height="30" alt="p" loading="lazy" />
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+        {% if user.is_authenticated %}
+        <li><a class="dropdown-item" href="{% url 'profile' pk=user.userprofile.id %}">my order</a></li>
+        {% endif %}
+        {% if user.is_superuser %}
+        <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>
+        <li><a class="dropdown-item" href="{% url 'visit_stats' %}">visit stats</a></li>
+        <li><a class="dropdown-item" href="{% url 'product_add' %}">Add Product</a></li>
+        {% endif %}
+        <li>
+          {% if user.is_authenticated %}
+          <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
+          {% else %}
+          <a class="dropdown-item" href="{% url 'login' %}">login</a>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<style>
+  #searchOverlay.active {
+    display: flex;
+  }
+
+  #searchOverlay input {
+    width: 60%;
+    padding: 8px;
+    font-size: .9rem;
+    border: none;
+    border-radius: 5px;
+    margin-left: 30px;
+    margin-top: 30px;
+  }
+
+
+
+  .submit {
+    font-size: .9rem;
+    padding: 8px;
+  }
+</style>
+
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <span class="close-btn" onclick="toggleSidebar()">&times;</span>
+  <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" /><br>
+
+  <form action="{% url 'home' %}" method="get">
+    <div id="searchOverlay">
+      <input type="text" id="searchInput" name="data" placeholder="Type to search...">
+      <button class="btn btn-dark submit">Search</button>
+    </div>
+  </form>
+  <ul class="collection-list">
+    {% for collection in heroCollections %}
+    <a class="set" href="{% url 'shop_grid' pk=collection.id %}">
+      <li>
+        <span>
+          {{collection.name}}
+        </span>
+      </li>
+    </a>
+    {% endfor %}
+
+    {% for collection in collectionsets %}
+    <li>
+      <span onclick='toggleSubmenu("{{collection.id}}")'>
+        <span>
+          <i class="fa-solid fa-plus"></i> &nbsp;
+        </span>
+        {{collection.name}}
+      </span>
+      <ul class="submenu" id="{{collection.id}}">
+        {% for category in collection.productcategory_set.all %}
+        <a href="{% url 'products' pk=category.id %}">
+          <li style="font-weight: 100; list-style-type: none;">{{category.name}}</li>
+        </a>
+
+        {% endfor %}
+      </ul>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- Overlay -->
+<!-- <div class="overlay" id="overlay" onclick="toggleSidebar()"></div> -->
+
+<!-- JavaScript to toggle sidebar -->
+<script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+  function toggleSubmenu(submenuId) {
+    const submenu = document.getElementById(submenuId);
+    submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    submenu.style.transition = "0.8s"
+    submenu.classList.toggle("visible");
+
+  }
+</script>

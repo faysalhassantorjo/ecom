@@ -89,7 +89,20 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'myproject.wsgi.application'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # "LOCATION": "redis://127.0.0.1:6379/1",  # Redis DB 1
+        "LOCATION": "redis://red-d1vod73uibrs739jqlt0:6379",  # Redis DB 1
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
+ASGI_APPLICATION = 'myproject.asgi.application'
 
 
 # settings.py

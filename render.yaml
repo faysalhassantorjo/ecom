@@ -1,14 +1,24 @@
+# render.yaml
+
 services:
   - type: web
-    name: longgfashion
-    env: python
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
-    startCommand: "gunicorn myproject.wsgi:application"
-    plan: free
+    name: lonng-app
+    env: docker
+    plan: free  # or 'starter', 'standard', etc.
+    dockerfilePath: ./Dockerfile
     envVars:
+      - key: REDIS_HOST
+        value: lonng-redis:6379
+      - key: REDIS_PORT
+        value: 6379
       - key: DATABASE_URL
         sync: false
       - key: SECRET_KEY
         generateValue: true
-      - key: DEBUG
-        value: "False"
+    ports:
+      - 8000
+
+  - type: redis
+    name: lonng-redis
+    plan: free  # or 'starter'
+
