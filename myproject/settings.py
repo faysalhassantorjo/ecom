@@ -29,7 +29,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 SECRET_KEY = 'django-insecure-x8wu11*837=t_10pm+)5=(78&metvucj*gfrhwhqp4tlt@oj__'
 
 DEBUG = False
-ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1',"*"]
 
 
 # Application definition
@@ -158,7 +158,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://longgfashion.com',
     'https://www.longgfashion.com',
     'http://localhost:8000',  # Add this for local development
-    'http://127.0.0.1:8000',  # Add this as well
+    'http://127.0.0.1:8000',
+    "https://ecom-45ti.onrender.com/"# Add this as well
 ]
 
 SECURE_SSL_REDIRECT = True
