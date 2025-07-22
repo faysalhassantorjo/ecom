@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name : lonng_app
 
-    command: python manage.py runserver 0.0.0.0:8000
+    command: daphne -b 0.0.0.0 -p 8000 myproject.asgi:application
+    # python manage.py runserver 0.0.0.0:8000
 
     volumes:
       - .:/app
