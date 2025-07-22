@@ -1,16 +1,15 @@
 # render.yaml
-
 services:
   - type: web
     name: lonng-app
     env: docker
-    plan: free  # or 'starter', 'standard', etc.
+    plan: free
     buildCommand: |
       docker build -t lonng_app -f Dockerfile .
-    startCommand: daphne -b 0.0.0.0 -p 8000 myproject.asgi:application
+    startCommand: daphne -b 0.0.0.0 -p $PORT myproject.asgi:application
     envVars:
       - key: REDIS_HOST
-        value: lonng-redis:6379
+        value: lonng-redis
       - key: REDIS_PORT
         value: 6379
       # - key: DATABASE_URL
@@ -19,8 +18,6 @@ services:
       #   generateValue: true
     ports:
       - 8000
-
   - type: redis
     name: lonng-redis
-    plan: free  # or 'starter'
-
+    plan: free
