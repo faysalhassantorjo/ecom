@@ -1,6 +1,6 @@
 {% load static %}
 <style>
-  .menu-icon {
+  .menu-icon,.close-btn {
     cursor: pointer;
     font-size: 18px;
     color: #fff;
@@ -9,9 +9,12 @@
     padding-right: 10px;
     border-radius: 5px;
   }
+  .navbar{
+    border: 1px solid #9fa6b2;
+  }
 </style>
 <div class="navbar"
-  style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  background-color: #182327a5;">
+  style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
   <!-- Menu Icon to trigger Sidebar -->
   <span class="menu-icon" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
@@ -105,7 +108,7 @@
     {% for collection in heroCollections %}
     <a class="set" href="{% url 'shop_grid' pk=collection.id %}">
       <li>
-        <span>
+        <span class="text-light">
           {{collection.name}}
         </span>
       </li>

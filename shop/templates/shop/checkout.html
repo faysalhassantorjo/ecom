@@ -57,35 +57,14 @@
             animation: pulse 1s infinite;
         }
 
-        /* Navbar */
-        .navbar {
-            border-radius: 10px;
-        }
-
-        .navbar-brand img {
-            height: 45px;
-        }
-
-        .navbar .fa-shopping-cart {
-            font-size: 20px;
-            color: #e0e0e0;
-            border: 1px solid #e0e0e0;
-            padding: 5px;
-            border-radius: 3px;
-            transition: color 0.3s, border-color 0.3s;
-        }
-
-        .navbar .fa-shopping-cart:hover {
-            color: #f74f06;
-            border-color: #f74f06;
-        }
+      
 
         /* Checkout Form Styles */
         .checkout__form {
-            background: #1b282e;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); */
+            border: 1px solid #797474;
         }
 
         .checkout__title {
@@ -279,30 +258,11 @@
 </div>
 
 <!-- Navbar -->
-<nav class="">
-    <div class="container navbar p-2">
+    <div class="container navbar p-2 d-flex justify-content-center" style="box-shadow: none;">
         <a class="navbar-brand mt-2 mt-lg-0" href="/">
-            <img src="{% static 'image/logo/logo.jpg' %}" alt="logo" loading="lazy" />
+            <img src="{% static 'image/logo/logo2.png' %}" alt="logo" height="70" loading="lazy" />
         </a>
-
-        <!-- <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="fas fa-bars" style="color: #e0e0e0;"></i>
-        </button> -->
-
-        <div class="" id="navbarSupportedContent">
-            <!-- Add any additional navbar items here if needed -->
-            <div class="d-flex align-items-center ms-auto">
-                <a class="text-reset me-3 position-relative" href="{% url 'cart' %}">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="badge rounded-pill badge-notification bg-danger position-absolute top-0 start-100 translate-middle">
-                        {{order.total_items}}
-                        <!-- <span class="visually-hidden">unread messages</span> -->
-                    </span>
-                </a>
-            </div>
-        </div>
     </div>
-</nav>
 
 <!-- Checkout Section Begin -->
 <section class="checkout spad mt-5">
@@ -321,18 +281,18 @@
                         </div> -->
 
                         <div class="row">
-                            <div class="col-lg-6 col-md-6 mb-3">
+                            <div class="col-lg-12 col-md-12 col-12">
                                 <div class="checkout__input">
-                                    <p>First Name<span>*</span></p>
+                                    <p>Full Name<span>*</span></p>
                                     {{form.first_name}}
                                 </div>
                             </div>
-                            <div class="col-lg-6 col-md-6 mb-3">
+                            <!-- <div class="col-lg-6 col-md-6 mb-3">
                                 <div class="checkout__input">
                                     <p>Last Name<span>*</span></p>
                                     {{form.last_name}}
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div class="checkout__input mb-3">
@@ -382,7 +342,8 @@
                                 <li>Pay <span style="color: #f74f06;">TK. {{subtotal}}</span></li>
                             </ul>
 
-                            <h6 class="mt-3 p-2 text-center" style="background-color: #003300b8; border-bottom: 4px solid #bb86fca1;">Cash On Delivery <i class="fa-solid fa-truck"></i></h6>
+                            <h6 class="mt-3 p-2 text-center bg-success"
+                             style=" border-bottom: 4px solid #01ffdd;">Cash On Delivery <i class="fa-solid fa-truck"></i></h6>
                            
                             <button id="placeOrderBtn" type="submit" class="site-btn">PLACE ORDER</button>
 

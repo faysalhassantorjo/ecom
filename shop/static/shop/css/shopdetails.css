@@ -507,3 +507,92 @@
                 font-size: 1rem;
             }
         }
+
+
+
+        /* Related section */
+        .product-card {
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            width: 250px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+
+        .product-card img {
+            width: 100%;
+            max-height: 400px;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .product-details {
+            padding: 16px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            color: #fff;
+        }
+
+        .price {
+            margin: 8px 0;
+            font-size: 16px;
+            color: #e74c3c;
+        }
+
+        .original-price {
+            font-size: 10px;
+            color: #989898;
+            text-decoration: line-through;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .reco-container {
+            padding: 30px 0;
+            border-radius: 8px;
+        }
+
+        .reco {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-left: 15px;
+            scroll-snap-type: x mandatory;
+            /* Enables snapping for smooth scrolling */
+        }
+
+        .product-card {
+            scroll-snap-align: start;
+            /* Aligns each card to the start when scrolling */
+        }
+
+        .stock-out-msg {
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
+            border-radius: 3px;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        /* Custom scrollbar */
+        .reco::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .reco::-webkit-scrollbar-thumb {
+            background-color: #f74f06;
+            border-radius: 10px;
+        }
+
+        .reco::-webkit-scrollbar-track {
+            background-color: #343a40;
+        }

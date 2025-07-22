@@ -1,0 +1,75 @@
+ {% load static %}
+
+ <div class="row review-section" id="reviewSection" style="position: relative;">
+            <div class="col-md-12">
+
+                <h4 style="text-align: center;">Customer Reviews <span style="opacity: .7;">
+                        ({{ product.total_reviews}}) <button id="toggleButton" class="btn btn-secondary" style="text-transform: lowercase;
+                    font-size: 12px; padding: 3px;" onclick="toggleReviewSection()">
+                            See Reviews
+                        </button></span></h4>
+
+                <div id="all-reviews" class="hidden-reviews">
+                    {% for review in reviews %}
+                    <div class="review-item">
+                        <h6>{{ review.user_name }} <span class="rating">{{ review.ratting }}★</span>
+                            <small class="text-light" style="opacity: .8;">- reviewed on {{ review.at_time }}</small>
+                        </h6>
+                        <p style="font-size: .8rem;">{{ review.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Review Form -->
+                <form class="mt-4" method="POST" action="{% url 'writeReview' slug=product.slug %}"
+                    style="max-width: 600px; margin: auto; align-items: center;">
+                    <hr>
+                    <h5 class="text-center" style="opacity: .8; font-size: .8rem;">Leave a Review</h5>
+                    <hr>
+                    {% csrf_token %}
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input required type="text" class="form-control" id="username" name="user_name" 
+                        {% if request.user.is_authenticated %} value="{{ request.user.username }}" {% endif %}
+                            placeholder="Enter your name">
+                    </div>
+         
+                    <style>
+                        select option {
+                            color: #f8d64e;
+                        }
+
+                        .form-label {
+                            color: #ffffff;
+                        }
+                    </style>
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating (1-5)</label>
+                        <select class="form-select" name="rating" id="rating" required style="max-width: 130px;">
+                            <option value="1">1 ★☆☆☆☆</option>
+                            <option value="2">2 ★★☆☆☆</option>
+                            <option value="3">3 ★★★☆☆</option>
+                            <option value="4">4 ★★★★☆</option>
+                            <option value="5">5 ★★★★★</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reviewText" class="form-label">Your Review</label>
+                        <textarea class="form-control" name="content" id="reviewText" required rows="4"
+                            placeholder="Write your review here"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger">Submit Review</button>
+                </form>
+            </div>
+        </div>
+     <style>
+            .hidden-reviews {
+                display: none;
+            }
+
+            .visible-reviews {
+                display: block;
+                transition: max-height 0.5s ease;
+            }
+        </style>

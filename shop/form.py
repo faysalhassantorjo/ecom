@@ -24,7 +24,7 @@ from .models import ShippingAddress,Review,Order,Product,ProductCategory,Collect
 class ShippingAddressForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress
-        fields = ['first_name', 'last_name', 'address', 'address_note', 'phon', 'email']
+        fields = ['first_name', 'address', 'address_note', 'phon', 'email']
 
     def __init__(self, *args, **kwargs):
         super(ShippingAddressForm, self).__init__(*args, **kwargs)
