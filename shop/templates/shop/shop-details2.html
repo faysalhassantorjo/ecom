@@ -82,18 +82,18 @@
             <!-- Product Images -->
             <div class="col-md-6">
                 <div class="product-img mb-4">
-                    <img id="mainImage" src="{{product.imageURL}}" alt="Prouct image" >
+                    <img id="mainImage" src="{{product.imageURL}}" loading="lazy" alt="Prouct image" >
                 </div>
                 <div class="thumb-img d-flex">
-                    <img src="{{product.imageURL}}" alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL}}" alt="Product Image 1" loading="lazy" onclick="changeImage(this.src)">
                     {% if product.imageURL2 %}
-                    <img src="{{product.imageURL2}}" alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL2}}" alt="Product Image 1" loading="lazy" onclick="changeImage(this.src)">
                     {% endif %}
                     {% if product.imageURL3 %}
-                    <img src="{{product.imageURL3}}" alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL3}}" alt="Product Image 1" loading="lazy" onclick="changeImage(this.src)">
                     {% endif %}
                     {% if product.imageURL4 %}
-                    <img src="{{product.imageURL4}}" alt="Product Image 1" onclick="changeImage(this.src)">
+                    <img src="{{product.imageURL4}}" alt="Product Image 1" loading="lazy" onclick="changeImage(this.src)">
                     {% endif %}
                 </div>
             </div>
@@ -311,6 +311,7 @@
                     <h3 class="related-title text-center">Related Product</h3>
                     <hr>
                     {% endif %}
+                    <br>
                     <div class="reco">
                         {% for product in relatedProduct %}
                         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">

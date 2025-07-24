@@ -114,6 +114,9 @@ html, body {
   font-size: 18px;
 }
 
+
+
+
 /* Category Section */
 .category-container {
   position: relative;
@@ -267,8 +270,14 @@ section {
 }
 
 /* Hero Section */
+.carousel-item{
+  margin-top: 10px;
+  border-radius: 8px 12px;
+  overflow: hidden;
+
+}
 .hero {
-  max-width: 1200px;
+  max-width: 85%;
   margin: auto;
 }
 
@@ -409,3 +418,40 @@ section {
     margin-right: -20px;
 }
 }
+
+
+  .product-card {
+        position: relative;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .product-image {
+        height: 450px;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+      }
+
+      .product-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.897) 20%, transparent);
+        color: white;
+      }
+
+      @media (max-width: 768px) {
+        .product-image {
+          height: 200px;
+        }
+      }

@@ -117,6 +117,7 @@
       border-radius: 10px;
     }
   </style>
+
 </head>
 
 <body>
@@ -153,68 +154,8 @@
     <i class="fas fa-spinner fa-spin preloader-icon"></i>
   </div>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg   c" style="box-shadow: none;">
-    <!-- Container wrapper -->
+{% include 'shop/components/simpleNav.html' %}
 
-    <div class="container navbar " style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
-      <!-- Toggle button -->
-
-
-      <!-- Collapsible wrapper -->
-      <div class="" id="navbarSupportedContent">
-        <!-- Navbar brand -->
-        <a class="navbar-brand mt-2 mt-lg-0" href="/">
-          <img src="{% static 'image/logo/logo2.png' %}" height="55" alt="logo" loading="lazy" />
-        </a>
-
-      </div>
-      <!-- Collapsible wrapper -->
-
-      <!-- Right elements -->
-      <div class="d-flex align-items-center">
-        <!-- Icon -->
-
-
-        <a class="text-reset me-3" href="{% url 'cart' %}">
-          <i class="fas fa-shopping-cart"
-            style="font-size: 23px; border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
-          <span class="badge rounded-pill badge-notification bg-danger" style="font-size: 10px;">
-            {% if order.total_items %}
-            {{order.total_items}}
-            {% else %}
-            0
-            {% endif %}
-          </span>
-
-        </a>
-
-        <!-- Notifications -->
-
-        <!-- Avatar -->
-        <div class="dropdown">
-          <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-            id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-            <img src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain"
-              class="rounded-circle" height="35" alt="p" loading="lazy" />
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
-
-
-            <li>
-
-              {% if user.is_authenticated %}
-              <a class="dropdown-item" href="{% url 'logout' %}">logout</a>
-              {% else %}
-              <a class="dropdown-item" href="{% url 'login' %}">login</a>
-              {% endif %}
-            </li>
-          </ul>
-        </div>
-      </div>
-      <!-- Right elements -->
-    </div>
-    <!-- Container wrapper -->
-  </nav>
   <!-- Navbar -->
 
 

@@ -8,7 +8,9 @@
     <title>Longg-লং</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
 
-    <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}"/>
+    <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}" />
+
+    <link rel="stylesheet" href="{% static 'shop/css/shop.css' %}">
 
 
     <meta property="og:image" content="{{categories.imageURL}}">
@@ -19,191 +21,64 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            margin: 0;
-            padding: 0;
-            background: #0B1215;
-        }
-
-       
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        .product-card {
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 8px rgba(207, 207, 207, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .product-card img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            transition: transform 1s ease;
-        }
-
-        .product-card img:hover{
-            transform: scale(1.5);
-            
-        }
-
-        .product-details {
-            padding: 16px;
-        }
-
-        .product-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 0;
-            color: #fafafa;
-            font-family: "Playfair Display", serif;
-        }
-
-        .price {
-            margin: 8px 0;
-            font-size: 16px;
-            color: #e74c3c;
-            font-family: "Space Grotesk", sans-serif;
-        }
-
-        .original-price {
-            font-size: 14px;
-            color: #999;
-            text-decoration: line-through;
-            font-family: "Space Grotesk", sans-serif;
-        }
-
-        @media (min-width: 1024px) {
-            .container {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-       
-
-     
-        }
-    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
+        rel="stylesheet">
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-0372CDLF47');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0372CDLF47"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-0372CDLF47');
+    </script>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <style>
-        .navbar-brand {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-    </style>
 
-    <nav class="navbar " style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
-        <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" href="/" style="text-decoration: none;">
-                <img src="{% static 'image/logo/logo2.png' %}" height="100" alt="Logo" loading="lazy">
-            </a>
-        </div>
-    </nav>
-    
-  <!-- Navbar -->
+
+    {% include 'shop/components/simpleNav.html' %}
 
 
 
-
-
-    <style>
-        .product-card {
-    position: relative;
-}
-
-.stock-out-msg {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: red;
-    color: white;
-    padding: 5px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    z-index: 10;
-    border-radius: 3px;
-    font-family: "Space Grotesk", sans-serif;
-}
-
-    </style>
     <div class="container">
         {% for product in products %}
         <a href="{% url 'shop_details' product.slug %}" style="text-decoration: none;">
-        <div class="product-card">
-            <div class="div" style="overflow: hidden;">
-                <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+            <div class="product-card">
+                <div class="div" style="overflow: hidden;">
+                    <img src="{{ product.imageURL }}" alt="Product Image" loading="lazy">
+
+                </div>
+                {% if product.in_stock %}
+                {% if product.discount_percent %}
+                <div class="stock-out-msg " style="background-color: #f74f06;">{{product.discount_percent}}% Off</div>
+                {% endif %}
+                {% else %}
+                <div class="stock-out-msg">Stock Out</div>
+                {% endif %}
+
+
+                <div class="product-details">
+                    <p class="product-name" style="text-transform: capitalize;">{{ product.name }} </p>
+
+                    <p class="price">Tk. {{ product.price }}
+                        {% if product.discount_percent %}
+                        <span class="original-price"> {{ product.update_price }}</span>
+                        {% endif %}
+                    </p>
+
+
+
+                </div>
+
 
             </div>
-            {% if product.in_stock %}
-                {% if product.discount_percent %}
-                    <div class="stock-out-msg " style="background-color: #f74f06;">{{product.discount_percent}}% Off</div>
-                {% endif %}
-            {% else %}
-            <div class="stock-out-msg">Stock Out</div>
-            {% endif %}
-
-
-            <div class="product-details" >
-                <p class="product-name" style="text-transform: capitalize;">{{ product.name }} </p>
-                
-                <p class="price">Tk. {{ product.price }}
-                {% if product.discount_percent %}
-                <span class="original-price"> {{ product.update_price }}</span>
-                {% endif %}
-                </p>
-               
-    
-            
-            </div>
-
-
-        </div>
         </a>
-                    
 
-   
+
         {% endfor %}
     </div>
 </body>

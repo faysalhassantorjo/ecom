@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart - Dark Theme</title>
+    <title>Longg-লং</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -17,107 +17,13 @@
         <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 
 
-
-    <style>
-        body {
-            background-color: #0B1215;
-            color: #e0e0e0;
-            font-family: "Arvo", serif;
-        }
-
-        .container {
-            /* background-color: #141d21; */
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #ffffff;
-        }
-
-        .cart-item {
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-
-        .cart-item img {
-            width: 100px;
-            height: auto;
-        }
-
-        .cart-item-details {
-            list-style: none;
-            padding: 0;
-        }
-
-        .cart-item-details li {
-            display: flex;
-            justify-content: space-between;
-            color: #bbbbbb;
-            padding: 5px;
-        }
-
-        .add-on-product {
-            font-size: 0.9rem;
-            color: #999;
-            margin-left: 20px;
-        }
-
-        .card {
-            background-color: #1b282e;
-            border: none;
-        }
-
-        .card-body {
-            color: #e0e0e0;
-        }
-
-        .btn-primary {
-            background-color: #6200ee;
-            border-color: #6200ee;
-        }
-
-        .btn-primary:hover {
-            background-color: #3700b3;
-            border-color: #3700b3;
-        }
-
-        input.form-control {
-            background-color: #333;
-            color: #e0e0e0;
-            border: 1px solid #444;
-        }
-
-        input.form-control:focus {
-            background-color: #444;
-            color: #ffffff;
-        }
-
-        .qty {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .qty i {
-            cursor: pointer;
-        }
-
-        .qty .mx-2 {
-            margin: 0 10px;
-        }
-    </style>
+<link rel="stylesheet" href="{% static 'shop/css/cart.css' %}">
+    
 </head>
 
 <body>
-    <nav class="navbar " style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
-        <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" href="/" style="text-decoration: none;">
-                <img src="{% static 'image/logo/logo2.png' %}" height="100" alt="Logo" loading="lazy">
-            </a>
-        </div>
-    </nav>
+    {% include 'shop/components/simpleNav.html' %}
+    
     <div class="container my-5">
         {% for item in order.order_items.all %}
 

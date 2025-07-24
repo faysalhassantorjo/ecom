@@ -138,17 +138,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
-#         'USER': 'postgres',
-#         'PASSWORD': 'okQCvXHXVqKGdnqzdQsHvUXOMvmzNtLs',
-#         'HOST': 'junction.proxy.rlwy.net',
-#         'PORT': '53927',
-#     }
-# }
-# pg_restore --dbname="postgresql://postgres:okQCvXHXVqKGdnqzdQsHvUXOMvmzNtLs@junction.proxy.rlwy.net:53927/railway" --clean --verbose "D:/mysqldata/db_for_new.sql"
 
 CSRF_TRUSTED_ORIGINS = [
     'https://longgfashion.com',

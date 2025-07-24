@@ -144,9 +144,11 @@ def visit_stats(request):
     return render(request, 'shop/visit_stats.html')
 
 
-cache_time = 60 *30
+cache_time = 10
 from django.db.models import Q
 def home(request):
+
+
     if request.method == "GET":
         data = request.GET.get('data', None)
         print('data is:', data)
@@ -155,25 +157,26 @@ def home(request):
                 Q(name__icontains=data) |
                 Q(tags__name__icontains=data)
             )
-            print(products)
             return render(request, 'shop/shop.html', {'products': set(products)})
 
     # ✅ Cached top-rated products
     top_rated_products = cache.get('top_rated_products')
     if top_rated_products is None:
-        top_rated_products = Product.objects.filter(ratting__gt=2).order_by('?')
-        cache.set('top_rated_products', top_rated_products,cache_time)  # 5 min
+        top_rated_products = list(
+            Product.objects.filter(ratting__gt=2).only('slug','ratting','name','price').order_by('?')  
+        )
+        cache.set('top_rated_products', top_rated_products,cache_time) 
 
     # ✅ Cached popular categories
     popular_category = cache.get('popular_category')
     if popular_category is None:
-        popular_category = ProductCategory.objects.filter(is_popular=True)
+        popular_category = ProductCategory.objects.filter(is_popular=True).only('id','name')
         cache.set('popular_category', popular_category, cache_time)
 
     # ✅ Cached hero collections
     hero_collections = cache.get('hero_collections')
     if hero_collections is None:
-        hero_collections = CollectionSet.objects.filter(hero=True).order_by('-id')
+        hero_collections = CollectionSet.objects.filter(hero=True).only('id').order_by('-id')
         cache.set('hero_collections', hero_collections, cache_time)
 
     # ✅ Cached non-hero collections
@@ -185,19 +188,19 @@ def home(request):
     # ✅ Cached discount products
     discount_products = cache.get('discount_products')
     if discount_products is None:
-        discount_products = Product.objects.filter(discount_percent__gt=5).order_by('?')[:8]
+        discount_products = list(Product.objects.filter(discount_percent__gt=5).only('slug','discount_percent','name','price',).order_by('?')[:8])
         cache.set('discount_products', discount_products, cache_time)
 
     # ✅ Cached all categories
     all_categories = cache.get('all_categories')
     if all_categories is None:
-        all_categories = ProductCategory.objects.all().order_by('?')
+        all_categories = list(ProductCategory.objects.all().only('id','name').order_by('?'))
         cache.set('all_categories', all_categories, cache_time)
 
     # ✅ Cached new arrivals
     new_arrivals = cache.get('new_arrivals')
     if new_arrivals is None:
-        new_arrivals = Product.get_new_arrivals().order_by('?')[:8]
+        new_arrivals = list(Product.get_new_arrivals().order_by('?')[:8])
         cache.set('new_arrivals', new_arrivals, cache_time)
 
     context = {
@@ -229,7 +232,7 @@ def home(request):
     except Exception as e:
         print(e)
 
-    return render(request, 'shop/nav.html', context)
+    return render(request, 'shop/home.html', context)
 
 import json
 from django.http import JsonResponse
@@ -525,27 +528,16 @@ from django.urls import reverse
 def go_to_admin_panel(request):
     return redirect(reverse('admin:index'))
 
-@cache_page(60 * 60) 
+@cache_page(60*30) 
 def products(request,pk):
+   
+    products=Product.objects.filter(productCategory__id = pk)
 
-    cat=ProductCategory.objects.get(id=pk)
-    
-    cache_key = f'product_category_{pk}'
-    products = cache.get(cache_key) 
-    if products is None:
-        products=cat.product_set.all().order_by('?')
-        cache.set(cache_key,products,timeout=cache_time)
-        print('product query occured')
-
-
-    total_products = products.count()
 
    
 
     context={
         'products':products,
-        'categories':cat,
-        'total_products':total_products,
     }
     return render(request,'shop/shop.html',context) 
 
@@ -604,13 +596,12 @@ def shop_details(request,slug):
 
         hero_collections = cache.get('hero_collections')
         collection_sets = cache.get('collection_sets')
-        if hero_collections and collection_sets:
-            context.update(
-                {
-                   'collectionsets':collection_sets,
-                   'heroCollections':hero_collections
-                }
-            )
+        context.update(
+            {
+                'collectionsets':collection_sets,
+                'heroCollections':hero_collections
+            }
+        )
 
         try:
            

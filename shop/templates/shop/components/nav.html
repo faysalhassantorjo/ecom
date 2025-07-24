@@ -13,16 +13,15 @@
     border: 1px solid #9fa6b2;
   }
 </style>
-<div class="navbar"
-  style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
+<div class="navbar" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
   <!-- Menu Icon to trigger Sidebar -->
   <span class="menu-icon" onclick="toggleSidebar()">
     <i class="fas fa-bars"></i>
   </span>
 
   <!-- Logo -->
-  <a class="navbar-brand mt-2 mt-lg-0" style="padding: 0; margin-right: 0;" href="#">
-    <img src="{% static 'image/logo/logo2.png' %}" height="50" alt="logo" loading="lazy" />
+  <a class="navbar-brand mt-2 mt-lg-0 " style="padding: 0; margin-right: 0;" href="/">
+    <img src="{% static 'image/logo/logo2.png' %}" height="50" alt="logo"  loading="lazy" />
   </a>
 
   <!-- Cart and Profile Icons -->
@@ -96,7 +95,7 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <span class="close-btn" onclick="toggleSidebar()">&times;</span>
-  <img src="{% static 'image/logo/logo.jpg' %}" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" /><br>
+  <img src="{% static 'image/logo/logo.jpg' %}" class="rounded-3" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" /><br>
 
   <form action="{% url 'home' %}" method="get">
     <div id="searchOverlay">
