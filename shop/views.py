@@ -144,7 +144,7 @@ def visit_stats(request):
     return render(request, 'shop/visit_stats.html')
 
 
-cache_time = 60 *10
+cache_time = 60 *30
 from django.db.models import Q
 def home(request):
     if request.method == "GET":

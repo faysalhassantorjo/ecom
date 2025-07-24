@@ -14,8 +14,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from cloudinary.models import CloudinaryField
-from cloudinary_storage.storage import MediaCloudinaryStorage
+
 
 class ResizedImageFieldFile(ImageFieldFile):
     def save(self, name, content, save=True):
