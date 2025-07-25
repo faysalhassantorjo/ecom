@@ -454,7 +454,7 @@ def checkout(request):
             order.totalbill = subtotal
             order.save()
             request.session['order'] = 'None'
-            # send_html_email(shipping_address)
+            send_html_email(shipping_address)
             request.session.flush()
             return redirect('order_success', pk=shipping_address.id)
     else:

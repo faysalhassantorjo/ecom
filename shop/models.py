@@ -348,7 +348,7 @@ class OrderItem(models.Model):
 
 class ShippingAddress(models.Model):
     order=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
-    first_name=models.CharField(max_length=20)
+    first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=20)
     address=models.TextField()
     address_note=models.CharField(max_length=100)
