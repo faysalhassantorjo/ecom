@@ -52,7 +52,7 @@
 </head>
 
 <body>
-  <!-- Custom CSS -->
+
   <!-- Navbar -->
   {% include 'shop/components/nav.html' %}
   <!-- Navbar -->
@@ -86,7 +86,7 @@
     </div>
   </section>
 
-<!-- Category -->
+  <!-- Category -->
   <section>
     <div class="container-fluid mt-1 category-container">
       <button class="arrow arrow-left" style="background-color: #f74e067d;">&lt;</button>
@@ -104,7 +104,7 @@
     </div>
   </section>
 
-<!-- Discount products -->
+  <!-- Discount products -->
   <section>
     <div class="container py-5">
       <div class="row">
@@ -118,15 +118,15 @@
         <div class="col-6 col-md-4 col-lg-3 mb-4">
           <a href="{% url 'shop_details' slug=product.slug %}">
             <div class="product-card" style="position: relative;">
-              <span class="badge bg-danger" style="position: absolute; top: 10px; left: 10px; z-index: 2; font-size: 1rem;">
+              <span class="badge bg-danger"
+                style="position: absolute; top: 10px; left: 10px; z-index: 2; font-size: 1rem;">
                 {{product.discount_percent}}% off
               </span>
               <div class="product-image" style='background-image: url("{{product.imageURL}}")'>
                 <div class="product-overlay text-center">
                   <h5 class="mb-1" style="opacity: .9;">{{product.name}}</h5>
                   <!-- <h6 class="mb-0">TK. {{product.price }}</h6> -->
-                  <h4 class="mb-0">TK. {{product.price }} <del
-                      style="opacity: .8; font-size: 1rem;">
+                  <h4 class="mb-0">TK. {{product.price }} <del style="opacity: .8; font-size: 1rem;">
                       {{product.update_price}}
                     </del></h4>
                 </div>
@@ -138,43 +138,43 @@
       </div>
     </div>
   </section>
-<style>
-   .product-card {
-        position: relative;
-        margin-bottom: 1rem;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: transform 0.3s ease;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
-      }
+  <style>
+    .product-card {
+      position: relative;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    }
 
-      .product-card:hover {
-        transform: translateY(-5px);
-      }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
 
+    .product-image {
+      height: 450px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .product-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.897) 20%, transparent);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
       .product-image {
-        height: 450px;
-        background-size: cover;
-        background-position: center;
-        position: relative;
+        height: 200px;
       }
-
-      .product-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 1rem;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.897) 20%, transparent);
-        color: white;
-      }
-
-      @media (max-width: 768px) {
-        .product-image {
-          height: 200px;
-        }
-      }
-</style>
+    }
+  </style>
   <!-- New arrivals -->
   {% if new_arrivals %}
   <section>
@@ -184,7 +184,7 @@
         <div class="heading text-center">
           <h3>New Arrivals</h3>
         </div>
-      
+
         {% for product in new_arrivals %}
         <div class="col-6 col-md-4 col-lg-3 mb-4">
           <a href="{% url 'shop_details' slug=product.slug %}">
@@ -350,7 +350,7 @@
 
 
 
-<script src="{% static 'shop/js/nav.js' %}" defer></script>
+  <script src="{% static 'shop/js/nav.js' %}" defer></script>
 
 
 
