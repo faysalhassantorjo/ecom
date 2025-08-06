@@ -87,7 +87,7 @@
   </section>
 
   <!-- Category -->
-  <section>
+  <!-- <section>
     <div class="container-fluid mt-1 category-container">
       <button class="arrow arrow-left" style="background-color: #f74e067d;">&lt;</button>
       <button class="arrow arrow-right" style="background-color: #f74e067d;">&gt;</button>
@@ -102,13 +102,12 @@
         {% endfor %}
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- Discount products -->
-  <section>
+  <!-- <section>
     <div class="container py-5">
       <div class="row">
-        <!-- Product Card 1 -->
         {% if discount_products %}
         <div class="heading text-center">
           <h3>Discount Products</h3>
@@ -125,7 +124,6 @@
               <div class="product-image" style='background-image: url("{{product.imageURL}}")'>
                 <div class="product-overlay text-center">
                   <h5 class="mb-1" style="opacity: .9;">{{product.name}}</h5>
-                  <!-- <h6 class="mb-0">TK. {{product.price }}</h6> -->
                   <h4 class="mb-0">TK. {{product.price }} <del style="opacity: .8; font-size: 1rem;">
                       {{product.update_price}}
                     </del></h4>
@@ -137,8 +135,8 @@
         {% endfor %}
       </div>
     </div>
-  </section>
-  <style>
+  </section> -->
+  <!-- <style>
     .product-card {
       position: relative;
       margin-bottom: 1rem;
@@ -174,11 +172,11 @@
         height: 200px;
       }
     }
-  </style>
+  </style> -->
   <!-- New arrivals -->
   {% if new_arrivals %}
   <section>
-    <div class="container py-5">
+    <div class="container py-2">
       <div class="row">
         <!-- Product Card 1 -->
         <div class="heading text-center">

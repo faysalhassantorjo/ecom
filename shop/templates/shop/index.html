@@ -44,6 +44,7 @@
             overflow: hidden;
         }
 
+
         /* ==========================================================================
            SWIPER STYLES
            ========================================================================== */
@@ -79,7 +80,6 @@
 
         .right_column {
             height: 60vh;
-            overflow-y: auto;
         }
 
         .right_column .block {
@@ -93,6 +93,9 @@
 
         .product {
             border: 1px solid black;
+            width: 100%;
+            height: 100%;
+            background: yellow;
         }
 
         .product img {
@@ -289,7 +292,6 @@
 
             .right_column {
                 height: 30vh;
-                overflow-y: auto;
             }
 
             .right_column .block {
@@ -298,7 +300,7 @@
             }
 
             .products {
-                height: 40vh;
+                height: 30vh;
             }
         }
 
@@ -318,13 +320,14 @@
             }
 
             .products {
-                height: 45vh;
+                height: 35vh;
                 border: 3px solid #f1f1f1;
                 overflow-y: auto;
             }
 
             .product {
-                height: 22.5vh;
+                height: 20vh;
+                width: 100%;
             }
 
             /* Sidebar Mobile Responsive */
@@ -371,7 +374,8 @@
             <div class="d-flex">
                 <!-- Shopping Cart -->
                 <button class="text-reset" style="background: none; border: none;">
-                    <i class="fas fa-shopping-cart" style="border:1px solid #272424; padding: 5px; border-radius: 3px; font-size: 20px;"></i>
+                    <i class="fas fa-shopping-cart"
+                        style="border:1px solid #272424; padding: 5px; border-radius: 3px; font-size: 20px;"></i>
                     <span class="badge rounded-pill badge-notification bg-danger" id="cart_items">
                         {{order.total_items}}
                     </span>
@@ -468,13 +472,8 @@
                             {% for collection in heroCollections %}
                             <div class="swiper-slide">
                                 <picture style="width: 100%; height: 100%;">
-                                    <source media="(max-width: 480px)" srcset="{{collection.mobileimageURL}}" 
-                                            style="width: 100%;" class="mobile-image">
-                                    <img src="{{collection.imageURL}}" 
-                                         class="hero-image desktop-image h-100"
-                                         style="height: 100%;" 
-                                         loading="lazy"
-                                         alt="Collection: {{collection.name}}">
+                                    <img src="{{collection.imageURL}}" class="hero-image desktop-image"
+                                        style="height: 100%;" loading="lazy" alt="Collection: {{collection.name}}">
                                 </picture>
                             </div>
                             {% endfor %}
@@ -489,14 +488,12 @@
                 <div class="col-lg-4 right_column p-0">
                     <div class="row w-100 h-100 m-0">
                         {% for collection in collectionsets %}
-                        <div class="col-6 col-md-6 col-lg-12 p-0 " style="border-color: #000000;">
+                        <div class="col-6 col-md-6 col-lg-12 p-0 block " style="border-color: #000000;">
                             <picture class="w-100 h-100 d-block">
                                 <source media="(max-width: 480px)" srcset="{{ collection.mobileimageURL }}">
                                 <img src="{{ collection.imageURL }}"
-                                     class="hero-image desktop-image w-100 h-100 d-block" 
-                                     style="object-fit: cover;"
-                                     loading="lazy" 
-                                     alt="Collection: {{ collection.name }}">
+                                    class="hero-image desktop-image w-100 h-100 d-block" style="object-fit: cover;"
+                                    loading="lazy" alt="Collection: {{ collection.name }}">
                             </picture>
                         </div>
                         {% endfor %}
@@ -511,7 +508,7 @@
                 {% for product in top_rated_product %}
                 <div class="col-lg-2 col-4" style="padding: 0;">
                     <a href="{% url 'shop_details' product.slug %}">
-                        <div class="product">
+                        <div class="product ">
                             <img src="{{product.imageURL}}" 
                                  class="card-img-top" 
                                  alt="Product: {{product.name}}">
@@ -521,6 +518,26 @@
                 {% endfor %}
             </div>
         </div>
+
+
+        <footer class="text-center text-light" style="opacity: 1; background-color: #182327a5; height: 100%; ">
+            <!-- Section: Social media -->
+            <section class="d-flex justify-content-center justify-content-lg-between ">
+
+                <div>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+
+
+                </div>
+                <!-- Right -->
+            </section>
+        </footer>
+
     </div>
 
     <!-- ==========================================================================

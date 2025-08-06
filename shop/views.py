@@ -179,7 +179,7 @@ def home(request):
     except Exception as e:
         print(f"Order Fetch Error: {e}")
 
-    return render(request, 'shop/index.html', context)
+    return render(request, 'shop/home.html', context)
 
 import json
 from django.http import JsonResponse

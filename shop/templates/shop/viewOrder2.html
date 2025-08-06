@@ -205,6 +205,10 @@
                                             {% if orderItem.customization_note %}
                                             <br><small class="text-muted">{{orderItem.customization_note}}</small>
                                             {% endif %}
+                                            {% if orderItem.product.discount_percent %}
+                                            <br>
+                                            <p class="badge bg-info">Discount Product - {{orderItem.product.discount_percent}}%</p>
+                                            {% endif %}
                                         </td>
                                         <td class="text-center">{{ orderItem.quantity }}</td>
                                         <td class="text-center">{{ orderItem.size }}</td>

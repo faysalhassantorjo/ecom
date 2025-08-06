@@ -1,6 +1,7 @@
 {% load static %}
 <style>
-  .menu-icon,.close-btn {
+  .menu-icon,
+  .close-btn {
     cursor: pointer;
     font-size: 18px;
     color: #fff;
@@ -9,7 +10,8 @@
     padding-right: 10px;
     border-radius: 5px;
   }
-  .navbar{
+
+  .navbar {
     border: 1px solid #9fa6b2;
   }
 </style>
@@ -21,7 +23,7 @@
 
   <!-- Logo -->
   <a class="navbar-brand mt-2 mt-lg-0 " style="padding: 0; margin-right: 0;" href="/">
-    <img src="{% static 'image/logo/logo2.png' %}" height="50" alt="logo"  loading="lazy" />
+    <img src="{% static 'image/logo/logo2.png' %}" height="50" alt="logo" loading="lazy" />
   </a>
 
   <!-- Cart and Profile Icons -->
@@ -95,44 +97,125 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <span class="close-btn" onclick="toggleSidebar()">&times;</span>
-  <img src="{% static 'image/logo/logo.jpg' %}" class="rounded-3" height="70" style="margin-left: 50px;" alt="logo" loading="lazy" /><br>
+  <img src="{% static 'image/logo/logo.jpg' %}" class="rounded-3" height="70" style="margin-left: 50px;" alt="logo"
+    loading="lazy" /><br>
 
-  <form action="{% url 'home' %}" method="get">
+  <!-- <form action="{% url 'home' %}" method="get">
     <div id="searchOverlay">
       <input type="text" id="searchInput" name="data" placeholder="Type to search...">
       <button class="btn btn-dark submit">Search</button>
     </div>
-  </form>
-  <ul class="collection-list">
-    {% for collection in heroCollections %}
-    <a class="set" href="{% url 'shop_grid' pk=collection.id %}">
-      <li>
-        <span class="text-light">
-          {{collection.name}}
-        </span>
-      </li>
-    </a>
-    {% endfor %}
+  </form> -->
 
-    {% for collection in collectionsets %}
-    <li>
-      <span onclick='toggleSubmenu("{{collection.id}}")'>
-        <span>
-          <i class="fa-solid fa-plus"></i> &nbsp;
-        </span>
-        {{collection.name}}
-      </span>
-      <ul class="submenu" id="{{collection.id}}">
-        {% for category in collection.productcategory_set.all %}
-        <a href="{% url 'products' pk=category.id %}">
-          <li style="font-weight: 100; list-style-type: none;">{{category.name}}</li>
-        </a>
+  <style>
+    .offcanvas-body {
+      padding: 1.5rem;
+      /* Light gray background */
+      height: 100%;
+      overflow-y: auto;
+    }
 
+    .section-spacing {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 0.5rem;
+    }
+
+    .menu-list {
+      list-style: none;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    .menu-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .dropdown-item {
+      font-size: 0.95rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: #e2e6ea;
+      color: #212529;
+    }
+
+    .text-highlight {
+      color: #d63384 !important;
+      font-weight: bold;
+      background-color: #f8d7da !important;
+
+    }
+
+
+    /* Scrollbar customization (optional) */
+    .offcanvas-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .offcanvas-body::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+  </style>
+
+  <div class="offcanvas-body" style="max-height: 60vh; overflow-y: auto;">
+    <!-- Search Section -->
+    <!-- <div class="d-flex mb-3 search-container">
+      <input type="text" class="form-control me-2" placeholder="Search by name, keyword" />
+      <button class="btn btn-dark btn-sm">Search</button>
+    </div> -->
+
+    <!-- Collections Section -->
+    <div class="section-spacing">
+      <p class="section-title">Collection</p>
+      <ul class="menu-list">
+        {% for collection in heroCollections %}
+        <li>
+          <a class="dropdown-item" href="/shop-grid/{{collection.id}}">
+            {{collection.name}}
+          </a>
+        </li>
+        {% endfor %}
+
+        {% for collection in collectionsets %}
+        {% if collection.name == "DISCOUNT OFFERS" %}
+        <li>
+          <a class="dropdown-item text-highlight" href="/shop-grid/{{collection.id}}">
+            Discount Products
+          </a>
+        </li>
+        {% endif %}
         {% endfor %}
       </ul>
-    </li>
-    {% endfor %}
-  </ul>
+    </div>
+
+    <!-- Categories Section -->
+    <div>
+      <p class="section-title">Category</p>
+      <ul class="menu-list">
+        {% for category in all_categories %}
+        <li>
+          <a class="dropdown-item" href="{% url 'products' category.id %}">
+            {{category.name}}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
 </div>
 
 <!-- Overlay -->
