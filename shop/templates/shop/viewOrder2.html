@@ -1,544 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load static %}
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Orders</title>
+    <title>Order Management Dashboard</title>
+
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Protest+Guerrilla&family=Saira:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: "Ubuntu", sans-serif;
-            background-color: #f8f9fa;
+            font-family: "Montserrat", sans-serif;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #212529 !important;  /* Bootstrap dark color */
+            color: white !important;
+        }
+        .nav-pills .nav-link {
+            color: #212529;
+            background-color: transparent;
         }
 
-        
-        .order-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border: none;
-            overflow: hidden;
-        }
-        
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        
-        .product-img {
-            width: auto;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        
-        .info-icon {
-            margin-right: 10px;
-            color: #f74f06;
-            width: 20px;
-            text-align: center;
-        }
-        
-        /* Details section styling */
-        .details-section {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 5px solid #f74f06;
-        }
-        
-        .details-section p {
-            margin: 5px 0;
-            font-size: 1rem;
-        }
 
-        .flex-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        /* Bill Summary styling */
-        .bill-summary {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            width: 300px;
-        }
-        
-        .bill-summary li {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 15px;
-            margin-bottom: 5px;
-            font-size: 1rem;
-            background-color: #f1f1f1;
-            border-radius: 5px;
-            border-left: 5px solid #f74f06;
-        }
-        
-        .bill-summary li span {
-            font-weight: bold;
-        }
-        
-        .bill-summary li.total {
-            background-color: #f74f06;
-            color: white;
-            border-left: none;
-        }
-        
-        .bill-summary li.total span {
-            font-weight: bold;
-        }
-
-        /* Status dropdown */
-        .status-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .status-display {
-            font-weight: bold;
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            border-radius: 5px;
-            background-color: #f8f9fa;
-        }
-        
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-confirmed {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        td {
-            text-align: center;
-        }
-        
-        .nav-tabs .nav-link {
-            color: #495057;
-            font-weight: 500;
-        }
-        
-        .nav-tabs .nav-link.active {
-            color: #f74f06;
-            font-weight: 600;
-            border-bottom: 2px solid #f74f06;
-        }
-        
-        .unstitched-badge {
-            background-color: #f74f06;
-            border-radius: 3px;
-            padding: 2px 5px;
-            font-size: 0.7rem;
-            color: white;
-            display: inline-block;
-            margin-top: 5px;
-        }
-        
-        .addon-table {
-            width: 100%;
-        }
-        
-        .addon-table th, .addon-table td {
-            padding: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .seen-by-badge {
-            font-size: 0.8rem;
-            font-weight: 400;
-            margin-right: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .print-btn {
-            background-color: #f74f06;
-            border: none;
-            padding: 10px 25px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .print-btn:hover {
-            background-color: #e04500;
-            transform: translateY(-2px);
-        }
-
-        /* Responsive Table for Mobile */
-        @media (max-width: 768px) {
-            .table {
-                display: block;
-            }
-            
-            .table thead {
-                display: none;
-            }
-            
-            .table tbody, .table tr, .table td {
-                display: block;
-                width: 100%;
-            }
-            
-            .table td {
-                padding: 10px;
-                border: none;
-                border-bottom: 1px solid #ddd;
-                position: relative;
-                text-align: right;
-            }
-            
-            .table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                font-weight: bold;
-                text-align: left;
-            }
-            
-            .product-img {
-                width: auto;
-                height: 60px;
-            }
-
-            .flex-container {
-                justify-content: space-between;
-                flex-direction: column;
-            }
-            
-            .status-container {
-                display: block;
-                padding: 15px;
-            }
-            
-            .bill-summary {
-                width: 100%;
-            }
-            
-            .date {
-                font-size: 0.8rem;
-            }
-            
-            .details-section p {
-                font-size: 0.9rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .table td {
-                padding: 8px;
-            }
-            
-            .product-img {
-                width: auto;
-                height: 40px;
-            }
-            
-            .order-card {
-                padding: 15px;
-            }
-        }
-        
         @media print {
             .no-print {
                 display: none !important;
             }
-            
-            body {
-                background-color: white;
-                font-size: 12pt;
-            }
-            
-            .order-card {
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
         }
     </style>
 </head>
-<body>
-    <div class="container py-4">
-        <!-- Back button -->
-        <div class="mb-4">
-            <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back
-            </a>
+<style>
+
+</style>
+<body class="bg-light">
+    <!-- Header -->
+    <div class="bg-dark text-white py-4 mb-4 no-print">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h3 mb-0 fw-bold">
+                        <i class="fas fa-clipboard-list me-3"></i>
+                        Order Management Dashboard
+                    </h1>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="/" class="btn btn-outline-light">
+                        <i class="fas fa-home me-2"></i>Home
+                    </a>
+                </div>
+            </div>
         </div>
-        
-        <h1 class="text-center mb-4">Order Management</h1>
+    </div>
 
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs mb-4" id="ordersTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="available-tab" data-bs-toggle="tab" data-bs-target="#available" type="button" role="tab">
-                    Available Orders <span class="badge bg-success ms-2">{{shippingAddresss|length}}</span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="confirmed-tab" data-bs-toggle="tab" data-bs-target="#confirmed" type="button" role="tab">
-                    Confirmed Orders <span class="badge bg-success ms-2"></span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">
-                    Cancelled Orders
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" href="/admin/">
-                    <i class="fas fa-cog me-1"></i>Admin Panel
-                </a>
-            </li>
-        </ul>
+    <div class="container">
+        <!-- Navigation Tabs -->
+        <div class="card shadow-sm mb-4 no-print">
+            <div class="card-body p-2">
+                <ul class="nav nav-pills nav-fill" id="ordersTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'viewOrder' %}" class="nav-link  {% if status == None %} active {% endif %}">
+                            <i class="fas fa-clock me-2"></i>
+                            Available Orders
+                            {% if status == None %}
+                            <span class="badge bg-success ms-2">{{shippingAddresss|length}}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'viewOrder' %}?status=confirmed"
+                            class="nav-link {% if status == 'confirmed' %} active {% endif %}">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Confirmed Orders
+                            {% if status == 'confirmed' %}
+                            <span class="badge bg-light text-dark ms-2">{{shippingAddresss|length}}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a href="{% url 'viewOrder' %}?status=cancelled"
+                            class="nav-link {% if status == 'cancelled' %} active {% endif %}">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Cancelled Orders
+                            {% if status == 'cancelled' %}
+                            <span class="badge bg-danger ms-2">{{shippingAddresss|length}}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" href="/admin/">
+                            <i class="fas fa-cog me-2"></i>Admin Panel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-        <!-- Tab content -->
-        <div class="tab-content mt-2">
-            <!-- Available Orders Section -->
-            <div class="tab-pane fade show active" id="available" role="tabpanel" aria-labelledby="available-tab">
-                <h3 class="mb-4">Available Orders</h3>
-                
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Orders Display -->
+            <div class="tab-pane fade show active" id="orders" role="tabpanel">
                 {% if not shippingAddresss %}
-                <div class="alert alert-info">
-                    No available orders at the moment.
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-inbox display-1 text-muted mb-3"></i>
+                        <h4 class="text-muted">No Orders Found</h4>
+                        <p class="text-muted">There are no orders for the selected status.</p>
+                    </div>
                 </div>
                 {% endif %}
-                
+
                 {% for shippingaddress in shippingAddresss %}
-                <div class="card order-card mb-4" id="{{ shippingaddress.order.order_id }}">
-                    <div class="card-body">
-                        <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-                            <h5 class="card-title mb-2 mb-md-0">
-                                Order: <span class="badge bg-orange" style="color: #495057;">{{ shippingaddress.order.id }}</span>
-                            </h5>
-                            <p class="date text-muted mb-0">
-                                <i class="far fa-calendar-alt me-1"></i>
-                                {{shippingaddress.timestamp|date:"M d, Y H:i"}} 
-                                <span class="text-muted">({{shippingaddress.timestamp|timesince}} ago)</span>
-                            </p>
-                        </div>
-                        
-                        <hr class="my-3">
-
-                        <!-- Customer Info -->
-                        <div class="row details-section mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong>
-                                     {{shippingaddress.first_name}} {{shippingaddress.last_name}}
-                                     {%if shippingaddress.order.user %}
-                                     <span  class="badge bg-info" title="Authenticated User">{{shippingaddress.order.user}}</span>
-                                     {% endif %}
-                                    </p>
-                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
-                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
-                            </div>
+                <div class="card shadow-sm mb-4" id="{{ shippingaddress.order.id }}">
+                    <!-- Order Header -->
+                    <div class="card-header bg-light">
+                        <div class="row align-items-center">
                             <div class="col-md-6">
-                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
-                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note|default:"No notes"}}</p>
+                                <h5 class="mb-0">
+                                    Order <span class="badge bg-dark fs-6">#{{ shippingaddress.order.id }}</span>
+                                </h5>
                             </div>
-                        </div>
-
-                        <!-- Product Table -->
-                                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="text-center">Image</th>
-                            <th class="text-center">Product Name</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-center">Size</th>
-                            <th class="text-center">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for orderItem in shippingaddress.order.order_items.all %}
-                        <tr>
-                            <td data-label="Image">
-                                <img src="{{ orderItem.product.imageURL }}" alt="product" class="product-img img-fluid">
-                                {% if not orderItem.is_stitched %}
-                                <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
-                                {% endif %}
-                            </td>
-                            <td data-label="Product Name" style=" width: 30%;">
-                                {{ orderItem.product.name }}
-                                <br>
-                                {% if orderItem.customization_note %}
-                                <p style="opacity: .8;">{{orderItem.customization_note}}</p>
-                                {% endif %}
-                            </td>
-                            <td data-label="Quantity" style="width: 10%;">{{ orderItem.quantity }}</td>
-                            <td data-label="Size" style="width: 10%;">{{ orderItem.size }}</td>
-                            <td data-label="Price">{{ orderItem.item_total }}</td>
-                        </tr>
-                        {% if orderItem.add_on_product.all %}
-                        <tr>
-                            <td colspan="5">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Add On</th>
-                                                <th>Size</th>
-                                                <th>Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for add_on in orderItem.add_on_product.all %}
-                                            <tr>
-                                                <td>{{ add_on.name }}</td>
-                                                <td>{{ add_on.size }}</td>
-                                                <td>{{ add_on.price }} TK.</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-
-                        <!-- Bill Summary and Status -->
-                        <div class="flex-container">
-                            <ul class="bill-summary">
-                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}} TK</li>
-                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}} TK</li>
-                                {% with delivery_charge=shippingaddress.order.delivary_charge total_amount=shippingaddress.order.get_total %}
-                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }} TK</li>
-                                {% endwith %}
-                            </ul>
-
-                            <!-- Status Section -->
-                            <div class="status-container no-print">
-                                <div class="status-display status-{{shippingaddress.order.status|lower}}">
-                                    Status: {{shippingaddress.order.status}}
-                                </div>
-                                
-                                <div class="dropdown">
-                                    <form method="POST" action="{% url 'order_status' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="order-id" value="{{shippingaddress.order.id}}">
-                                        
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-sync-alt me-1"></i> Change
-                                        </button>
-                                        
-                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Pending">
-                                                    <i class="fas fa-clock text-warning me-2"></i>Pending
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Confirmed">
-                                                    <i class="fas fa-check-circle text-success me-2"></i>Confirmed
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Cancelled">
-                                                    <i class="fas fa-times-circle text-danger me-2"></i>Cancelled
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </form>
+                            <div class="col-md-6 text-md-end">
+                                <div class="text-muted">
+                                    <i class="far fa-calendar-alt me-2"></i>
+                                    {{shippingaddress.timestamp|date:"M d, Y H:i"}}
+                                    <br><small>({{shippingaddress.timestamp|timesince}} ago)</small>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Seen By Section -->
-                        <div class="mt-3 no-print">
-                            <p class="text-muted mb-2" style="font-size: 0.8rem;">Seen By:</p>
-                            <div class="d-flex flex-wrap">
-                                {% for user in shippingaddress.seen_by.all %}
-                                <span class="badge bg-light text-dark seen-by-badge">
-                                    <i class="far fa-user-circle me-1"></i>{{ user.user.username }}
-                                </span>
-                                {% empty %}
-                                <span class="badge bg-light text-muted seen-by-badge">
-                                    No views yet
-                                </span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                        <!-- Print Button -->
-                        <div class="text-center mt-4 no-print">
-                            <button class="btn print-btn" onclick="printDiv('{{ shippingaddress.order.order_id }}')">
-                                <i class="fas fa-print me-2"></i>Print Order
-                            </button>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            </div>
 
-            <!-- Confirmed Orders Section -->
-            <div class="tab-pane fade" id="confirmed" role="tabpanel" aria-labelledby="confirmed-tab">
-                <h3 class="mb-4">Confirmed Orders</h3>
-                
-                {% if not confirmed_order %}
-                <div class="alert alert-info">
-                    No confirmed orders in last 2 weeks.
-                </div>
-                {% endif %}
-                
-                {% for shippingaddress in confirmed_order %}
-                <div class="card order-card mb-4" id="{{ shippingaddress.order.order_id }}">
                     <div class="card-body">
-                        <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-                            <h5 class="card-title mb-2 mb-md-0">
-                                Order: <span class="badge bg-orange">#{{ shippingaddress.order.order_id }}</span>
-                            </h5>
-                            <p class="date text-muted mb-0">
-                                <i class="far fa-calendar-alt me-1"></i>
-                                {{shippingaddress.timestamp|date:"M d, Y H:i"}} 
-                                <span class="text-muted">({{shippingaddress.timestamp|timesince}} ago)</span>
-                            </p>
-                        </div>
-                        
-                        <hr class="my-3">
+                        <!-- Customer Information -->
+                        <div class="alert alert-light border-start mb-4">
+                            <!-- <h6 class="text-primary mb-3">
+                                <i class="fas fa-user me-2"></i>Customer Information
+                            </h6> -->
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div>
+                                        <div class="fw-semibold fs-5">
+                                            {{ shippingaddress.first_name }} {{ shippingaddress.last_name }}
+                                            {% if shippingaddress.order.user %}
+                                            <span class="badge bg-secondary ms-2 small">{{ shippingaddress.order.user}}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-muted small">{{ shippingaddress.email }}</div>
+                                        <!-- <div class="mt-1">{{ shippingaddress.phon }}</div> -->
 
-                        <!-- Customer Info -->
-                        <div class="row details-section mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
-                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
-                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
+                                        <div class="mt-2">
+                                            <div class="fw-semibold">Phone</div>
+                                            <div class="text-muted small">{{ shippingaddress.phon }}</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="fw-semibold">Address</div>
+                                    <div class="text-muted small">{{ shippingaddress.address }}</div>
+
+                                    {% if shippingaddress.address_note %}
+                                    <div class="mt-2">
+                                        <div class="fw-semibold">Note</div>
+                                        <div class="text-muted small">{{ shippingaddress.address_note }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
-                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note|default:"No notes"}}</p>
-                            </div>
+
                         </div>
 
-                        <!-- Product Table -->
+                        <!-- Products Table -->
                         <div class="table-responsive mb-4">
-                            <table class="table table-hover">
-                                <thead class="table-light">
+                            <table class="table table-hover table-bordered">
+                                <thead class="table-dark">
                                     <tr>
-                                        <th class="text-center">Image</th>
                                         <th class="text-center">Product</th>
-                                        <th class="text-center">Qty</th>
+                                        <th class="text-center">Details</th>
+                                        <th class="text-center">Quantity</th>
                                         <th class="text-center">Size</th>
                                         <th class="text-center">Price</th>
                                     </tr>
@@ -546,32 +192,42 @@
                                 <tbody>
                                     {% for orderItem in shippingaddress.order.order_items.all %}
                                     <tr>
-                                        <td data-label="Image">
-                                            <img src="{{orderItem.product.imageURL}}" alt="{{orderItem.product.name}}" class="product-img">
+                                        <td class="text-center">
+                                            <img src="{{ orderItem.product.imageURL }}" alt="product"
+                                                class="img-fluid rounded"
+                                                style="width: 80px; height: 80px; object-fit: cover;">
                                             {% if not orderItem.is_stitched %}
-                                            <div class="unstitched-badge">Unstitched</div>
+                                            <br><span class="badge bg-warning text-dark mt-1">Unstitched</span>
                                             {% endif %}
-                                            
                                         </td>
-                                        <td data-label="Product">{{orderItem.product.name}}</td>
-                                        <td data-label="Qty">{{orderItem.quantity}}</td>
-                                        <td data-label="Size">{{orderItem.size|default:"-"}}</td>
-                                        <td data-label="Price">{{orderItem.item_total}} TK</td>
+                                        <td>
+                                            <strong>{{ orderItem.product.name }}</strong>
+                                            {% if orderItem.customization_note %}
+                                            <br><small class="text-muted">{{orderItem.customization_note}}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">{{ orderItem.quantity }}</td>
+                                        <td class="text-center">{{ orderItem.size }}</td>
+                                        <td class="text-center fw-bold">{{ orderItem.item_total }} TK</td>
                                     </tr>
                                     {% if orderItem.add_on_product.all %}
                                     <tr>
                                         <td colspan="5" class="p-0">
-                                            <div class="p-2 bg-light">
-                                                <p class="mb-2"><strong>Add On Products:</strong></p>
-                                                <table class="addon-table">
-                                                    {% for add_on in orderItem.add_on_product.all %}
-                                                    <tr>
-                                                        <td>{{ add_on.name }}</td>
-                                                        <td>{{add_on.size|default:"-"}}</td>
-                                                        <td>{{add_on.price}} TK</td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </table>
+                                            <div class="bg-light p-3">
+                                                <h6 class="text-muted mb-2">
+                                                    <i class="fas fa-plus me-2"></i>Add-on Products:
+                                                </h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm mb-0">
+                                                        {% for add_on in orderItem.add_on_product.all %}
+                                                        <tr>
+                                                            <td>{{ add_on.name }}</td>
+                                                            <td>{{ add_on.size }}</td>
+                                                            <td class="fw-bold">{{ add_on.price }} TK</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -582,256 +238,119 @@
                         </div>
 
                         <!-- Bill Summary and Status -->
-                        <div class="flex-container">
-                            <ul class="bill-summary">
-                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}} TK</li>
-                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}} TK</li>
-                                {% with delivery_charge=shippingaddress.order.delivary_charge total_amount=shippingaddress.order.get_total %}
-                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }} TK</li>
-                                {% endwith %}
-                            </ul>
-
-                            <!-- Status Section -->
-                            <div class="status-container no-print">
-                                <div>
-                                    <div class="status-display status-{{shippingaddress.order.status|lower}}">
-                                        Status: {{shippingaddress.order.status}}
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <div class="card bg-dark bg-opacity-10 border-dark">
+                                    <div class="card-header bg-dark text-white">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-receipt me-2"></i>Bill Summary
+                                        </h6>
                                     </div>
-                                    {% if shippingaddress.order.status_changed_by %}
-                                    <small class="text-muted">
-                                        Action by: {{ shippingaddress.order.status_changed_by.username }}
-                                        {% if shippingaddress.order.status_changed_at %}
-                                            on {{ shippingaddress.order.status_changed_at|date:"M d, Y H:i" }}
-                                        {% endif %}
-                                    </small>
-                                    {% endif %}
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Product Total:</span>
+                                            <strong>{{shippingaddress.order.get_total}} TK</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Delivery Charge:</span>
+                                            <strong>{{shippingaddress.order.delivary_charge}} TK</strong>
+                                        </div>
+                                        <hr>
+                                         
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold fs-5">Total Amount:</span>
+                                            <strong class="fs-5 text-dark">{{ shippingaddress.order.totalbill }}
+                                                TK</strong>
+                                        </div>
+                                 
+                                    </div>
                                 </div>
-                                
-                                
-                                <div class="dropdown">
-                                    <form method="POST" action="{% url 'order_status' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="order-id" value="{{shippingaddress.order.id}}">
-                                        
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-sync-alt me-1"></i> Change
-                                        </button>
-                                        
-                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Pending">
-                                                    <i class="fas fa-clock text-warning me-2"></i>Pending
+                            </div>
+
+                            <div class="col-lg-6 mb-3">
+                                <div class="card no-print">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">
+                                            <i class="fas fa-tasks me-2"></i>Order Status
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        {% if shippingaddress.order.status == "Pending" %}
+                                        <span class="badge bg-warning text-dark fs-6 mb-3">
+                                            <i class="fas fa-clock me-1"></i>{{shippingaddress.order.status}}
+                                        </span>
+                                        {% elif shippingaddress.order.status == "Confirmed" %}
+                                        <span class="badge bg-success fs-6 mb-3">
+                                            <i class="fas fa-check-circle me-1"></i>{{shippingaddress.order.status}}
+                                        </span>
+                                        {% elif shippingaddress.order.status == "Cancelled" %}
+                                        <span class="badge bg-danger fs-6 mb-3">
+                                            <i class="fas fa-times-circle me-1"></i>{{shippingaddress.order.status}}
+                                        </span>
+                                        {% endif %}
+
+                                        <div class="dropdown d-grid">
+                                            <form method="POST" action="{% url 'order_status' %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="order-id"
+                                                    value="{{shippingaddress.order.id}}">
+
+                                                <button class="btn btn-outline-info dropdown-toggle btn-sm" type="button"
+                                                    data-bs-toggle="dropdown">
+                                                    <i class="fas fa-edit me-2"></i>Change Status
                                                 </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Confirmed">
-                                                    <i class="fas fa-check-circle text-success me-2"></i>Confirmed
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Cancelled">
-                                                    <i class="fas fa-times-circle text-danger me-2"></i>Cancelled
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </form>
+
+                                                <ul class="dropdown-menu w-100">
+                                                    <li>
+                                                        <button class="dropdown-item" type="submit" name="status"
+                                                            value="Pending">
+                                                            <i class="fas fa-clock text-warning me-2"></i>Pending
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="dropdown-item" type="submit" name="status"
+                                                            value="Confirmed">
+                                                            <i
+                                                                class="fas fa-check-circle text-success me-2"></i>Confirmed
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button class="dropdown-item" type="submit" name="status"
+                                                            value="Cancelled">
+                                                            <i
+                                                                class="fas fa-times-circle text-danger me-2"></i>Cancelled
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Seen By Section -->
-                        <div class="mt-3 no-print">
-                            <p class="text-muted mb-2" style="font-size: 0.8rem;">Seen By:</p>
-                            <div class="d-flex flex-wrap">
+                        <!-- <div class="alert alert-secondary no-print">
+                            <h6 class="alert-heading mb-2">
+                                <i class="fas fa-eye me-2"></i>Viewed By:
+                            </h6>
+                            <div class="d-flex flex-wrap gap-2">
                                 {% for user in shippingaddress.seen_by.all %}
-                                <span class="badge bg-light text-dark seen-by-badge">
-                                    <i class="far fa-user-circle me-1"></i>{{ user.user.username }}
+                                <span class="badge bg-light text-dark border">
+                                    <i class="fas fa-user-circle me-1"></i>{{ user.user.username }}
                                 </span>
                                 {% empty %}
-                                <span class="badge bg-light text-muted seen-by-badge">
-                                    No views yet
+                                <span class="badge bg-light text-muted border">
+                                    <i class="fas fa-eye-slash me-1"></i>No views yet
                                 </span>
                                 {% endfor %}
                             </div>
-                        </div>
-                        
+                        </div> -->
+
                         <!-- Print Button -->
-                        <div class="text-center mt-4 no-print">
-                            <button class="btn print-btn" onclick="printDiv('{{ shippingaddress.order.order_id }}')">
-                                <i class="fas fa-print me-2"></i>Print Order
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- Cancelled Orders Section -->
-            <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
-                <h3 class="mb-4">Cancelled Orders</h3>
-                
-                {% if not canceled_order %}
-                <div class="alert alert-info">
-                    No cancelled orders in last 2 weeks.
-                </div>
-                {% endif %}
-                
-                {% for shippingaddress in canceled_order %}
-                <div class="card order-card mb-4" id="{{ shippingaddress.order.order_id }}">
-                    <div class="card-body">
-                        <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-                            <h5 class="card-title mb-2 mb-md-0">
-                                Order: <span class="badge bg-orange">#{{ shippingaddress.order.order_id }}</span>
-                            </h5>
-                            <p class="date text-muted mb-0">
-                                <i class="far fa-calendar-alt me-1"></i>
-                                {{shippingaddress.timestamp|date:"M d, Y H:i"}} 
-                                <span class="text-muted">({{shippingaddress.timestamp|timesince}} ago)</span>
-                            </p>
-                        </div>
-                        
-                        <hr class="my-3">
-
-                        <!-- Customer Info -->
-                        <div class="row details-section mb-4">
-                            <div class="col-md-6 mb-3 mb-md-0">
-                                <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{shippingaddress.first_name}} {{shippingaddress.last_name}}</p>
-                                <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{shippingaddress.email}}</p>
-                                <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{shippingaddress.phon}}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{shippingaddress.address}}</p>
-                                <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{shippingaddress.address_note|default:"No notes"}}</p>
-                            </div>
-                        </div>
-
-                        <!-- Product Table -->
-                        <div class="table-responsive mb-4">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="text-center">Image</th>
-                                        <th class="text-center">Product</th>
-                                        <th class="text-center">Qty</th>
-                                        <th class="text-center">Size</th>
-                                        <th class="text-center">Price</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for orderItem in shippingaddress.order.order_items.all %}
-                                    <tr>
-                                        <td data-label="Image">
-                                            <img src="{{orderItem.product.imageURL}}" alt="{{orderItem.product.name}}" class="product-img">
-                                            {% if not orderItem.is_stitched %}
-                                            <div class="unstitched-badge">Unstitched</div>
-                                            {% endif %}
-                                            <p>{{orderItem.customization_note}}</p>
-                                        </td>
-                                        <td data-label="Product">{{orderItem.product}}</td>
-                                        <td data-label="Qty">{{orderItem.quantity}}</td>
-                                        <td data-label="Size">{{orderItem.size|default:"-"}}</td>
-                                        <td data-label="Price">{{orderItem.item_total}} TK</td>
-                                    </tr>
-                                    {% if orderItem.add_on_product.all %}
-                                    <tr>
-                                        <td colspan="5" class="p-0">
-                                            <div class="p-2 bg-light">
-                                                <p class="mb-2"><strong>Add On Products:</strong></p>
-                                                <table class="addon-table">
-                                                    {% for add_on in orderItem.add_on_product.all %}
-                                                    <tr>
-                                                        <td>{{ add_on.name }}</td>
-                                                        <td>{{add_on.size|default:"-"}}</td>
-                                                        <td>{{add_on.price}} TK</td>
-                                                    </tr>
-                                                    {% endfor %}
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Bill Summary and Status -->
-                        <div class="flex-container">
-                            <ul class="bill-summary">
-                                <li><span>Product Bill:</span> {{shippingaddress.order.get_total}} TK</li>
-                                <li><span>Delivery Charge:</span> {{shippingaddress.order.delivary_charge}} TK</li>
-                                {% with delivery_charge=shippingaddress.order.delivary_charge total_amount=shippingaddress.order.get_total %}
-                                <li class="total"><span>Total Bill:</span> {{ delivery_charge|add:total_amount }} TK</li>
-                                {% endwith %}
-                            </ul>
-
-                            <!-- Status Section -->
-                            <div class="status-container no-print">
-                                <div>
-                                    <div class="status-display status-{{shippingaddress.order.status|lower}}">
-                                        Status: {{shippingaddress.order.status}}
-                                    </div>
-                                    {% if shippingaddress.order.status_changed_by %}
-                                    <small class="text-muted">
-                                        Action by: {{ shippingaddress.order.status_changed_by.username }}
-                                        {% if shippingaddress.order.status_changed_at %}
-                                            on {{ shippingaddress.order.status_changed_at|date:"M d, Y H:i" }}
-                                        {% endif %}
-                                    </small>
-                                    {% endif %}
-                                </div>
-                                
-                                
-                                <div class="dropdown">
-                                    <form method="POST" action="{% url 'order_status' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="order-id" value="{{shippingaddress.order.id}}">
-                                        
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="statusDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-sync-alt me-1"></i> Change
-                                        </button>
-                                        
-                                        <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Pending">
-                                                    <i class="fas fa-clock text-warning me-2"></i>Pending
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Confirmed">
-                                                    <i class="fas fa-check-circle text-success me-2"></i>Confirmed
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button class="dropdown-item" type="submit" name="status" value="Cancelled">
-                                                    <i class="fas fa-times-circle text-danger me-2"></i>Cancelled
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Seen By Section -->
-                        <div class="mt-3 no-print">
-                            <p class="text-muted mb-2" style="font-size: 0.8rem;">Seen By:</p>
-                            <div class="d-flex flex-wrap">
-                                {% for user in shippingaddress.seen_by.all %}
-                                <span class="badge bg-light text-dark seen-by-badge">
-                                    <i class="far fa-user-circle me-1"></i>{{ user.user.username }}
-                                </span>
-                                {% empty %}
-                                <span class="badge bg-light text-muted seen-by-badge">
-                                    No views yet
-                                </span>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        
-                        <!-- Print Button -->
-                        <div class="text-center mt-4 no-print">
-                            <button class="btn print-btn" onclick="printDiv('{{ shippingaddress.order.order_id }}')">
+                        <div class="text-center no-print">
+                            <button class="btn btn-secondary "
+                                onclick="printDiv('{{ shippingaddress.order.id }}')">
                                 <i class="fas fa-print me-2"></i>Print Order
                             </button>
                         </div>
@@ -843,26 +362,31 @@
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         function printDiv(divId) {
             let printContents = document.getElementById(divId).innerHTML;
             let originalContents = document.body.innerHTML;
-            
+
             document.body.innerHTML = printContents;
             window.print();
             document.body.innerHTML = originalContents;
-            
+
             // Force a page reload to restore functionality
             window.location.reload();
         }
-        
-        // Initialize Bootstrap tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
+
+        // Add loading state to status change buttons
+        document.querySelectorAll('form[action*="order_status"] button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function () {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+                this.disabled = true;
+            });
         });
     </script>
 </body>
+
 </html>
+
+

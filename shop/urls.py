@@ -2,6 +2,8 @@
 from django.urls import path,include,re_path
 from .views import *
 
+from .bkashPayment import *
+
 
 # def handle_unexpected_url(request):
 #     return render(request,'shop/404.html')
@@ -32,6 +34,21 @@ urlpatterns = [
     path('delete-product/<int:pk>/<int:pk2>',delete_product, name="delete_product"),
     path('confirm-page/<int:pk>/<int:pk2>',confirm_page, name="confirm_page"),
      path('go-to-admin/', go_to_admin_panel, name='go_to_admin'),
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+    path('bkash/create-agreement/', create_agreement),
+    path('bkash/execute-agreement/', execute_agreement),
+    path('bkash/create-payment/', create_payment),
+    path('bkash/execute-payment/', execute_payment),
 
 # re_path(r'^.*$', handle_unexpected_url),
 ]
