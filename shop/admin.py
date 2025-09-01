@@ -16,8 +16,8 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile)
 admin.site.register(OrderItem)
-admin.site.register(AnonymousUser)
-# admin.site.register(Order)
+admin.site.register(Payment)
+admin.site.register(CompletedOrder)
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
       list_display = [field.name for field in Order._meta.fields]
@@ -27,9 +27,14 @@ admin.site.register(ProductCategory)
 admin.site.register(ShippingAddress)
 admin.site.register(Review)
 admin.site.register(CollectionSet)
-admin.site.register(Cuppon)
+admin.site.register(Coupon)
 # admin.site.register(AddOn)
 
 @admin.register(PageVisit)
 class PageVisitAdmin(admin.ModelAdmin):
     list_display = ('view_name', 'url','session_address', 'count')
+@admin.register(PromoCode)
+class PageVisitAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in PromoCode._meta.fields]
+
+admin.site.register(PromoType)

@@ -5,17 +5,15 @@
 <head>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" async>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- <link rel= "stylesheet" href= "https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css" > -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
 
-  <!-- Additional Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&display=swap&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
-    rel="stylesheet">
-  <!-- Page Title (SEO & Browser tab) -->
+<!-- Google Fonts -->
+    {% include 'shop/utils/fonts.html' %}
+
+  
+    <!-- Page Title (SEO & Browser tab) -->
   <title>longg-লং</title>
 
   <!-- Meta Description (SEO) -->
@@ -55,6 +53,7 @@
 
   <!-- Navbar -->
   {% include 'shop/components/nav.html' %}
+
   <!-- Navbar -->
 
   <section class="hero" id="hero">
@@ -66,7 +65,7 @@
             <!-- <img src="{{ collection.imageURL }}" class="d-block w-100 hero-image"  alt="Image Description"> -->
             <picture>
               <source media="(max-width: 767px)" srcset="{{ collection.mobileimageURL }}" class="mobile-image">
-              <img src="{{ collection.imageURL }}" class="hero-image desktop-image" loading="lazy">
+              <img src="{{ collection.imageURL }}" style="object-position: center;" class="hero-image desktop-image" loading="lazy">
             </picture>
 
           </div>
@@ -229,9 +228,9 @@
       }
     </style>
     {% if top_rated_product %}
-    <div class="heading text-center">
-      <h3>Top Selling Products</h3>
-      <h6>Grab these new items before they are gone!</h6>
+    <div class="heading text-center" >
+      <h3 style="font-weight: normal;">Top Selling Products</h3>
+      <!-- <h6>Grab these new items before they are gone!</h6> -->
     </div>
     {% endif %}
     <div class="swiper mySwiper" style="height: 450px;">
@@ -265,7 +264,7 @@
                   <hr>
                   <p class="card-text mb-0 text-center"
                     style="font-size:1.2rem; color: #ffffff;font-family: 'Space Grotesk', sans-serif;">
-                    {{ product.price }} Tk.
+                    {{ product.price_ }} Tk.
                   </p>
                 </div>
               </div>

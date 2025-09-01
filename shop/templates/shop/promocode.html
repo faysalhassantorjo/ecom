@@ -1,0 +1,715 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promo Code</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    {% include 'shop/utils/fonts.html' %}
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --neon-pink: #f472b6;
+            --primary-gradient: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+        }
+
+        body {
+            background: #0a0a0f !important;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.3) 0%, transparent 50%);
+            min-height: 100vh;
+
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Enhanced card styling with glassmorphism 2.0 */
+        .card {
+            background: rgba(15, 15, 23, 0.8) !important;
+            backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(139, 92, 246, 0.3) !important;
+            border-radius: 24px !important;
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(139, 92, 246, 0.1),
+                    rgba(244, 114, 182, 0.1),
+                    transparent);
+            transition: left 0.8s ease;
+            z-index: 0;
+        }
+
+        /* 
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow:
+                0 30px 60px rgba(139, 92, 246, 0.2),
+                0 12px 24px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        } */
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success card with enhanced neon effects */
+        .bg-success.rounded-circle {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)) !important;
+            width: 80px !important;
+            height: 80px !important;
+            box-shadow:
+                0 0 40px rgba(0, 212, 255, 0.5),
+                0 0 80px rgba(0, 212, 255, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: neonPulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .bg-success.rounded-circle::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes neonPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow:
+                    0 0 40px rgba(0, 212, 255, 0.5),
+                    0 0 80px rgba(0, 212, 255, 0.3),
+                    0 10px 30px rgba(0, 0, 0, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow:
+                    0 0 60px rgba(0, 212, 255, 0.8),
+                    0 0 120px rgba(0, 212, 255, 0.5),
+                    0 15px 40px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .bg-primary.text-white.rounded-3 {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)) !important;
+            border-radius: 16px !important;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 30px rgba(139, 92, 246, 0.4),
+                0 8px 24px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+        }
+
+        .bg-primary.text-white.rounded-3::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg,
+                    var(--neon-blue),
+                    var(--neon-purple),
+                    var(--neon-pink),
+                    var(--neon-blue));
+            border-radius: 18px;
+            z-index: -1;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Form styling with cyberpunk aesthetic */
+        .form-outline {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .form-control,
+        .form-select {
+            /* background: rgba(15, 15, 23, 0.8) !important; */
+            border: 2px solid rgba(139, 92, 246, 0.3) !important;
+            border-radius: 6px !important;
+            padding: 10px 12px !important;
+            font-size: .9rem;
+            color: #ffffff !important;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+        }
+
+        .form-control::placeholder {
+            opacity: 1 !important;
+            color: #c7c7c7;
+            /* change as needed */
+        }
+
+        .form-label {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .form-label i {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink)) !important;
+            border: 2px solid var(--neon-purple) !important;
+            border-radius: 6px !important;
+            padding: 10px 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: capitalize;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 0 30px rgba(139, 92, 246, 0.4),
+                0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow:
+                0 0 40px rgba(139, 92, 246, 0.6),
+                0 12px 30px rgba(0, 0, 0, 0.4) !important;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple)) !important;
+            border-color: var(--neon-pink) !important;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            transform: none !important;
+            cursor: not-allowed;
+        }
+
+        /* Additional button styles */
+        .btn-outline-primary {
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            background: rgba(15, 15, 23, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--neon-blue);
+            color: #0a0a0f;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .user {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes textGlow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.6)) drop-shadow(0 0 20px rgba(139, 92, 246, 0.4));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.9)) drop-shadow(0 0 40px rgba(139, 92, 246, 0.7));
+            }
+        }
+
+        .text-success {
+            color: var(--neon-blue) !important;
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        /* Enhanced floating icons with neon glow */
+        .floating-icon {
+            position: fixed;
+            color: rgba(139, 92, 246, 0.3);
+            font-size: 4rem;
+            pointer-events: none;
+            animation: floatRandom 15s ease-in-out infinite;
+            z-index: 1;
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+        }
+
+        .floating-icon:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+            color: rgba(0, 212, 255, 0.4);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.6));
+        }
+
+        .floating-icon:nth-child(2) {
+            top: 25%;
+            right: 15%;
+            animation-delay: -3s;
+            color: rgba(244, 114, 182, 0.4);
+            filter: drop-shadow(0 0 20px rgba(244, 114, 182, 0.6));
+        }
+
+        .floating-icon:nth-child(3) {
+            bottom: 35%;
+            left: 12%;
+            animation-delay: -6s;
+            color: rgba(139, 92, 246, 0.4);
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+        }
+
+        .floating-icon:nth-child(4) {
+            bottom: 20%;
+            right: 20%;
+            animation-delay: -9s;
+            color: rgba(0, 212, 255, 0.3);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+        }
+
+        @keyframes floatRandom {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.3;
+            }
+
+            25% {
+                transform: translateY(-30px) rotate(90deg) scale(1.1);
+                opacity: 0.6;
+            }
+
+            50% {
+                transform: translateY(15px) rotate(180deg) scale(0.9);
+                opacity: 0.4;
+            }
+
+            75% {
+                transform: translateY(-20px) rotate(270deg) scale(1.05);
+                opacity: 0.5;
+            }
+        }
+
+        /* Usage stats with neon styling */
+        small.text-muted.d-block {
+            background: rgba(15, 15, 23, 0.8) !important;
+            color: var(--neon-blue) !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            display: inline-block !important;
+            backdrop-filter: blur(15px);
+            margin-top: 1rem;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Security message with enhanced styling */
+        .text-center.mt-4 small {
+            background: rgba(15, 15, 23, 0.8) !important;
+            color: var(--neon-purple) !important;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            display: block !important;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            position: relative;
+        }
+
+        .text-center.mt-4 small::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            border-radius: 15px 15px 0 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .floating-icon {
+                font-size: 2.5rem;
+            }
+
+            .card {
+                margin: 1rem;
+            }
+
+            .bg-success.rounded-circle {
+                width: 60px !important;
+                height: 60px !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .floating-icon {
+                display: none;
+            }
+
+            .container {
+                padding-top: 1.5rem;
+            }
+
+            .card-body {
+                padding: 2rem !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating decorative icons -->
+    <div class="floating-icon"><i class="fas fa-gift"></i></div>
+    <div class="floating-icon"><i class="fas fa-star"></i></div>
+    <div class="floating-icon"><i class="fas fa-percent"></i></div>
+    <div class="floating-icon"><i class="fas fa-tags"></i></div>
+
+    {% include 'shop/components/simpleNav.html' %}
+
+    <div class="container mt-2">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-sm-10">
+
+                {% if promo_code %}
+                <!-- Success Card -->
+                <div id="promoCard" class="card shadow-lg border-0 rounded-4 mt-3">
+                    <div class="card-body p-4 text-center">
+                        <div class="bg-success rounded-circle mx-auto mb-3"
+                            style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-check text-white fa-lg"></i>
+                        </div>
+                        <h3 class="fw-bold text-light">🎉 You Have a Promo Code!
+                            <span class="user">{{promo_code.user}}</span>
+                        </h3>
+                        <p class="">{{promo_code.email}}</p>
+                        <p class="text-muted mb-2">
+                            Type: {{ promo_code.promo_type.name }} ({{promo_code.promo_type.discount_percentage }}% Off)</p>
+                        <h2 id="code" class="bg-primary text-white rounded-3 py-3 px-2 mt-3"
+                            style="letter-spacing: 2px;">
+                            {{ promo_code.code }}
+                        </h2>
+                        <small class="text-muted d-block mt-2">Used {{ promo_code.used_time }} times</small>
+                        <div class="mt-4">
+                            <button class="btn btn-outline-primary me-2">
+                                <i class="fas fa-copy me-2"></i>Copy Code
+                            </button>
+                            <a class="btn btn-success" href="{% url 'cart' %}?code={{promo_code.code}}">
+                                <i class="fas fa-shopping-cart me-2"></i>Use Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Form Card -->
+                <div id="promoFormCard" class="card shadow-lg border-0 mt-1 rounded-4">
+                    <div class="card-body p-3">
+                        <div class="text-center mb-4">
+                            <h4 class="fw-bold text-light mb-2">Create Your Promo Code</h4>
+                        </div>
+
+                        <form id="promoForm">
+                            {% csrf_token %}
+
+                            <div class="form-outline mb-4">
+                                <input type="text" id="name" class="form-control form-control-lg"
+                                    placeholder="Enter your name" required />
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <input type="text" id="phone" class="form-control form-control-lg"
+                                    placeholder="Enter valid Phone Number" required />
+                            </div>
+                            <div class="form-outline mb-4">
+                                <select id="type" class="form-select dark-select" required>
+                                    <option value="">Select Promo Type</option>
+                                    {% for t in promo_types %}
+                                    <option value="{{ t.id }}">{{ t.name }} ({{ t.discount_percentage }}%)</option>
+                                    {% endfor %}
+                                </select>
+                                <!-- <label class="form-label fw-bold" for="type">
+                                    <i class="fas fa-tags me-2"></i>Promo Type
+                                </label> -->
+                            </div>
+                            <div class="form-outline mb-4">
+                                <label class="text-info" for="email">
+                                Only <b>.edu</b> or <b>.ac</b> domain will be granted, we will send a token to your mail
+                                </label>
+                                <!-- <label class="text-info" for="email">
+                                শুধুমাত্র <b>.edu</b> বা <b>.ac</b> ডোমেইনের মেইল গ্রহণযোগ্য হবে, আমরা আপনার মেইলে একটি টোকেন পাঠাবো
+                                </label> -->
+
+
+                                <input type="email" id="email" class="form-control form-control-lg"
+                                    placeholder="Enter valid Student Email" required />
+                            </div>
+
+                            
+
+                            <style>
+                                .dark-select {
+                                    background-color: #1e1e2f;
+                                    color: #fff;
+                                    border: 1px solid #333;
+                                    border-radius: 10px;
+                                    padding: 0.6rem;
+                                    transition: all 0.3s ease;
+                                }
+
+                                .dark-select option {
+                                    background-color: #1e1e2f;
+                                    color: #fff;
+                                }
+
+                                .dark-select:focus {
+                                    border-color: #4e73df;
+                                    box-shadow: 0 0 8px rgba(78, 115, 223, 0.7);
+                                }
+
+                                .dark-select:hover {
+                                    background-color: #25253a;
+                                }
+                            </style>
+
+
+                            <button type="submit"
+                                class="btn btn-primary btn-lg btn-block shadow-sm rounded-3 ">
+                                Generate
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                                <i class="fas fa-lock me-1"></i>
+                                Your information is secure and will not be shared
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("promoForm");
+            const verifyTokenBtn = document.getElementById("verifyTokenBtn");
+
+            let formDataCache = {}; // store user form data for second step
+
+            // Add copy functionality
+            const copyBtn = document.querySelector('.btn-outline-primary');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function () {
+                    const promoCode = document.querySelector('#code').textContent.trim();
+                    navigator.clipboard.writeText(promoCode).then(() => {
+                        this.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-copy me-2"></i>Copy Code';
+                        }, 2000);
+                    }).catch(() => {
+                        // Fallback for older browsers
+                        const textArea = document.createElement('textarea');
+                        textArea.value = promoCode;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        this.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = '<i class="fas fa-copy me-2"></i>Copy Code';
+                        }, 2000);
+                    });
+                });
+            }
+
+            // STEP 1 — Send email token
+            if (form) {
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending Token...';
+                    submitBtn.disabled = true;
+
+                    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+                    formDataCache = {
+                        name: document.getElementById("name").value,
+                        phone: document.getElementById("phone").value,
+                        email: document.getElementById("email").value,
+                        type_id: document.getElementById("type").value
+                    };
+
+                    fetch("{% url 'send_token' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": csrfToken
+                        },
+                        body: JSON.stringify(formDataCache)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '/promo-token-verification/'
+                            } else {
+                                alert(data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                            alert("Network error occurred. Please try again.");
+                        })
+                        .finally(() => {
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        });
+                });
+            }
+
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.2.0/mdb.min.js"></script>
+</body>
+
+</html>

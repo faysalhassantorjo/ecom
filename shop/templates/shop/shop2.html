@@ -15,13 +15,8 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-    rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+  {% include 'shop/utils/fonts.html' %}
+
   <link rel="icon" type="image/png" href="{% static 'image/logo/logo.jpg' %}" />
 
 
@@ -73,7 +68,6 @@
 
     body {
       background-color: #0B1215;
-      font-family: "Playfair Display", serif;
 
     }
 
@@ -84,7 +78,6 @@
     .heading h3 {
       font-size: 2rem;
       color: #ececec;
-      font-family: "Playfair Display", serif;
       font-optical-sizing: auto;
       font-weight: bold;
       margin-bottom: 10px;
@@ -148,6 +141,7 @@
 
     .heading {
       font-size: 2rem;
+      font-family: "Proza Libre", sans-serif !important;
     }
   </style>
   <div class="preloader">
@@ -321,9 +315,9 @@
             <div class="product-details">
               <p class="product-name"> {{product.name}}</p>
               <p class="price">
-                Tk. {{product.price}}
+                Tk. {{product.price_}}
                 {% if product.discount_percent %}
-                <del>{{product.update_price}}</del>
+                <del>{{product.price}}</del>
                 {% endif %}
               </p>
             </div>
@@ -382,8 +376,6 @@
       }
 
       .t {
-
-        font-family: "Playfair Display", serif;
         font-optical-sizing: auto;
         font-weight: weight;
         font-style: normal;

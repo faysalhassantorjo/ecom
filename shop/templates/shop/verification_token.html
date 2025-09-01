@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Token Verification</title>
+    <!-- MDBootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'mdb/css/mdb.min.css' %}">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --neon-pink: #f472b6;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0f !important;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 212, 255, 0.3) 0%, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .verification-card {
+            max-width: 480px;
+            width: 100%;
+            border-radius: 24px;
+            background: rgba(15, 15, 23, 0.8);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 3rem 2.5rem;
+            color: #fff;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 8px 16px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(139, 92, 246, 0.1), 
+                rgba(244, 114, 182, 0.1),
+                transparent);
+            transition: left 0.8s ease;
+        }
+
+        .verification-card:hover::before {
+            left: 100%;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .fa-envelope-circle-check {
+            color: var(--neon-blue);
+            filter: drop-shadow(0 0 20px var(--neon-blue));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h4.fw-bold {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            font-size: 2rem;
+        }
+
+        .token-input {
+            letter-spacing: 8px;
+            font-size: 2rem;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            background: rgba(15, 15, 23, 0.9);
+            color: var(--neon-blue);
+            transition: all 0.3s ease;
+            
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+            background: rgba(15, 15, 23, 1);
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            border: 2px solid var(--neon-purple);
+            border-radius: 8px;
+            padding: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-success::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+        }
+
+        .btn-success:hover::before {
+            left: 100%;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #ff6b7d;
+            backdrop-filter: blur(10px);
+        }
+
+        a.fw-bold {
+            color: var(--neon-blue);
+            text-decoration: none;
+            text-shadow: 0 0 10px var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+
+        a.fw-bold:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 15px var(--neon-pink);
+            transform: translateY(-1px);
+        }
+
+        .text-light {
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        strong {
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Floating particles */
+        .floating-particle {
+            position: fixed;
+            color: rgba(139, 92, 246, 0.2);
+            font-size: 2rem;
+            pointer-events: none;
+            animation: float 12s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .floating-particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-particle:nth-child(2) { top: 60%; right: 15%; animation-delay: -4s; }
+        .floating-particle:nth-child(3) { bottom: 30%; left: 20%; animation-delay: -8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            33% { transform: translateY(-20px) rotate(120deg); opacity: 0.4; }
+            66% { transform: translateY(15px) rotate(240deg); opacity: 0.1; }
+        }
+
+        @media (max-width: 576px) {
+            .verification-card { padding: 2rem 1.5rem; }
+            .token-input { font-size: 1.6rem; letter-spacing: 6px; }
+            h4.fw-bold { font-size: 1.6rem; }
+            .floating-particle { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating particles -->
+    <div class="floating-particle"><i class="fas fa-envelope"></i></div>
+    <div class="floating-particle"><i class="fas fa-shield-alt"></i></div>
+    <div class="floating-particle"><i class="fas fa-key"></i></div>
+
+    {% if email %}
+    <div class="verification-card">
+        <div class="card-body text-center">
+            {% if error_msg %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_msg }}
+            </div>
+            {% endif %}
+
+            <div class="mb-4">
+                <i class="fas fa-envelope-circle-check fa-4x"></i>
+            </div>
+            <h4 class="fw-bold mb-3">Verify Your Email</h4>
+            <p class="text-light mb-4">
+                We have sent a 6-digit token to <strong>{{ email }}</strong>.
+                Please enter it below to continue.
+            </p>
+
+            <form method="post" id="tokenForm">
+                {% csrf_token %}
+                <div class="form-outline mb-4">
+                    <input type="text" name="token" id="tokenInput" maxlength="6"
+                        class="form-control form-control-lg token-input" 
+                        placeholder="000000" required>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm mt-2">
+                    <i class="fas fa-check-circle me-2"></i>Verify Token
+                </button>
+            </form>
+
+            <p class="mt-4" style="color: rgba(255, 255, 255, 0.8);">
+                Didn't receive the email?
+                <a href="#" class="fw-bold">Resend Token</a>
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <div class="verification-card">
+        <div class="card-body text-center">
+            <div class="mb-4">
+                <i class="fas fa-exclamation-triangle fa-4x text-warning"></i>
+            </div>
+            <h4 class="fw-bold mb-3 text-warning">Oops!</h4>
+            <p class="text-light">Sorry, something went wrong. Please try again.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- MDBootstrap JS -->
+    <script src="{% static 'mdb/js/mdb.min.js' %}"></script>
+</body>
+
+</html>

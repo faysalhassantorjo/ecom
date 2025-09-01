@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,38 +10,48 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Prata&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Space+Grotesk:wght@300..700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Prata&display=swap"
+        rel="stylesheet">
 
     <style>
-        body{
+        body {
             font-family: "Playfair Display", serif;
         }
+
         .product-img {
             width: 50px;
             height: 50px;
             object-fit: cover;
         }
+
         .info-icon {
             margin-right: 5px;
         }
+
         .status-container {
             margin-top: 20px;
         }
+
         .bill-summary li {
             list-style: none;
             padding: 5px 0;
         }
+
         .total {
             font-weight: bold;
         }
-        
+
         /* Responsive table styling for mobile */
         @media (max-width: 768px) {
             .table-responsive thead {
                 display: none;
             }
+
             .table-responsive td {
                 display: block;
                 width: 100%;
@@ -48,6 +59,7 @@
                 position: relative;
                 padding-left: 50%;
             }
+
             .table-responsive td::before {
                 content: attr(data-label);
                 position: absolute;
@@ -57,154 +69,189 @@
                 font-weight: bold;
                 text-align: left;
             }
+
             @media print {
-            .no-print {
-                display: none;
+                .no-print {
+                    display: none;
+                }
             }
-        }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container mt-5">
-    <div class="card order-card p-3 mt-1" id="{{ shippingaddress.order.id }}">
-        <div class="card-body">
-            <div class="d-flex justify-content-between">
-                <h5 class="card-title">Order: 
-                    <span style="background-color: #f74f06; padding: 3px; color: #ddd;">
-                        #{{ shippingaddress.order.id }}
-                    </span>
-                </h5>
-                <!-- <p class="date"><strong>Date:</strong> {{ shippingaddress.timestamp }} 
-                    <span>({{ shippingaddress.timestamp|timesince }} ago)</span>
-                </p> -->
-            </div>
-            
-            <hr>
-
-            <!-- Customer Info -->
-            <div class="row details-section">
-                <div class="col-md-6">
-                    <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{ shippingaddress.first_name }} {{ shippingaddress.last_name }}</p>
-                    <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{ shippingaddress.email }}</p>
-                    <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{ shippingaddress.phon }}</p>
+    <div class="container mt-5">
+        <div class="card order-card p-3 mt-1" id="{{ completed_order.id }}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h5 class="card-title">Order:
+                        <span style="background-color: #f74f06; padding: 3px; color: #ddd;">
+                            #{{ completed_order.order.id }}
+                        </span>
+                    </h5>
+                    <p class="date"><strong>Date:</strong> {{ completed_order.completed_at }} 
+                    <span>({{ completed_order.completed_at|timesince }} ago)</span>
+                </p>
                 </div>
-                <div class="col-md-6">
-                    <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{ shippingaddress.address }}</p>
-                    <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{ shippingaddress.address_note }}</p>
+
+                <hr>
+
+                <!-- Customer Info -->
+                <div class="row details-section">
+                    <div class="col-md-6">
+                        <p><i class="fas fa-user info-icon"></i><strong>Name:</strong> {{ completed_order.shipping_address.name }}
+                        </p>
+                        <p><i class="fas fa-envelope info-icon"></i><strong>Email:</strong> {{ completed_order.shipping_address.email }}
+                        </p>
+                        <p><i class="fas fa-phone info-icon"></i><strong>Phone:</strong> {{ completed_order.shipping_address.phon }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><i class="fas fa-map-marker-alt info-icon"></i><strong>Address:</strong> {{completed_order.shipping_address.address }}</p>
+                        <p><i class="fas fa-sticky-note info-icon"></i><strong>Note:</strong> {{completed_order.shipping_address.address_note }}</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Product Table - Responsive -->
-            <div class="table-responsive mt-4">
-                <table class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="text-center">Image</th>
-                            <th class="text-center">Product Name</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-center">Size</th>
-                            <th class="text-center">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for orderItem in shippingaddress.order.order_items.all %}
-                        <tr>
-                            <td data-label="Image">
-                                <img src="{{ orderItem.product.imageURL }}" alt="product" class="product-img img-fluid">
-                                {% if not orderItem.is_stitched %}
-                                <span style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
-                                {% endif %}
-                            </td>
-                            <td data-label="Product Name">
-                                {{ orderItem.product.name }}
-                                <br>
-                                {% if orderItem.customization_note %}
-                                <p style="opacity: .8;">{{orderItem.customization_note}}</p>
-                                {% endif %}
-                            </td>
-                            <td data-label="Quantity">{{ orderItem.quantity }}</td>
-                            <td data-label="Size">{{ orderItem.size }}</td>
-                            <td data-label="Price">{{ orderItem.item_total }}</td>
-                        </tr>
-                        {% if orderItem.add_on_product.all %}
-                        <tr>
-                            <td colspan="5">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Add On</th>
-                                                <th>Size</th>
-                                                <th>Price</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for add_on in orderItem.add_on_product.all %}
-                                            <tr>
-                                                <td>{{ add_on.name }}</td>
-                                                <td>{{ add_on.size }}</td>
-                                                <td>{{ add_on.price }} TK.</td>
-                                            </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Bill Summary -->
-            <div class="d-flex flex-column flex-md-row justify-content-between mt-4">
-                <ul class="bill-summary list-unstyled">
-                    <li><span>Product Bill:</span> {{ shippingaddress.order.get_total }}</li>
-                    <li><span>Delivery Charge:</span> {{ shippingaddress.order.delivary_charge }}</li>
-                    <li class="total" style="color: #f74f06;"><span>Total Bill:</span> {{ shippingaddress.order.get_total|add:shippingaddress.order.delivary_charge }}</li>
-                </ul>
-
-                <!-- Status Display -->
-                <!-- <div class="status-container no-print">
-                    <p>Status: <span style="background-color: rgb(0, 128, 0); color: #f1f1f1; padding: 5px; border-radius: 3px;">{{ shippingaddress.order.status }}</span></p>
-                </div> -->
-            </div>
-            <div class="mt-1">
-                <div class="alert alert-success text-center" role="alert">
-                  <h4 class="alert-heading">Order Successful!</h4>
-                  <p>Your order process has been successfully completed. We will contact you very soon via the phone number you provided.</p>
-                  <hr>
-                  <p class="mb-0">You can also reach us on our <a href="https://www.facebook.com/LONGGFASHION" class="alert-link" target="_blank">Facebook Page</a>. Please mention your Order ID There.</p>
+                <!-- Product Table - Responsive -->
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="text-center">Image</th>
+                                <th class="text-center">Product Name</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Size</th>
+                                <th class="text-center">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for orderItem in completed_order.order.order_items.all %}
+                            <tr>
+                                <td data-label="Image">
+                                    <img src="{{ orderItem.product.imageURL }}" alt="product"
+                                        class="product-img img-fluid">
+                                    {% if not orderItem.is_stitched %}
+                                    <span
+                                        style="background-color: #f74f06; border-radius: 3px; padding: 3px; font-size: 10px;">unstitched</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Product Name">
+                                    {{ orderItem.product.name }}
+                                    <br>
+                                    {% if orderItem.customization_note %}
+                                    <p style="opacity: .8;">{{orderItem.customization_note}}</p>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Quantity">{{ orderItem.quantity }}</td>
+                                <td data-label="Size">{{ orderItem.size }}</td>
+                                <td data-label="Price">{{ orderItem.item_total }}</td>
+                            </tr>
+                            {% if orderItem.add_on_product.all %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Add On</th>
+                                                    <th>Size</th>
+                                                    <th>Price</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for add_on in orderItem.add_on_product.all %}
+                                                <tr>
+                                                    <td>{{ add_on.name }}</td>
+                                                    <td>{{ add_on.size }}</td>
+                                                    <td>{{ add_on.price }} TK.</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-              </div>
 
-            <!-- Print Button -->
-            <div class="text-center no-print mt-3">
-                <button class="btn btn-info"  onclick="printDiv('{{ shippingaddress.order.id }}')">Print</button>
-                <a href="/"  class="btn btn-success">Continue Shopping</a>
+                <!-- Bill Summary -->
+                <div class="d-flex flex-column flex-md-row justify-content-center mb-4">
+                    <div class="card  border-0 w-100"
+                        style="max-width: 420px; border-radius: 20px; overflow: hidden;">
+                        <div class="card-header text-white text-center fw-bold"
+                            style="background: linear-gradient(135deg, #f74f06, #ff7e29); font-size: 1.2rem;">
+                            🧾 Bill Summary
+                        </div>
+                        <div class="card-body bg-light">
+                            <ul class="bill-summary list-unstyled m-0">
+                                <li class="d-flex justify-content-between py-2 border-bottom">
+                                    <span>Product bill</span>
+                                    <strong>{{ completed_order.order.get_total }} tk</strong>
+                                </li>
+                                <li class="d-flex justify-content-between py-2 border-bottom">
+                                    <span>Delivery charge</span>
+                                    <strong>{{ completed_order.order.delivary_charge }} tk</strong>
+                                </li>
+                                <li class="d-flex justify-content-between py-2 border-bottom text-danger fw-bold"
+                                    style="font-size: 1.1rem;">
+                                    <span>Total bill</span>
+                                    <strong>{{ completed_order.order.totalbill }} tk</strong>
+                                </li>
+                                <li class="d-flex justify-content-between py-2 border-bottom">
+                                    <span>Paid</span>
+                                    <strong>{{ completed_order.order.paid }} tk</strong>
+                                </li>
+                                <li class="d-flex justify-content-between py-2"
+                                    style="font-size: 1.1rem; color:#0d6efd; font-weight: bold;">
+                                    <span>Due</span>
+                                    <strong>{{ completed_order.order.due }} tk</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="mt-1">
+                    <div class="alert alert-success text-center" role="alert">
+                        <h4 class="alert-heading">Order Successful!</h4>
+                        <p>Your order process has been successfully completed. We will contact you very soon via the
+                            phone number you provided.</p>
+                        <hr>
+                        <p class="mb-0">You can also reach us on our <a href="https://www.facebook.com/LONGGFASHION"
+                                class="alert-link" target="_blank">Facebook Page</a>. Please mention your Order ID
+                            There.</p>
+                    </div>
+                </div>
+
+                <!-- Print Button -->
+                <div class="text-center no-print mt-3">
+                    <button class="btn btn-info" onclick="printDiv('{{ shippingaddress.order.id }}')">Print</button>
+                    <a href="/" class="btn btn-success">Continue Shopping</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- JavaScript to handle printing -->
-<script>
-    function printDiv(orderId) {
-        var printContents = document.getElementById(orderId).innerHTML;
-        var originalContents = document.body.innerHTML;
+    <!-- JavaScript to handle printing -->
+    <script>
+        function printDiv(orderId) {
+            var printContents = document.getElementById(orderId).innerHTML;
+            var originalContents = document.body.innerHTML;
 
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-    }
-</script>
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+    </script>
 
-<!-- Bootstrap and Font Awesome JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap and Font Awesome JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

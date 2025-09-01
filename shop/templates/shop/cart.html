@@ -12,35 +12,37 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
 
 
-<link rel="stylesheet" href="{% static 'shop/css/cart.css' %}">
-    
+    <link rel="stylesheet" href="{% static 'shop/css/cart.css' %}">
+
 </head>
 
 <body>
     {% include 'shop/components/simpleNav.html' %}
-    
+
     <div class="container my-5">
         {% for item in order.order_items.all %}
 
         <div class="cart-item row">
             <div class="col-md-4">
-                <img src="{{item.product.imageURL}}" height="100" width="100" style="border-radius: 10px;" alt="Product 2">
+                <img src="{{item.product.imageURL}}" height="100" width="100" style="border-radius: 10px;"
+                    alt="Product 2">
                 {% if item.customization_note %}
                 <p style="font-size: .8rem;">{{item.customization_note}}</p>
                 {% endif %}
             </div>
-    
+
             <div class="col-md-4">
                 <ul class="cart-item-details">
                     <li><strong> {{item.product.name}}</strong></li>
                     <li>Size: {{item.size}}</li>
                     {% if item.is_stitched %}
-                    <li> {{item.product.price}}</li>
+                    <li> {{item.product.price_}}</li>
                     {% else %}
                     <li>{{item.product.unstitched_price}}</li>
                     {% endif %}
@@ -72,7 +74,7 @@
                         <input type="text" name="action" value="remove {{ item.product.slug }}" hidden>
                         <input type="text" name="from" value="cart" hidden>
                         <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
-                        <input type="text" name="item_id", hidden value="{{item.id}}">
+                        <input type="text" name="item_id" , hidden value="{{item.id}}">
 
                         <button type="submit" class="btn btn-outline-light">
                             <i class="fa fa-minus"></i>
@@ -86,7 +88,7 @@
                         <input type="text" name="from" value="cart" hidden>
                         <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
 
-                        <input type="text" name="item_id", hidden value="{{item.id}}">
+                        <input type="text" name="item_id" , hidden value="{{item.id}}">
 
                         <button type="submit" class="btn btn-outline-light">
                             <i class="fa fa-plus"></i>
@@ -105,7 +107,7 @@
                     <input type="text" name="from" value="cart" hidden>
                     <input type="text" name="unstitched" value="{{item.is_stitched}}" hidden>
                     <input type="text" name="customization_note" value="{{item.customization_note}}" hidden>
-                        <input type="text" name="item_id", hidden value="{{item.id}}">
+                    <input type="text" name="item_id" , hidden value="{{item.id}}">
 
                     <button type="submit" class="btn btn-danger">
                         <i class="fa-solid fa-trash"></i>
@@ -116,12 +118,103 @@
 
         {% endfor %}
 
-        <!-- Cart Summary -->
-        <div class="row justify-content-end mt-5">
-            <div class="col-md-6">
-                <style>
-              
+        {% if order.total %}
 
+        <div>
+            <p style="text-align: end; font-weight:lighter;">Sub Total - {{order.total}} </p>
+        </div>
+
+        {% if messages %}
+        <div id="flash-messages">
+            {% for message in messages %}
+            <p style="color: #08e6ff; text-align: center;">{{ message }}</p>
+            {% endfor %}
+        </div>
+
+        <script>
+            setTimeout(() => {
+                const msgBox = document.getElementById("flash-messages");
+                if (msgBox) {
+                    msgBox.style.display = "none";
+                }
+            }, 2000); // 2000 ms = 2 seconds
+        </script>
+        {% endif %}
+
+
+        <!-- Cart Summary -->
+        <div class="row justify-content-between mt-5">
+            <div class="col-md-6 col-12 mt-1">
+                <div class="card">
+                    {% if order.promo %}
+                    <!-- Promo Already Applied -->
+                    <div class="card-body"
+                        style="background: #f74f06;overflow: hidden; border: 1px dashed #ffffff; border-radius: 4px;">
+                        <span class="promo-tag d-flex justify-content-center">
+                            Promo Applied: {{ order.promo.code }} ({{ order.promo.promo_type.discount_percentage}}%)
+                        </span>
+                    </div>
+                    {% else %}
+                    <div class="card-body">
+
+                        <a class="mb-2 text-light" href="{% url 'promo_code' %}">Student? <span
+                                style="color: #bb86fc;">Get promo code</span>
+                            {% if not request.user.is_authenticated %}
+                            <span class="text-secondary" style="font-size: .8rem;">You need to log in First</span>
+                            {% endif %}
+                        </a>
+                        <!-- Promo Code Input -->
+                        <style>
+                            input:focus {
+                                border: none !important;
+                                box-shadow: none !important;
+                            }
+                        </style>
+
+
+                        <form id="promoForm" class="mb-3 mt-2 d-flex">
+                            {% csrf_token %}
+                            <input type="text" name="promo_code" id="promo_code"
+                                value="{% if code %}{{ code }}{% endif %}" placeholder="Enter promo code"
+                                class="form-control me-2" required>
+                            <button type="submit" class="btn btn-dark">Apply</button>
+                        </form>
+
+                        <script>
+                            document.getElementById("promoForm").addEventListener("submit", function (e) {
+                                e.preventDefault(); // stop normal form submit
+
+                                const promoCode = document.getElementById("promo_code").value;
+                                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                                fetch("{% url 'cart' %}", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/x-www-form-urlencoded",
+                                        "X-CSRFToken": csrfToken
+                                    },
+                                    body: new URLSearchParams({
+                                        "promo_code": promoCode
+                                    })
+                                })
+                                    .then(response => response.text())
+                                    .then(data => {
+                                        window.location.reload()
+                                    })
+                                    .catch(error => {
+                                        console.error("Error:", error);
+                                    });
+                            });
+                        </script>
+
+                    </div>
+
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-md-6 col-12 mt-1">
+                <style>
                     .card-body {
                         padding: 20px;
                         /* Adds padding inside the card */
@@ -209,6 +302,7 @@
 
             </div>
         </div>
+        {% endif %}
     </div>
 
     <!-- Bootstrap JS, Popper.js, and jQuery -->

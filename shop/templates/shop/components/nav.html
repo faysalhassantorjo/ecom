@@ -1,24 +1,22 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
+
 {% load static %}
 <style>
   .menu-icon,
   .close-btn {
     cursor: pointer;
-    font-size: 18px;
-    color: #fff;
-    border: 1px solid #ececec;
-    padding-left: 10px;
-    padding-right: 10px;
-    border-radius: 5px;
+    font-size: 30px;
+
   }
 
-  .navbar {
+  /* .navbar {
     border: 1px solid #9fa6b2;
-  }
+  } */
 </style>
-<div class="navbar" style="backdrop-filter: blur(20px); background:none;border-radius: 10px;  ">
+<div class="navbar container mt-1" style="backdrop-filter: blur(20px); background:#182327aa;border-radius: 10px;  ">
   <!-- Menu Icon to trigger Sidebar -->
   <span class="menu-icon" onclick="toggleSidebar()">
-    <i class="fas fa-bars"></i>
+    <i class="las la-bars"></i>
   </span>
 
   <!-- Logo -->
@@ -28,36 +26,32 @@
 
   <!-- Cart and Profile Icons -->
   <div class="d-flex align-items-center">
-    {% if user.is_superuser %}
-    <a class="btn btn-info btn-sm me-2" href="{% url 'viewOrder' %}">View Order</a>
-    {% endif %}
-    <a class="text-reset me-3" href="{% url 'cart' %}">
-      <i class="fas fa-shopping-cart" style="border:1px solid #fff; padding: 5px; border-radius: 3px; color:#fff"></i>
-      <span class="badge rounded-pill badge-notification bg-danger" id="cart_items" style="font-size: 10px;">
-        {% if order.total_items %}
-        {{order.total_items}}
-        {% else %}
-        0
-        {% endif %}
-      </span>
-    </a>
 
-
-    <!-- Profile Dropdown -->
+    <style>
+      .la-user{
+        font-size: 35px !important;
+        padding: 5px
+      }
+    </style>
+      <!-- Profile Dropdown -->
     <div class="dropdown">
-      <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+      <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow p-2" href="#"
         id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-        <img src="https://th.bing.com/th/id/OIP.OlnxO753VRgHKDLLDzCKoAHaHw?rs=1&pid=ImgDetMain" class="rounded-circle"
-          height="30" alt="p" loading="lazy" />
+        <i class="lar la-user text-light"></i>
+        <span style="color: #f74f06;">
+          {% if request.user.is_authenticated %}
+          {{request.user.username}}
+          {% endif %}
+        </span>
+        
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
         {% if user.is_authenticated %}
-        <li><a class="dropdown-item" href="{% url 'profile' pk=user.userprofile.id %}">my order</a></li>
+        <li><a class="dropdown-item" href="{% url 'profile' %}">my order</a></li>
         {% endif %}
         {% if user.is_superuser %}
-        <li><a class="dropdown-item" href="{% url 'viewOrder' %}">View Order</a></li>
-        <li><a class="dropdown-item" href="{% url 'visit_stats' %}">visit stats</a></li>
-        <li><a class="dropdown-item" href="{% url 'product_add' %}">Add Product</a></li>
+        <li><a class="dropdown-item" href="{% url 'dashboard' %}?section=orders&status=approved">Dashboard</a></li>
+        
         {% endif %}
         <li>
           {% if user.is_authenticated %}
@@ -68,6 +62,21 @@
         </li>
       </ul>
     </div>
+
+    <a class="text-reset me-3" href="{% url 'cart' %}">
+      <!-- <i class="fas fa-shopping-cart" style=" padding: 5px; font-size: 25px; color:#fff"></i> -->
+      <i class="las la-shopping-cart" style=" padding: 1px; font-size: 35px; color:#fff"></i>
+      <span class="badge rounded-pill badge-notification " id="cart_items" style="font-size: 10px; font-weight: lighter;background-color: #f74f06">
+        {% if order.total_items %}
+        {{order.total_items}}
+        {% else %}
+        0
+        {% endif %}
+      </span>
+    </a>
+
+
+  
   </div>
 </div>
 <style>
@@ -170,7 +179,7 @@
     }
   </style>
 
-  <div class="offcanvas-body" style="max-height: 60vh; overflow-y: auto;">
+  <div class="offcanvas-body" style="max-height: 80vh; overflow-y: auto;">
     <!-- Search Section -->
     <!-- <div class="d-flex mb-3 search-container">
       <input type="text" class="form-control me-2" placeholder="Search by name, keyword" />

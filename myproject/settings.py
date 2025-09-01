@@ -28,7 +28,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1',"*"]
 
 
@@ -121,22 +121,42 @@ EMAIL_HOST_PASSWORD = 'bqkm pqfo mlyh hjop'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# psql 'postgresql://neondb_owner:npg_6AvyHYxc9Uhl@ep-wild-cloud-a137z13c-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+from decouple import config
 
-
+PASS = config("DB_PASSWORD")
+HOST = config("DB_HOST")
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'neondb',
         'USER': 'neondb_owner',
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': '5432',  # Default PostgreSQL port
+        'PASSWORD': PASS,
+        'HOST': HOST,
+        'PORT': '5432',
         'OPTIONS': {
-            'sslmode': 'require',  # Required for Neon databases
+            'sslmode': 'require',
         },
     }
 }
+
+
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'neondb',
+#         'USER': 'neondb_owner',
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
+#         'PORT': '5432',  # Default PostgreSQL port
+#         'OPTIONS': {
+#             'sslmode': 'require',  # Required for Neon databases
+#         },
+#     }
+# }
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -224,4 +244,5 @@ CACHES = {
         'LOCATION': 'cache_table',
     }
 }
+
 

@@ -68,16 +68,6 @@ class ResizedImageField(models.ImageField):
         # kwargs["storage"] = MediaCloudinaryStorage()  # Cloudinary storage backend
         super().__init__(*args, **kwargs)
 
-
-class AnonymousUser(models.Model):
-    session_key = models.CharField(max_length=40, unique=True)
-
-    def __str__(self) -> str:
-        st = self.session_key
-        new_string = st.replace('.', '')
-        return new_string
-
-
 class CollectionSet(models.Model):
     name=models.CharField(max_length=255)
     hero=models.BooleanField(default=False)
@@ -146,12 +136,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return str(self.user)
 
-class AddOnProduct(models.Model):
-    title=models.CharField(max_length=100)
-    price=models.PositiveIntegerField(default=0)
-    size = models.CharField(max_length = 50)
-    def __str__(self):
-        return str(f'{self.title} ')
 
 
 class Product(models.Model):
@@ -184,21 +168,11 @@ class Product(models.Model):
         return str(f'{self.name} ')
 
     
-    def update_price(self):
-        if self.discount:
-            discount = float(self.price * (self.discount_percent / 100))
-            discounted_price = float(self.price - discount)
-            self.main_price=self.price
-
-            self.discount=False
-            self.price = discounted_price
-            self.save()
-            return discounted_price
+    def price_(self):
+        if self.discount_percent>0:
+            return  int(self.price * (1 - (self.discount_percent / 100)))
         else:
-            discount = float(self.main_price * (self.discount_percent / 100))
-            discounted_price = self.price - discount
-
-            return discount+self.price
+            return self.price
 
 
     # def save(self, *args, **kwargs):
@@ -262,39 +236,35 @@ class Product(models.Model):
         # Filter products that arrived within the last 15 days
         return cls.objects.filter(arrive_at__gte=threshold_date)
 import uuid
+from nanoid import generate
+
+def generate_order_id():
+    # 10-character alphanumeric ID, very low chance of collision
+    return generate(size=10)
 class Order(models.Model):
-    STATUS_CHOICES = [
-        ('not_confirm','not_confirm'),
-        ('Confirmed','Confirmed'),
-        ('Pending', 'Pending'),
-        ('Processing', 'Processing'),
-        ('Shipped', 'Shipped'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
-    ]
     LOCATION_CHOICES = [
         ('inside_dhaka', 'Inside Dhaka'),
         ('outside_dhaka', 'Outside Dhaka'),
     ]
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False
-        )
-
-    user=models.ForeignKey(UserProfile,on_delete=models.SET_NULL,null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='not_confirm')
+    id = models.CharField(
+        primary_key=True,
+        max_length=10,
+        default=generate_order_id,
+        editable=False
+    )
+    user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='orders', blank=True)
     sesssion_id = models.CharField(max_length=50, blank=True, null=True)
-    items = models.ManyToManyField('Product', through='OrderItem')
     created_at=models.DateTimeField(default=now,blank=True)
     complete=models.BooleanField(default=False,blank=True)
-    coupon=models.BooleanField(default=False,null=True,blank=True)
-    coupon_percentange=models.PositiveIntegerField(default=0,null=True,blank=True)
-    cancel_reason=models.TextField(null=True,blank=True)
     location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
     totalbill= models.PositiveIntegerField(default=0)
     delivary_charge = models.PositiveIntegerField(default=False)
-    status_changed_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    promo = models.ForeignKey('PromoCode', on_delete=models.SET_NULL, related_name='promo',null=True, blank=True)
+    paid = models.PositiveIntegerField(default=0)
+
+    @property
+    def due(self):
+        return self.totalbill - self.paid
 
 
     def __str__(self):
@@ -304,8 +274,9 @@ class Order(models.Model):
     def get_total(self):
         order_items = OrderItem.objects.filter(order=self)
         total = sum(item.item_total for item in order_items)
-        if self.coupon:
-            total-=total*(self.coupon_percentange/100)
+        if self.promo:
+            percentange = self.promo.promo_type.discount_percentage
+            total -= total*(percentange/100)
 
         return int(total)
 
@@ -324,36 +295,66 @@ class Order(models.Model):
         order_items = OrderItem.objects.filter(order=self)
         total = sum(item.quantity for item in order_items)
         return total 
+    
+
+class CompletedOrder(models.Model):
+    STATUS_CHOICES = [
+        ('approved', 'Approved'),
+        ('confirmed', 'Confirmed'),
+        ('processing', 'Processing'),
+        ('cancelled', 'Cancelled'),
+        ('delivered', 'Delivered'),
+        ('returned', 'Returned'),   
+    ]
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='completed_orders')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    completed_at = models.DateTimeField(default=now, blank=True)
+    payment = models.OneToOneField('Payment', on_delete=models.SET_NULL, null=True, blank=True, related_name='completed_orders')
+    shipping_address = models.ForeignKey('ShippingAddress', on_delete=models.SET_NULL, null=True, blank=True, related_name='completed_orders')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='approved')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    def __str__(self):
+        return f"Completed Order {self.id}"
 
 
 
 class OrderItem(models.Model):
-    product=models.ForeignKey(Product,on_delete=models.CASCADE,null=True)
+    product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True,blank=True)
     quantity=models.IntegerField(default=0)
     order = models.ForeignKey(Order, related_name='order_items',null=True, on_delete=models.CASCADE)
     size=models.CharField(max_length=10,blank=True,null=True)
     is_stitched = models.BooleanField(default=True)
     customization_note = models.TextField(null=True, blank=True)
+    product_price = models.PositiveIntegerField(default=0)
     @property
     def item_total(self):
         # add_on = self.add_on_product.all()
         # total_add_on = sum(add_pro.price for add_pro in add_on)
         if  self.is_stitched:
-            total=self.product.price*self.quantity
+            total=self.product_price*self.quantity
         else:  
             total=self.product.unstitched_price*self.quantity
         # return total+(total_add_on*self.quantity)
         return total
+    
+    # @property
+    # def 
+    def save(self, *args, **kwargs):
+        if not self.product_price and self.product:
+            self.product_price = self.product.price_()
+        super().save(*args, **kwargs)
+    
+
 
 class ShippingAddress(models.Model):
-    order=models.ForeignKey(Order,on_delete=models.CASCADE,null=True)
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=20)
+    # complete_order=models.ForeignKey(CompletedOrder,on_delete=models.CASCADE,null=True)
+    name=models.CharField(max_length=100,null=True,blank=True)
     address=models.TextField()
     address_note=models.CharField(max_length=100)
     phon=models.CharField(max_length=20)
-    email=models.CharField(max_length=100)
+    email=models.EmailField(max_length=100)
     timestamp=models.DateTimeField(default=now,blank=True)
+    complete = models.BooleanField(default=False)
     
 
 
@@ -379,10 +380,39 @@ class Review(models.Model):
     
 
 
-class Cuppon(models.Model):
+class Coupon(models.Model):
     cuppon_name=models.CharField(max_length=10)
     percent=models.PositiveIntegerField(default=0)
     min_order= models.PositiveIntegerField(default=0)
+    
+
+import random
+import string
+def generate_unique_code():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+
+class PromoType(models.Model):
+    name = models.CharField(max_length=20)
+    discount_percentage = models.PositiveIntegerField(default=0)
+
+class PromoCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='promocode')
+    promo_type = models.ForeignKey(PromoType,null=True, blank=True, on_delete=models.CASCADE)
+    code = models.CharField(max_length=10, unique=True, default=generate_unique_code)
+    email = models.EmailField(max_length=100)
+    used_time = models.PositiveIntegerField(default=0)
+
+
+    def save(self, *args, **kwargs):
+        # Ensure uniqueness in case of collision
+        if not self.code:
+            self.code = generate_unique_code()
+        while PromoCode.objects.filter(code=self.code).exists():
+            self.code = generate_unique_code()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.code
     
 
 class PageVisit(models.Model):
@@ -402,3 +432,23 @@ class Post(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     def __str__(self):
         return self.title
+
+class Payment(models.Model):
+    STATUS = [
+        ('completed', 'Completed'),
+        ('refunded', 'Refunded'),
+        ('failed', 'Failed'),
+    ]
+
+    METHODES = [
+        ('bkash', 'Bkash'),
+    ]
+    payment_id = models.CharField(max_length=100, unique=True)
+    method = models.CharField(max_length=20, choices=METHODES, null=True, blank=True)
+    transaction_status = models.CharField(max_length=20, choices=STATUS, null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+
+    def __str__(self):
+        return f"Bkash Payment for Order {self.order.id} - {self.transaction_status}"

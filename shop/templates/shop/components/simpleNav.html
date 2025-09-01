@@ -1,24 +1,25 @@
-  {% load static %}
-  <!-- Navbar -->
-    <style>
-        .navbar-brand {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-.navbar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-    </style>
+{% load static %}
+<!-- Navbar -->
+<style>
+    .navbar-brand {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
 
-    <nav class="navbar " style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
-        <div class="container-fluid justify-content-center">
-            <a class="navbar-brand" href="/" style="text-decoration: none;">
-                <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="Logo" loading="lazy">
-            </a>
-        </div>
-    </nav>
-    
-  <!-- Navbar -->
+    .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+
+<nav class="navbar " style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
+    <div class="container-fluid justify-content-center">
+        <a class="navbar-brand" href="/" style="text-decoration: none;">
+            <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="Logo" loading="lazy">
+        </a>
+    </div>
+</nav>
+
+<!-- Navbar -->

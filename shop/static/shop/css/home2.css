@@ -5,7 +5,7 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: #0B1215;
-  font-family: "Playfair Display", serif;
+   font-family: "Proza Libre", sans-serif;
 }
 
 /* Sidebar */
@@ -58,10 +58,6 @@ html, body {
   cursor: pointer;
   font-size: 18px;
   color: #fff;
-  border: 1px solid #ececec;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 5px;
 }
 
 .close-btn {
@@ -258,7 +254,6 @@ section {
 .heading h3 {
   font-size: 2rem;
   color: #ececec;
-  font-family: "Playfair Display", serif;
   font-weight: bold;
   margin-bottom: 10px;
 }

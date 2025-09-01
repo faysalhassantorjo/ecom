@@ -2,17 +2,33 @@ import requests
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .models import Order, Payment, CompletedOrder, ShippingAddress
+from django.contrib import messages
+from django.db import transaction
+from django.core.cache import cache
 
-# Sandbox credentials (store these securely in production)
-BKASH_APP_KEY = "0vWQuCRGiUX7EPVjQDr0EUAYtc"
-BKASH_APP_SECRET = "jcUNPBgbcqEDedNKdvE4G1cAK7D3hCjmJccNPZZBq96QIxxwAMEx"
-BKASH_USERNAME = "01770618567"
-BKASH_PASSWORD = "D7DaC<*E*eG"
-BASE_URL = "https://tokenized.sandbox.bka.sh/v1.2.0-beta"
+
+from decouple import config
+
+BKASH_APP_KEY = config("BKASH_APP_KEY")
+BKASH_APP_SECRET = config("BKASH_APP_SECRET")
+BKASH_USERNAME = config("BKASH_USERNAME")
+BKASH_PASSWORD = config("BKASH_PASSWORD")
+BASE_URL = config("BASE_URL")
+
+# sandbox
+# BKASH_APP_KEY = "0vWQuCRGiUX7EPVjQDr0EUAYtc"
+# BKASH_APP_SECRET = "jcUNPBgbcqEDedNKdvE4G1cAK7D3hCjmJccNPZZBq96QIxxwAMEx"
+# BKASH_USERNAME = "01770618567"
+# BKASH_PASSWORD = "D7DaC<*E*eG"
+# BASE_URL = "https://tokenized.sandbox.bka.sh/v1.2.0-beta"
 
 
 def get_token():
     url = f"{BASE_URL}/tokenized/checkout/token/grant"
+    id_token = cache.get('id_token')
+    if id_token: 
+        return {'id_token':id_token}
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -24,77 +40,20 @@ def get_token():
         "app_secret": BKASH_APP_SECRET
     }
     response = requests.post(url, headers=headers, json=body)
-    data = response.json()
-    if data.get("statusMessage") == "Successful":
-        return data
-    return None
+    res = response.json()
+    
+    if "id_token" in res:
+        cache.set('id_token',res.get('id_token'),timeout=1800)
+    
+    return response.json()
 
 
-def create_agreement(request):
+def create_payment(request,name,order_id):
     token_data = get_token()
-    if not token_data:
-        return JsonResponse({"error": "Failed to get token"}, status=400)
+    id_token = token_data.get("id_token")
 
-    id_token = token_data['id_token']
-    headers = {
-        "Accept": "application/json",
-        "Authorization": id_token,
-        "X-App-Key": BKASH_APP_KEY,
-    }
-
-    body = {
-        "mode": "0000",
-        "callbackURL": "http://127.0.0.1:8000/bkash/create-payment/",  # Local callback
-        "payerReference": "01619777282",
-        "amount": "25",
-        "currency": "BDT",
-        "intent": "sale"
-    }
-
-    response = requests.post(f"{BASE_URL}/tokenized/checkout/create", headers=headers, json=body)
-    data = response.json()
-
-    request.session['token'] = id_token
-    request.session['paymentID'] = data.get('paymentID')
-
-    return redirect(data.get('bkashURL'))
-
-
-# @csrf_exempt
-def execute_agreement(request):
-    paymentID = request.session.get('paymentID')
-    id_token = request.session.get('token')
-
-    if not paymentID or not id_token:
-        return JsonResponse({"error": "Session expired or missing data"}, status=400)
-
-    url = f"{BASE_URL}/tokenized/checkout/execute"
-    headers = {
-        "Accept": "application/json",
-        "Authorization": id_token,
-        "X-App-Key": BKASH_APP_KEY,
-    }
-    body = {
-        "paymentID": paymentID
-    }
-
-    response = requests.post(url, headers=headers, json=body)
-    data = response.json()
-
-    agreementID = data.get("agreementID")
-    if not agreementID:
-        return JsonResponse({"error": "Failed to execute agreement"}, status=400)
-
-    return agreementID
-
-
-def create_payment(request):
-    
-    id_token = request.session.get('token')
-    agreementID = execute_agreement(request)
-    
-    if not id_token or not agreementID:
-        return JsonResponse({"error": "Missing token or agreementID"}, status=400)
+    if not id_token:
+        return JsonResponse({"error": "Could not fetch token"}, status=400)
 
     headers = {
         "Accept": "application/json",
@@ -103,43 +62,98 @@ def create_payment(request):
     }
 
     body = {
-        "mode": "0001",
-        "payerReference": "01619777282",
-        "callbackURL": "http://127.0.0.1:8000/bkash/execute-payment/",
-        "agreementID": agreementID,
+        "mode": "0011",   # For checkout
+        "payerReference": name,
+        "callbackURL": "https://longgfashion.onrender.com//bkash/execute-payment/",
         "amount": "25",
         "currency": "BDT",
         "intent": "sale",
-        "merchantInvoiceNumber": "Inv0124"
+        "merchantInvoiceNumber": f'{order_id}'
     }
 
     response = requests.post(f"{BASE_URL}/tokenized/checkout/create", headers=headers, json=body)
     data = response.json()
+    
+    request.session['paymentID'] = data.get("paymentID")
 
-    request.session['paymentID'] = data.get('paymentID')
-
-    return redirect(data.get('bkashURL'))
+    return redirect(data.get("bkashURL"))
 
 
-# @csrf_exempt
 def execute_payment(request):
-    paymentID = request.session.get('paymentID')
-    id_token = request.session.get('token')
+    id_token = cache.get('id_token')
+    paymentID = request.session.get("paymentID")
 
     if not paymentID or not id_token:
-        return JsonResponse({"error": "Missing paymentID or token"}, status=400)
+        # return JsonResponse({"error": "Missing paymentID or token"}, status=400)
+        return JsonResponse({"error": "Some error occurred"}, status=400)
 
-    url = f"{BASE_URL}/tokenized/checkout/payment/execute"
     headers = {
         "Accept": "application/json",
         "Authorization": id_token,
         "X-App-Key": BKASH_APP_KEY,
     }
-    body = {
-        "paymentID": paymentID
-    }
 
-    response = requests.post(url, headers=headers, json=body)
-    data = response.json()
+    body = {"paymentID": paymentID}
 
-    return JsonResponse(data)
+    response = requests.post(f"{BASE_URL}/tokenized/checkout/execute", headers=headers, json=body)
+    
+    response_data = response.json()
+    order_id = response_data.get("merchantInvoiceNumber")
+    
+    if response_data.get("transactionStatus") == "Completed":
+        payment = Payment.objects.create(
+                    payment_id=response_data.get("paymentID"),
+                    transaction_status="completed",
+                    method="bkash",
+                    amount=response_data.get("amount", 0)
+                )
+        try:    
+            with transaction.atomic():
+                order = Order.objects.filter(id=order_id).first()
+                if not order:
+                    return JsonResponse()
+                order.complete = True
+                order.paid = response_data.get("amount", 0)
+                order.save()
+                    
+                shipping_data =request.session['shipping_address']
+                             
+                shipping = ShippingAddress.objects.create(
+                    **shipping_data
+                )
+                    
+                completed_order = CompletedOrder.objects.create(
+                    order=order,
+                    payment=payment,
+                    user = request.user if request.user.is_authenticated else None,
+                    shipping_address = shipping
+                )
+                    
+                    
+                request.session.pop('order_id', None)
+                request.session.pop('shipping_address_id', None)
+                request.session.pop('shipping_address', None)
+                
+                messages.success(request, "Payment successful and order completed.")
+                return redirect('order_success', pk=completed_order.id)
+       
+        except Exception as e:
+            print('some error occured', e)
+            return JsonResponse({"error": "Order not found"}, status=404)
+    
+    elif response_data.get("transactionStatus") == "Failed":
+        messages.error(request, "Transaction Faild")
+        return redirect('checkout')
+    
+    elif response_data.get("statusCode") == "2056":
+        
+        messages.error(request,"Invalid Payment State")
+        return redirect('checkout')
+        
+    
+    messages.error(request,"Payment failed. Please try again.")  
+    print(response.json())
+        
+    return redirect('checkout')
+        
+      

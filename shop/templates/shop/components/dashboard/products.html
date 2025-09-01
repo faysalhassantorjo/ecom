@@ -1,0 +1,192 @@
+<style>
+    .card{
+        box-shadow: none !important;
+    }
+</style>
+
+<div class="section" id="products">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold text-dark">Product Management</h2>
+            <p class="text-muted">Manage your product catalog</p>
+        </div>
+    </div>
+
+    <!-- Product Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">{{total_products}}</h3>
+                    <p class="mb-0">Total Products</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">{{in_stock_products}}</h3>
+                    <p class="mb-0">In Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-danger">{{out_of_stock_products}}</h3>
+                    <p class="mb-0">Out of Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div>
+                <button class="btn btn-primary mb-2">
+                    <i class="fas fa-plus me-2"></i>Add New Product
+                </button>
+                <button class="btn btn-outline-secondary">
+                    <i class="fas fa-download me-2"></i>Export Products
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Button -->
+
+
+    <!-- Products Table -->
+    <div class="" style="box-shadow: none !important;">
+        <div class="mb-2 p-0">
+            <div class="table-responsive" style="box-shadow: none;">
+                <table class="table table-hover mb-0"  style="box-shadow: none;">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock Status</th>
+                            <th>Rating</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                    style="width: 60px; height: 70px; object-fit: cover; border-radius: 5px;">
+
+                            </td>
+                            <td>
+                                <strong>{{product.name}}</strong><br>
+                                <small class="text-muted">Code: DK001</small>
+                            </td>
+                            <td>
+                                {% for cat in product.productCategory.all %}
+                                {{ cat.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>৳ {{product.price}}</td>
+                            <td>
+                                {% if product.in_stock %}
+                                <span class="badge bg-success">In Stock</span>
+                                {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="me-1">{{product.average_rating}}</span>
+                                    <i class="fas fa-star text-warning"></i>
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i>View</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i>Edit</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"><i
+                                                    class="fas fa-copy me-2"></i>Duplicate</a></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item text-danger" href="#"><i
+                                                    class="fas fa-trash me-2"></i>Delete</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Pagination -->
+        <div class="card-footer">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-0">
+
+                    <!-- First & Previous -->
+                    {% if products.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'dashboard' %}?section=products&page=1" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{% url 'dashboard' %}?section=products&page={{ products.previous_page_number }}"
+                            aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><span class="page-link">&laquo;&laquo;</span></li>
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    {% endif %}
+
+                    <!-- Page Numbers -->
+                    {% for num in products.paginator.page_range %}
+                    {% if products.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > products.number|add:-3 and num < products.number|add:3 %} <li class="page-item"><a
+                            class="page-link" href="{% url 'dashboard' %}?section=products&page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+
+                        <!-- Next & Last -->
+                        {% if products.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="{% url 'dashboard' %}?section=products&page={{ products.next_page_number }}"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="{% url 'dashboard' %}?section=products&page={{ products.paginator.num_pages }}"
+                                aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        <li class="page-item disabled"><span class="page-link">&raquo;&raquo;</span></li>
+                        {% endif %}
+
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>

@@ -64,9 +64,9 @@
                 <div class="product-details">
                     <p class="product-name" style="text-transform: capitalize;">{{ product.name }} </p>
 
-                    <p class="price">Tk. {{ product.price }}
+                    <p class="price">Tk. {{ product.price_ }}
                         {% if product.discount_percent %}
-                        <span class="original-price"> {{ product.update_price }}</span>
+                        <span class="original-price"> {{ product.price }}</span>
                         {% endif %}
                     </p>
 

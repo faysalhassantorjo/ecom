@@ -24,7 +24,7 @@ from .models import ShippingAddress,Review,Order,Product,ProductCategory,Collect
 class ShippingAddressForm(forms.ModelForm):
     class Meta:
         model = ShippingAddress
-        fields = ['first_name', 'address', 'address_note', 'phon', 'email']
+        fields = ['name', 'address', 'address_note', 'phon', 'email']
 
     def __init__(self, *args, **kwargs):
         super(ShippingAddressForm, self).__init__(*args, **kwargs)
@@ -39,14 +39,8 @@ class WriteReview(forms.ModelForm):
         model=Review
         fields=['ratting','content',]
 
-class OrderStatus(forms.ModelForm):
-    class Meta:
-        model=Order
-        fields = ['status']
-class OrderCancel(forms.ModelForm):
-    class Meta:
-        model=Order
-        fields = ['cancel_reason']
+
+
 
 class AddProduct(forms.ModelForm):
     tags = TagField(widget=forms.TextInput(attrs={

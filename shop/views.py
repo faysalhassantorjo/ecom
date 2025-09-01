@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Product,OrderItem,Order,UserProfile,AnonymousUser,ProductCategory,ShippingAddress,Review,CollectionSet,Cuppon,PageVisit
+from .models import Product,OrderItem,Order,UserProfile,ProductCategory,ShippingAddress,Review,CollectionSet,Coupon,PageVisit
 import json
 from django.http import JsonResponse
 from django.contrib.sessions.models import Session
@@ -7,7 +7,7 @@ from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
-from .form import PriceSortForm,WriteReview,OrderStatus,AddProduct,AddCategory,AddCollection,LoginForm,OrderCancel
+from .form import PriceSortForm,WriteReview,AddProduct,AddCategory,AddCollection,LoginForm
 
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout,authenticate
@@ -77,19 +77,18 @@ def user_login(request):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                order_id = request.session.get('order',None)
+                order_id = request.session.get('order_id',None)
                 session_id = get_session_id(request)
                 order_items=None
                 if order_id:
                     session_order = Order.objects.filter(sesssion_id = session_id).first()
                     order_items = session_order.order_items.all()
-                    print('order items are : ', order_items)
                 else:
                     print('no order is FOund')
                     
                 login(request, user)
                 if order_items:
-                    user =UserProfile.objects.get(user=request.user)
+                    user=request.user
                     prev_order,c = Order.objects.get_or_create(user=user,complete=False)
                     
                     for item in order_items:
@@ -103,7 +102,7 @@ def user_login(request):
             else:
                 messages.error(request, 'Invalid username or password')
 
-    return render(request, 'shop/login.html')
+    return render(request, 'shop/auth/login.html')
 
 def logoutV(request):
     logout(request)
@@ -133,8 +132,8 @@ def register(request):
         messages.success(request, f"Account created for {username}")
         login(request, user)
         return redirect('home') 
-    else: return render(request, 'shop/register.html')
-    return render(request, 'shop/register.html')
+    else: return render(request, 'shop/auth/register.html')
+
 
 
 from collections import Counter
@@ -146,6 +145,8 @@ def visit_stats(request):
 from .utils import home_query
 cache_time = 60*60
 def home(request):
+    from django.db import connection
+
     if request.method == "GET":
         data = request.GET.get('data', None)
         if data:
@@ -161,20 +162,16 @@ def home(request):
     # Order & user handling
     try:
         order = []
-        userProfile = None
-
         if request.user.is_authenticated:
-            userProfile, _ = UserProfile.objects.get_or_create(user=request.user)
-            order = Order.objects.filter(user=userProfile, complete=False).first()
+            order = Order.objects.filter(user=request.user, complete=False).first()
         else:
-            session_id = get_session_id(request)
-            order = Order.objects.filter(sesssion_id=session_id, complete=False).first()
-
-
+            order_id = request.session.get('order_id', None)
+            order = Order.objects.filter(id=order_id, complete = False).first()
         context.update({
             'order': order,
-            'userProfile': userProfile
         })
+        
+        print('order-->',order)
 
     except Exception as e:
         print(f"Order Fetch Error: {e}")
@@ -222,10 +219,7 @@ def create_order_item(request):
         product = Product.objects.get(slug=productId)
         
         if request.user.is_authenticated:
-            userprofile = UserProfile.objects.get(user=request.user)
-        
-            order, c = Order.objects.get_or_create(user=userprofile, complete=False)
-        
+            order, c = Order.objects.get_or_create(user=request.user, complete=False)
         else:
             session_id = get_session_id(request)
             order,c = Order.objects.get_or_create(sesssion_id=session_id, complete=False)
@@ -254,20 +248,18 @@ def create_order_item(request):
         print('is product is istiched?',is_istiched)
         orderItem.size = size
         orderItem.save()
-        order.status = 'not_confirm'
         order.totalbill=order.total
             
         if orderItem.quantity <= 0:
-            print(orderItem.product.name)
             orderItem.delete()
-            print('product deletedhjfdashjhdj')
+
             
         order.save()
 
         if cart:
             return redirect('cart')
         
-        request.session['order'] = str(order.id)
+        request.session['order_id'] = str(order.id)
         
         return JsonResponse({'status': 'success', 'message': 'Item added to cart'})
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})    
@@ -275,51 +267,43 @@ def create_order_item(request):
 from .form import ShippingAddressForm
 def cart(request):
     order = None
-    if request.user.is_authenticated:
-        try:
-            u = UserProfile.objects.get(user=request.user)
-            order = Order.objects.get(
-                user = u,
-                complete = False
-            )
-        except Exception as e:
-            order = None
-            print('error',e)
-    else:
-        try:
-            session_id = get_session_id(request)
-            order = Order.objects.get(sesssion_id =session_id,complete =False )
-        except Exception as e:
-            order = None
-            print('error',e)
+    code = None
     
-    try:
-        coupons = Cuppon.objects.all()
 
-        if request.method == 'POST':
-            q = request.POST['q']
-            print('coupon', q)
+    if request.user.is_authenticated:
+        order = Order.objects.filter(user=request.user, complete=False).first()
+        
+        code = request.GET.get('code')
+    else:
+        order_id = request.session.get('order_id', None)
+        order = Order.objects.filter(id=order_id).first()
+    
+    context = {
+        'order': order,
+        'code':code
+        
+    }
+    if request.method == 'POST':
+        q = request.POST['promo_code']
+        try:
+            promo = PromoCode.objects.get(code = q)
+            order.promo = promo
+            promo.used_time+=1
+            promo.save()
+            order.save()
+            return JsonResponse({'success':True})
+        except Exception as e:
+            messages.error(request,"promo code is not valid!")
+            return JsonResponse({'success':False})
 
-            for c in coupons:
-                if c.coupon_name == q and order and not order.coupon:
-                    if order.get_total >= c.min_order:
-                        order.coupon = True
-                        order.coupon_percentage = c.percent
-                        order.save()
 
   
-        saves = 0
-        if order and order.coupon:
-            saves = abs(order.total - order.get_total)
-            
-        context = {
-            'order': order,
-            'saves': saves
-        }
-    except Exception as e:
-        print(e)
-        return render(request, 'shop/404.html')
-        
+    saves = 0
+    if order and order.promo:
+        saves = abs(order.total - order.get_total)
+        context.update({'saves': saves})
+  
+
     return render(request, 'shop/cart.html', context)
 
 def location_choice(request,pk):
@@ -340,9 +324,9 @@ def location_choice(request,pk):
         'order':order
     }
     return render(request,'shop/location_choice.html',context)
-
-def profile(request,pk):
-    user=UserProfile.objects.get(id=pk)
+@login_required(login_url='login')
+def profile(request):
+    user=request.user
     orders=Order.objects.filter(user=user,complete=True).order_by('-created_at')
     
         
@@ -370,12 +354,14 @@ def order_cancel(request,pk):
     }
     return render(request,'shop/orderStatus.html',context)
 import time
+
+
+from .bkashPayment import create_payment
 def checkout(request):
     order = None
 
     if request.user.is_authenticated:
-        u = UserProfile.objects.get(user=request.user)
-        order = Order.objects.filter(user=u, complete=False).first()
+        order = Order.objects.filter(user=request.user, complete=False).first()
     else:
         session_id = get_session_id(request)
         order = Order.objects.filter(sesssion_id=session_id, complete=False).first()
@@ -393,18 +379,24 @@ def checkout(request):
     if request.method == 'POST':
         form = ShippingAddressForm(request.POST)
         if form.is_valid():
-            shipping_address = form.save(commit=False)
-            shipping_address.order = order
-            shipping_address.save()
-            order.complete = True
-            order.status = "Pending"
-            order.totalbill = subtotal
-            order.save()
-            request.session['order'] = 'None'
-            send_html_email(shipping_address)
-            request.session.flush()
-            return redirect('order_success', pk=shipping_address.id)
+            # shipping_address = form.save(commit=False)
+            shipping_address = form.cleaned_data
+            request.session['shipping_address']= shipping_address
+            
+            name = shipping_address['name'] if shipping_address['name'] else 'Anonymous'
+            
+            
+            print('shipping address',request.session['shipping_address'])
+            # shipping_address.order = order
+            # shipping_address.save()
+            # order.totalbill = subtotal
+            # order.save()
+            # request.session['shipping_address_id'] = shipping_address.id
+            return create_payment(request,name, order.id)
+            # return redirect('checkout')
+           
     else:
+       
         form = ShippingAddressForm()
 
     context = {
@@ -417,13 +409,13 @@ def checkout(request):
 
     return render(request, 'shop/checkout.html', context)
 
+from .models import CompletedOrder, ShippingAddress
 def order_success(request,pk):
-    data=ShippingAddress.objects.get(id=pk)
-    total = data.order.get_total+data.order.delivary_charge
-
+    completed_order= CompletedOrder.objects.get(id=pk)
+    
     context={
-        'shippingaddress':data,
-        'total':total
+        'completed_order':completed_order,
+        # 'total':total
     }
     return render(request,'shop/orderSuccess.html',context)
 
@@ -433,13 +425,6 @@ def shop_grid(request,pk):
     context={}
     
     try:
-
-        if request.user.is_authenticated:
-            userprofile = UserProfile.objects.get(user=request.user)
-            order= Order.objects.filter(user=userprofile, complete=False).first()     
-        else:
-            session_id = get_session_id(request)
-            order = Order.objects.filter(sesssion_id=session_id, complete=False).filter()
 
         collection=CollectionSet.objects.get(id=pk)
         
@@ -462,7 +447,6 @@ def shop_grid(request,pk):
 
                 'x':True,
                 'collection':collection,
-                'order':order
             })
         return render(request,'shop/shop2.html',context)
     except Exception as e:
@@ -496,35 +480,35 @@ def shop_details(request,slug):
         cache_key = f'product_{slug}'
         related_cache_key = f'product_related_{slug}'
         product = cache.get(cache_key)
-        related_data = cache.get(related_cache_key)
+        # related_data = cache.get(related_cache_key)
   
 
         if product is None:
             product = Product.objects.get(slug=slug)
             cache.set(cache_key, product, timeout=60*5)  
 
-        if related_data is None:
-            reviews = Review.objects.filter(product=product)
-            product_categories = product.productCategory.all()
-            relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()[:4]
+        # if related_data is None:
+        #     reviews = Review.objects.filter(product=product)
+        #     product_categories = product.productCategory.all()
+        #     relatePro = Product.objects.filter(tags__in=product.tags.all()).exclude(id=product.id).distinct()[:4]
 
-            # Cache related data
-            related_data = {
-                'reviews': reviews,
-                'product_categories': product_categories,
-                'relatePro': relatePro,
-                'tags': product.tags.all(),
-            }
-            cache.set(related_cache_key, related_data, timeout=60*5)  # Cache for 20 minutes
+        #     # Cache related data
+        #     related_data = {
+        #         'reviews': reviews,
+        #         'product_categories': product_categories,
+        #         'relatePro': relatePro,
+        #         'tags': product.tags.all(),
+        #     }
+        #     cache.set(related_cache_key, related_data, timeout=60*5)  # Cache for 20 minutes
 
-        reviews = related_data['reviews']
+        # reviews = related_data['reviews']
        
-        product_categories = related_data['product_categories']
-        relatePro = related_data['relatePro']
-        tags = related_data['tags']
+        # product_categories = related_data['product_categories']
+        # relatePro = related_data['relatePro']
+        # tags = related_data['tags']
 
-        # Form for reviews
-        form = WriteReview()
+        # # Form for reviews
+        # form = WriteReview()
 
         star_count = product.average_rating
 
@@ -532,12 +516,12 @@ def shop_details(request,slug):
         
         context = {
             'product': product,
-            'form': form,
-            'reviews': reviews,
+            # 'form': form,
+            # 'reviews': reviews,
             'star_count': star_count,
-            'relatedProduct': relatePro[:6],
-            'product_categories': product_categories,
-            'tags': tags,
+            # 'relatedProduct': relatePro[:6],
+            'product_categories': product.productCategory.all(),
+            # 'tags': tags,
         }
 
         hero_collections = cache.get('hero_collections')
@@ -552,13 +536,14 @@ def shop_details(request,slug):
         try:
            
             if request.user.is_authenticated:
-                upro = UserProfile.objects.get(user=request.user)
-                order = Order.objects.filter(user_id = upro, complete = False).first()
-                print('userprofile',request.user.userprofile)
+                order = Order.objects.filter(user=request.user, complete = False).first()
+                
             else:
                 session_id = get_session_id(request)
                 order = Order.objects.filter(sesssion_id = session_id,complete=False).first()
+                
             items=order.order_items.all()
+            print('order-->',order)
             
             context.update({'order':order,'items':items})
         except Exception as e:
@@ -575,57 +560,33 @@ from .decorator import admin_only
 from django.db import transaction
 from datetime import timedelta
 
-@admin_only
-def viewOrder(request):
-    from datetime import timedelta
-    from django.utils import timezone
-    
-    two_weeks_ago = timezone.now() - timedelta(weeks=2)
-    status = request.GET.get('status')  # Fixed: Changed request.get to request.GET.get
-    
-    if status == 'confirmed':
-        shippingAddress = ShippingAddress.objects.filter(
-            order__status="Confirmed", 
-            order__created_at__gte=two_weeks_ago
-        ).order_by('-timestamp')
-    elif status == 'cancelled':  # Fixed: Changed 'Cancelled' to 'cancelled'
-        shippingAddress = ShippingAddress.objects.filter(
-            order__status="Cancelled", 
-            order__created_at__gte=two_weeks_ago
-        ).order_by('-timestamp')
-    else:
-        shippingAddress = ShippingAddress.objects.filter(
-            order__status="Pending"
-        ).order_by('-timestamp')
 
-    print(status)
-    context = {
-        'shippingAddresss': shippingAddress,
-        'status':status
-    }
-    return render(request, 'shop/viewOrder2.html', context)
+
 
 def order_status(request):
     
     if request.method == 'POST':
-        order_id = request.POST.get('order-id')
-        status = request.POST.get('status')
-        order=Order.objects.get(id=order_id)
-        
-        order.status = status
-        
-        shippingAddress=ShippingAddress.objects.get(order = order)
-        order.status_changed_by = request.user
-        order.save()
-        
-        if order.status == "Confirmed":
-            send_confermation_mail(shippingAddress)
-            print("------------")
-            print("Email sent done")
+        data = json.loads(request.body)
+        order_id = data.get('order_id')
+        status = data.get('status')
+        print('status',status)
+        order=Order.objects.filter(id=order_id).first()
+        if order:
             
-        return redirect('viewOrder')
+            completed_order=CompletedOrder.objects.filter(order=order).first()
+            if completed_order:
+                completed_order.status = status
+                completed_order.save()
+                if completed_order.status == "confirmed":
+                    # send_confermation_mail(shippingAddress)
+                    pass
+            
+                return JsonResponse({'success': True, 'message': 'Order status updated successfully'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Order not found'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method'})
 
-    return HttpResponse('somthing worng')
+
 
 from django.contrib.auth.decorators import login_required
 from PIL import Image as PILImage
@@ -752,3 +713,229 @@ def confirm_page(request,pk,pk2):
 
 def custom_404_view(request,exception):
     return render(request, 'shop/404.html', status=404)
+
+
+from .models import PromoCode, PromoType
+@login_required(login_url='/login/')
+def promo_code(request):
+    promocode = PromoCode.objects.filter(user=request.user).first()
+    promotypes = PromoType.objects.all()
+
+    
+
+    return render(request, 'shop/promocode.html', {
+        'promo_code': promocode,
+        'promo_types': promotypes
+    })
+
+import secrets
+from django.core.mail import send_mail
+import re
+
+def is_student_email(email):
+    return re.search(r'\.(edu|bd|ac)\b', email) is not None
+
+def send_token(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        name = data.get("name")
+        phone = data.get("phone")
+        email = data.get("email")
+        type_id = data.get("type_id")
+
+        if PromoCode.objects.filter(user=request.user).exists():
+            return JsonResponse({"success": False, "error": "You already have a promo code"})
+        
+        if PromoCode.objects.filter(email=email).exists():
+            return JsonResponse({"success": False, "error": "This email has been used by other user"})
+        
+        if not is_student_email(email=email):
+            return JsonResponse({"success": False, "error": "Enter a valid Student Email"})
+ 
+
+        token = secrets.token_hex(3).upper()
+        
+        
+
+        # try:
+        #     promo_type = PromoType.objects.get(id=type_id)
+        # except PromoType.DoesNotExist:
+        #     return JsonResponse({"success": False, "error": "Invalid promo type"})
+        user = request.user
+        
+        promo_object ={
+            'user':request.user,
+            'promo_type':type_id,
+            'email':email,
+            'token':token
+        }
+        cache.set(f'{user}_promo_object',promo_object,timeout=900)
+        
+        send_mail(
+            subject="Your Email Verification Token",
+            message=f"Your token is: {token}\nValid for 15 minutes.",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[email],
+        )
+    
+        return JsonResponse({
+            "success": True,
+        })
+        
+def verification_token(request):
+    user = request.user
+    error_msg = None
+
+    res = cache.get(f'{user}_promo_object')
+    
+    if request.method == "POST":
+        entered_token = request.POST.get("token")
+
+        if not res:
+            error_msg = "Verification token expired or invalid. Please request a new one."
+        else:
+            cached_token = res.get('token')
+
+            if entered_token == cached_token:
+                cached_promo_type = res.get('promo_type')
+                cached_email = res.get('email')
+                promo_type = PromoType.objects.get(id=cached_promo_type)
+
+                promo = PromoCode.objects.create(
+                    user=user,
+                    promo_type=promo_type,
+                    email=cached_email,
+                )
+                # Optionally clear cache so token can't be reused
+                cache.delete(f'{user}_promo_object')
+
+                return redirect('promo_code')  # or redirect to success page
+            else:
+                print(cached_token,entered_token)
+                error_msg = "Invalid token. Please try again."
+
+    return render(request, 'shop/verification_token.html', {
+        'email': res.get('email') if res else None,
+        'error_msg': error_msg,
+    })
+    
+
+from django.shortcuts import render
+from django.db.models import Sum, Count
+from .models import Order, Product, Payment, UserProfile
+@admin_only
+def viewOrder(request):
+    from datetime import timedelta
+    from django.utils import timezone
+    
+    two_weeks_ago = timezone.now() - timedelta(weeks=2)
+    status = request.GET.get('status')  # Fixed: Changed request.get to request.GET.get
+    
+    if status == 'confirmed':
+        shippingAddress = ShippingAddress.objects.filter(
+            order__status="Confirmed", 
+            order__created_at__gte=two_weeks_ago
+        ).order_by('-timestamp')
+    elif status == 'cancelled':  # Fixed: Changed 'Cancelled' to 'cancelled'
+        shippingAddress = ShippingAddress.objects.filter(
+            order__status="Cancelled", 
+            order__created_at__gte=two_weeks_ago
+        ).order_by('-timestamp')
+    else:
+        shippingAddress = ShippingAddress.objects.filter(
+            order__status="Pending"
+        ).order_by('-timestamp')
+
+    print(status)
+    context = {
+        'shippingAddresss': shippingAddress,
+        'status':status
+    }
+    # return render(request, 'shop/viewOrder2.html', context)
+    return render(request, 'shop/dashboard.html',context)
+
+from .models import CompletedOrder
+from django.core.paginator import Paginator
+@admin_only
+def dashboard(request):
+    # total_orders = Order.objects.count()
+    # total_sales = Order.objects.aggregate(total=Sum('totalbill'))['total'] or 0
+    # total_products = Product.objects.count()
+    # total_users = UserProfile.objects.count()
+    # pending_orders = Order.objects.filter(status="Pending").count()
+    # delivered_orders = Order.objects.filter(status="Delivered").count()
+    # total_payments = BkashPayment.objects.aggregate(total=Sum('amount'))['total'] or 0
+    context ={}
+    if request.GET.get('section')=='orders':
+        context.update({"section": 'orders'})
+        if request.GET.get('status') == "approved":
+            completed_orders = CompletedOrder.objects.filter(status="approved").order_by('-completed_at')
+            context.update({
+                'status': 'approved',
+                'completed_orders': completed_orders
+            })
+        elif request.GET.get('status') == 'confirmed':
+            completed_orders = CompletedOrder.objects.filter(status="confirmed").order_by('-completed_at')
+            context.update({
+                'status': 'confirmed',
+                'completed_orders': completed_orders
+            })
+        elif request.GET.get('status') == 'cancelled':
+            completed_orders = CompletedOrder.objects.filter(status="cancelled").order_by('-completed_at')
+            context.update({
+                'status': 'cancelled',
+                'completed_orders': completed_orders
+            })
+    
+    elif request.GET.get('section')=='dashboard':
+        context.update({"section": 'dashboard'})
+
+        confirm_orders = CompletedOrder.objects.filter(status="confirmed").count()
+        pending_orders = CompletedOrder.objects.filter(status="approved").count()
+        cancelled_orders = CompletedOrder.objects.filter(status="cancelled").count()
+        
+        order_status_data = [confirm_orders, pending_orders, cancelled_orders]
+        
+        context.update({
+            "total_products": Product.objects.count(),
+            "total_orders" : Order.objects.filter(complete=True).count(),
+            "total_sales": Order.objects.filter(complete=True).aggregate(total=Sum('totalbill'))['total'] or 0,
+            "available_products": Product.objects.filter(in_stock=True).count(),
+            "new_users": User.objects.filter(date_joined__gte=timezone.now() - timedelta(days=30)).count(),
+            "order_status_data": order_status_data,
+
+        })
+
+    elif request.GET.get('section')=='payments':
+        context.update({"section": 'payments'})
+        context.update({
+            "total_payments": Payment.objects.aggregate(total=Sum('amount'))['total'] or 0,
+            "bkash_payments": Payment.objects.all().order_by('-id')
+        })
+    
+    elif request.GET.get('section')=='products':
+        products = Product.objects.all().order_by('-id')
+        paginator = Paginator(products, 5)
+
+        page_number = request.GET.get('page')
+        
+        page_obj = paginator.get_page(page_number)
+        context.update({"section": 'products'})
+        context.update({
+            "total_products": Product.objects.count(),
+            "in_stock_products": Product.objects.filter(in_stock=True).count(),
+            "out_of_stock_products": Product.objects.filter(in_stock=False).count(),
+            "products": page_obj
+        })
+
+    elif request.GET.get('section')=='analytics':
+        context.update({"section": 'analytics'})
+    elif request.GET.get('section')=='reviews':
+        context.update({"section": 'reviews'})
+    elif request.GET.get('section')=='users':
+        context.update({"section": 'users'})
+        context.update({
+            "total_users": UserProfile.objects.count(),
+            "users": UserProfile.objects.all().order_by('-id')
+        })  
+    return render(request, 'shop/dashboard.html',context)

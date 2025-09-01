@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - E-commerce</title>
+    <!-- Bootstrap MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    {% include 'shop/utils/fonts.html' %}
+
+    <style>
+        .sidebar {
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e20 0%, #110c18 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            transition: all 0.3s;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        .stats-card {
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 0;
+            transition: all 0.3s;
+            background-color: transparent;
+        }
+
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .gradient-bg-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-bg-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .gradient-bg-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .gradient-bg-4 {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-open .sidebar {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="p-3">
+            <h4 class="text-white mb-0">
+                <!-- <i class="fas fa-store me-2"></i> -->
+                Admin Panel
+            </h4>
+            <p class="text-muted">Welcome, {{ user.username }}</p>
+        </div>
+        <ul class="nav nav-pills flex-column sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'dashboard' %} active {% endif %}"
+                    href="{% url 'dashboard' %}?section=dashboard">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'orders' %} active {% endif %}"
+                    href="{% url 'dashboard' %}?section=orders&status=approved">
+                    <i class="fas fa-shopping-cart me-2"></i>Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'products' %} active {% endif %}" href="{% url 'dashboard' %}?section=products" data-section="products">
+                    <i class="fas fa-box me-2"></i>Products
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'users' %} active {% endif %}" href="{% url 'dashboard' %}?section=users" data-section="customers">
+                    <i class="fas fa-users me-2"></i>Customers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'analytics' %} active {% endif %}" href="{% url 'dashboard' %}?section=analytics" data-section="analytics">
+                    <i class="fas fa-chart-bar me-2"></i>Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if section == 'reviews' %} active {% endif %}" href="{% url 'dashboard' %}?section=reviews" data-section="reviews">
+                    <i class="fas fa-star me-2"></i>Reviews
+                </a>
+            </li>
+            <li class="nav-item {% if section == 'orders' %} active {% endif %}">
+                <a class="nav-link {% if section == 'payments' %} active {% endif %}"
+                    href="{% url 'dashboard' %}?section=payments" data-section="payments">
+                    <i class="fas fa-credit-card me-2"></i>Payments
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+
+        <!-- Dashboard Content -->
+        <div class="container-fluid p-4" id="dashboard-content">
+
+            <!-- Dashboard Section -->
+            {% if section == "dashboard" %}
+                {% include 'shop/components/dashboard/dashboard.html' %}
+            {% endif %}
+
+            <!-- Orders Section -->
+            {% if section == "orders" %}
+            <div class="section" id="orders">
+
+                {% include 'shop/components/dashboard/order.html' %}
+            </div>
+            {% endif %}
+
+            <!-- Products Section -->
+            {% if section == "products" %}
+                {% include 'shop/components/dashboard/products.html' %}
+            {% endif %}
+
+            <!-- Analytics Section -->
+             {% if section == "analytics" %}
+            <div class="section" id="analytics">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-dark">Analytics & Reports</h2>
+                        <p class="text-muted">Detailed insights about your business performance</p>
+                    </div>
+                </div>
+
+                <!-- Analytics Cards -->
+                <div class="row mb-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Revenue Analytics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="revenueChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Top Categories</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Visits -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Page Visits Analytics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Page</th>
+                                        <th>Visits</th>
+                                        <th>Trend</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Home Page</td>
+                                        <td>2,547</td>
+                                        <td><span class="text-success">↑ 12%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Product Catalog</td>
+                                        <td>1,892</td>
+                                        <td><span class="text-success">↑ 8%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Product Details</td>
+                                        <td>1,456</td>
+                                        <td><span class="text-danger">↓ 3%</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Reviews Section -->
+             {% if section == "reviews" %}
+            <div class="section" id="reviews">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-dark">Customer Reviews</h2>
+                        <p class="text-muted">Manage customer feedback and ratings</p>
+                    </div>
+                </div>
+
+                <!-- Review Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-warning">4.5</h3>
+                                <p class="mb-0">Average Rating</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-primary">892</h3>
+                                <p class="mb-0">Total Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-success">756</h3>
+                                <p class="mb-0">Positive Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-danger">136</h3>
+                                <p class="mb-0">Negative Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Recent Reviews</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong>Sarah Wilson</strong>
+                                            <div class="text-warning">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">2 days ago</small>
+                                    </div>
+                                    <p class="text-muted mb-2">"Excellent quality kurti! The fabric is soft and the
+                                        design is beautiful. Highly recommended!"</p>
+                                    <small class="text-muted">Product: Designer Kurti #DK001</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <strong>Ahmed Hassan</strong>
+                                            <div class="text-warning">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="far fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">3 days ago</small>
+                                    </div>
+                                    <p class="text-muted mb-2">"Good product, fast delivery. Will order again!"</p>
+                                    <small class="text-muted">Product: Cotton Shirt #CS102</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Customers Section -->
+             {% if section == "users" %}
+            <div class="section" id="customers">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-dark">Customer Management</h2>
+                        <p class="text-muted">Manage your customer base and user profiles</p>
+                    </div>
+                </div>
+
+                <!-- Customer Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-primary">892</h3>
+                                <p class="mb-0">Total Customers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-success">156</h3>
+                                <p class="mb-0">Active This Month</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-info">45</h3>
+                                <p class="mb-0">New This Week</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h3 class="text-warning">234</h3>
+                                <p class="mb-0">Repeat Customers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Customer List</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Customer</th>
+                                        <th>Email</th>
+                                        <th>Orders</th>
+                                        <th>Total Spent</th>
+                                        <th>Join Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                    style="width: 40px; height: 40px;">
+                                                    <strong>JD</strong>
+                                                </div>
+                                                <div>
+                                                    <strong>John Doe</strong><br>
+                                                    <small class="text-muted">ID: #USR001</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>john.doe@email.com</td>
+                                        <td>12</td>
+                                        <td>৳15,480</td>
+                                        <td>2024-01-15</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-envelope"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                                    style="width: 40px; height: 40px;">
+                                                    <strong>JS</strong>
+                                                </div>
+                                                <div>
+                                                    <strong>Jane Smith</strong><br>
+                                                    <small class="text-muted">ID: #USR002</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>jane.smith@email.com</td>
+                                        <td>8</td>
+                                        <td>৳9,650</td>
+                                        <td>2024-02-20</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-envelope"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Payments Section -->
+            {% if section == "payments" %}
+                {% include 'shop/components/dashboard/payment.html' %}
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Bootstrap MDB JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
+
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // Mobile menu toggle
+            const mobileToggle = document.getElementById('mobile-menu-toggle');
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function () {
+                    document.body.classList.toggle('mobile-menu-open');
+                });
+            }
+
+            // Initialize Charts
+            initializeCharts();
+        });
+
+        function initializeCharts() {
+            // Sales Chart
+            const salesCtx = document.getElementById('salesChart');
+            if (salesCtx) {
+                new Chart(salesCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Sales (৳)',
+                            data: [25000, 32000, 28000, 41000, 38000, 45000, 52000],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return '৳' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Order Status Chart
+            const orderCtx = document.getElementById('orderStatusChart');
+            const data = "{{ order_status_data }}";
+            if (orderCtx) {
+                new Chart(orderCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Confirmed', 'Pending', 'Cancelled'],
+                        datasets: [{
+                            data: data.slice(1, -1).split(',').map(Number),
+                            backgroundColor: [
+                                '#28a745',
+                                '#ffc107',
+                                '#dc3545'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Revenue Chart for Analytics
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                        datasets: [{
+                            label: 'Revenue (৳)',
+                            data: [45000, 52000, 48000, 61000, 58000, 65000, 72000],
+                            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return '৳' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart');
+            if (categoryCtx) {
+                new Chart(categoryCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Women\'s Clothing', 'Men\'s Clothing', 'Accessories', 'Footwear'],
+                        datasets: [{
+                            data: [45, 30, 15, 10],
+                            backgroundColor: [
+                                '#ff6b6b',
+                                '#4ecdc4',
+                                '#45b7d1',
+                                '#96ceb4'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Simulate real-time updates
+        function updateStats() {
+            // This would typically fetch real data from your Django backend
+            // For demo purposes, we'll just simulate some updates
+            console.log('Stats updated');
+        }
+
+        // Update stats every 30 seconds
+        setInterval(updateStats, 30000);
+    </script>
+</body>
+
+</html>

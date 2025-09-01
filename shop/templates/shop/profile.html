@@ -1,78 +1,193 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Order Table</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <title>My Orders</title>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  {% include 'shop/utils/fonts.html' %}
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet">
+
   <style>
-    .logo {
-      max-width: 150px;
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .sidebar {
+      background: white;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+      padding: 20px;
+      height: 100%;
+      position: sticky;
+      top: 90px;
+    }
+
+    .sidebar h5 {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 12px;
+    }
+
+    .sidebar ul li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #333;
+      font-weight: 500;
+      font-size: 0.95rem;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: 0.2s;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #f1f3f4;
+      color: #000;
+    }
+
+    .order-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .order-header {
+      padding: 20px;
+      border-bottom: 1px solid #f1f3f4;
+    }
+
+    .order-id {
+      font-size: 1rem;
+      color: #333;
+      margin: 0 0 10px 0;
+      font-weight: 500;
+    }
+
+    .order-id .order-number {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    .order-status {
+      background: #60fff7;
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      border: 1px solid #28a745;
+    }
+
+    .item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #e9ecef;
+      margin-bottom: 8px;
+    }
+
+    .empty-orders {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
     }
   </style>
 </head>
+
 <body>
 
-<div class="container my-5">
-  <!-- Logo centered at the top -->
-  <div class="text-center mb-4">
-    <img src="{% static 'image/logo/logo.jpg' %}" height="70" alt="Logo" class="logo">
-  </div>
-
-  <!-- Back button -->
-  <div class="mb-3">
-    <a href="javascript:history.back()" class="btn btn-secondary">
-      &larr; Back
+<!-- Navbar -->
+<nav class="navbar" style="backdrop-filter: blur(20px); border:1px solid #f8f8f874; border-radius: 8px;">
+  <div class="container-fluid justify-content-center">
+    <a class="navbar-brand" href="/" style="text-decoration: none;">
+      <img src="{% static 'image/logo/logo2.png' %}" height="70" alt="Logo" loading="lazy">
     </a>
   </div>
+</nav>
 
+<div class="container mt-3">
   <div class="row">
-    <div class="col-lg-12">
-      <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover text-center">
-          <thead class="thead-dark">
-            <tr>
-              <th>#Order Id</th>
-              <th>Order Status</th>
-              <th>Order Items</th>
-              <th>Total</th>
-              <!-- <th>Action</th> -->
-            </tr>
-          </thead>
-          <tbody>
-            {% for order in orders %}
-              {% if order.status != 'not_confirm' %}
-                <tr>
-                  <td style="width: 20%;">{{ order.id }}</td>
-                  <td>{{ order.status }}</td>
-                  <td>
-                    {% for item in order.order_items.all %}
-                      {{ item.product.name }}<br>
-                    {% endfor %}
-                  </td>
-                  <td>{{ order.get_total }} TK</td>
-                  <!-- <td>
-                    {% if order.status == 'Pending' %}
-                      <a href="{% url 'order_cancel' pk=order.id %}" class="btn btn-outline-danger btn-sm">Cancel</a>
-                    {% else %}
-                      <button class="btn btn-outline-secondary btn-sm" disabled>Cancel</button>
-                    {% endif %}
-                  </td> -->
-                </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
+    <!-- Sidebar -->
+    <div class="col-md-3 mb-3">
+      <div class="sidebar">
+        <h5>My Account</h5>
+        <ul>
+          <!-- <li><a href="#"><i class="fas fa-user"></i> My Profile</a></li> -->
+          <li><a href="#"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+          <li><a href="{% url 'promo_code' %}"><i class="fas fa-tags"></i> Promo Codes</a></li>
+          <!-- <li><a href="#"><i class="fas fa-heart"></i> Wishlist</a></li> -->
+          <!-- <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li> -->
+          <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
       </div>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="col-md-9">
+      {% for order in orders %}
+      <div class="order-card">
+        <div class="order-header d-flex justify-content-between mb-2">
+          <div>
+            <p class="order-id">Your Order ID:
+              <span class="order-number">#{{ order.id }}</span>
+              ({{ order.order_items.all|length }} Items) |
+              Payable Amount: <span class="total-amount">TK. {{ order.due }}</span>
+            </p>
+          </div>
+          <div>{{ order.completed_orders.completed_at }}</div>
+        </div>
+
+        <div class="order-meta px-3 pb-2">
+          <span class="order-status">{{ order.completed_orders.status }}</span>
+        </div>
+
+        <div class="items-container px-3 pb-3">
+          <div class="d-flex flex-wrap gap-3">
+            {% for item in order.order_items.all %}
+            <div class="item text-center">
+              <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+              <div class="item-name">{{ item.product.name }}</div>
+              <div class="item-price">TK. {{ item.product.price }}</div>
+              <div class="item-qty" style="font-size: 12px;">Qty: {{ item.quantity }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="empty-orders">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>No Orders Found</h3>
+        <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+      </div>
+      {% endfor %}
     </div>
   </div>
 </div>
 
-<!-- Optional JavaScript; choose one of the two! -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"></script>
 </body>
 </html>

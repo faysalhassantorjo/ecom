@@ -14,7 +14,7 @@ urlpatterns = [
     path('update_item/',create_order_item, name="update_item"),
     path('cart/',cart, name="cart"),
     path('location-select/<str:pk>',location_choice, name="location_choice"),
-    path('myorder/<int:pk>',profile, name="profile"),
+    path('myorder/',profile, name="profile"),
     path('checkout/',checkout, name="checkout"),
     path('shop-grid/<int:pk>',shop_grid, name="shop_grid"),
     path('shop-details/<slug:slug>',shop_details, name="shop_details"),
@@ -33,7 +33,14 @@ urlpatterns = [
     path('edit-product/<slug:slug>',edit_product, name="edit_product"),
     path('delete-product/<int:pk>/<int:pk2>',delete_product, name="delete_product"),
     path('confirm-page/<int:pk>/<int:pk2>',confirm_page, name="confirm_page"),
-     path('go-to-admin/', go_to_admin_panel, name='go_to_admin'),
+    path('go-to-admin/', go_to_admin_panel, name='go_to_admin'),
+     
+    
+    path('promo-code/',promo_code, name='promo_code'),
+    path('send-promo-token/',send_token, name='send_token'),
+    path('promo-token-verification/',verification_token, name='verification_token'),
+    
+    path('dashboard/', dashboard, name='dashboard'),
      
      
      
@@ -43,12 +50,10 @@ urlpatterns = [
      
      
      
-     
-     
-    path('bkash/create-agreement/', create_agreement),
-    path('bkash/execute-agreement/', execute_agreement),
-    path('bkash/create-payment/', create_payment),
-    path('bkash/execute-payment/', execute_payment),
+    # path('bkash/create-agreement/', create_agreement),
+    # path('bkash/execute-agreement/', execute_agreement),
+    path('bkash/create-payment/', create_payment, name='create_payment'),
+    path('bkash/execute-payment/', execute_payment, name='execute_payment'),
 
 # re_path(r'^.*$', handle_unexpected_url),
 ]

@@ -146,9 +146,10 @@
                                 <div class="col-md-6">
                                     <div>
                                         <div class="fw-semibold fs-5">
-                                            {{ shippingaddress.first_name }} {{ shippingaddress.last_name }}
+                                            {{ shippingaddress.name }} 
                                             {% if shippingaddress.order.user %}
-                                            <span class="badge bg-secondary ms-2 small">{{ shippingaddress.order.user}}</span>
+                                            <span class=" ms-1 rounded-2 small" style="padding: 2px; font-size: 10px;">
+                                                @{{ shippingaddress.order.user}}</span>
                                             {% endif %}
                                         </div>
                                         <div class="text-muted small">{{ shippingaddress.email }}</div>
@@ -251,22 +252,41 @@
                                         </h6>
                                     </div>
                                     <div class="card-body">
+                                        {% if shippingaddress.order.promo %}
+                                        <div 
+                                        style="
+                                        border: 1px dashed #212529;
+                                        background: #ffea01b7;
+                                        padding: 10px 12px; margin-bottom: 10px; 
+                                        text-align: center;">
+                                        {{shippingaddress.order.promo.promo_type.name}} 
+                                        {{shippingaddress.order.promo.promo_type.discount_percentage}} %
+                                        </div>
+                                        {% endif %}
                                         <div class="d-flex justify-content-between mb-2">
-                                            <span>Product Total:</span>
+                                            <span>Product Total</span>
                                             <strong>{{shippingaddress.order.get_total}} TK</strong>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
-                                            <span>Delivery Charge:</span>
-                                            <strong>{{shippingaddress.order.delivary_charge}} TK</strong>
+                                            <span>Delivery Charge</span>
+                                            <p>{{shippingaddress.order.delivary_charge}} TK</p>
                                         </div>
                                         <hr>
                                          
                                         <div class="d-flex justify-content-between">
-                                            <span class="fw-bold fs-5">Total Amount:</span>
-                                            <strong class="fs-5 text-dark">{{ shippingaddress.order.totalbill }}
-                                                TK</strong>
+                                            <span class="fw-bold fs-5">Total Amount</span>
+                                            <p class="fs-5 text-dark">{{ shippingaddress.order.totalbill }} TK</p>
                                         </div>
-                                 
+
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fs-5">Paid</span>
+                                            <p class="fs-5 text-dark">{{ shippingaddress.order.paid }} TK</p>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between">
+                                            <span class="fw-bold fs-5">Due</span>
+                                            <strong class="fs-5 text-danger">{{ shippingaddress.order.due }} TK</strong>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
