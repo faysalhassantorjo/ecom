@@ -71,7 +71,7 @@ def create_payment(request,name,order_id):
     body = {
         "mode": "0011",   # For checkout
         "payerReference": name,
-        "callbackURL": "https://longgfashion.onrender.com//bkash/execute-payment/",
+        "callbackURL": "https://longgfashion.onrender.com/bkash/execute-payment/",
         "amount": "25",
         "currency": "BDT",
         "intent": "sale",
