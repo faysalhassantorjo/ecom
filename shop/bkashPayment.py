@@ -48,6 +48,7 @@ def get_token():
     }
     response = requests.post(url, headers=headers, json=body)
     res = response.json()
+    print("response", res)
     
     if "id_token" in res:
         cache.set('id_token',res.get('id_token'),timeout=1800)
