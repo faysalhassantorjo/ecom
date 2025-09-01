@@ -28,7 +28,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1',"*"]
 
 
@@ -164,7 +164,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.longgfashion.com',
     'http://localhost:8000',  # Add this for local development
     'http://127.0.0.1:8000',
-    "https://ecom-45ti.onrender.com/"# Add this as well
+    "https://longgfashion.onrender.com/"# Add this as well
 ]
 
 SECURE_SSL_REDIRECT = True
@@ -173,20 +173,20 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # settings.py
 
 # Disable HTTPS settings when DEBUG is True
-# if DEBUG:
-#     SECURE_SSL_REDIRECT = False
-#     SESSION_COOKIE_SECURE = False
-#     CSRF_COOKIE_SECURE = False
-#     SECURE_HSTS_SECONDS = 0
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-#     SECURE_HSTS_PRELOAD = False
-# else:
-#     SECURE_SSL_REDIRECT = True
-#     SESSION_COOKIE_SECURE = True
-#     CSRF_COOKIE_SECURE = True
-#     SECURE_HSTS_SECONDS = 31536000  # 1 year
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+else:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
