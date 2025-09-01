@@ -27,6 +27,13 @@ BASE_URL = config("BASE_URL")
 def get_token():
     url = f"{BASE_URL}/tokenized/checkout/token/grant"
     id_token = cache.get('id_token')
+    
+    print(f"""
+          {BKASH_APP_KEY}
+          {BKASH_APP_SECRET}
+          {BKASH_USERNAME}
+          {BKASH_PASSWORD}
+          """)
     if id_token: 
         return {'id_token':id_token}
     headers = {
