@@ -48,7 +48,6 @@ def get_token():
     }
     response = requests.post(url, headers=headers, json=body)
     res = response.json()
-    print("response", res)
     
     if "id_token" in res:
         cache.set('id_token',res.get('id_token'),timeout=1800)
@@ -83,8 +82,14 @@ def create_payment(request,name,order_id):
     data = response.json()
     
     request.session['paymentID'] = data.get("paymentID")
-
-    return redirect(data.get("bkashURL"))
+    
+    print(response)
+    try:
+        
+        return redirect(data.get("bkashURL"))
+    
+    except :
+        return JsonResponse(data)
 
 
 def execute_payment(request):
