@@ -387,12 +387,8 @@ def checkout(request):
             
             
             print('shipping address',request.session['shipping_address'])
-            # shipping_address.order = order
-            # shipping_address.save()
-            # order.totalbill = subtotal
-            # order.save()
-            # request.session['shipping_address_id'] = shipping_address.id
-            return create_payment(request,name, order.id)
+            amount = order.delivary_charge
+            return create_payment(request,name, order.id,amount=amount)
             # return redirect('checkout')
            
     else:
@@ -411,7 +407,7 @@ def checkout(request):
 
 from .models import CompletedOrder, ShippingAddress
 def order_success(request,pk):
-    completed_order= CompletedOrder.objects.get(id=pk)
+    completed_order= CompletedOrder.objects.get(order__id=pk)
     
     context={
         'completed_order':completed_order,
@@ -432,8 +428,8 @@ def shop_grid(request,pk):
             cache_key =f'hero_collection_{collection.id}'
             products = cache.get(cache_key)     
             if not products:
-                products = Product.objects.filter(collectionset = collection)
-                cache.set(cache_key,products,timeout=60*1)
+                products = collection.product_set.all()
+                cache.set(cache_key,products,timeout=60*5)
             context.update({'products':products})
         else:
             cache_key = f"collection_category{pk}"                  
@@ -441,7 +437,9 @@ def shop_grid(request,pk):
             if categories is None:
                 categories=collection.productcategory_set.all()
                 cache.set(cache_key,categories,timeout=60*5)
-            context.update({'categories':categories})
+            products = collection.product_set.all()
+            
+            context.update({'categories':categories,'products':products})
 
         context.update({
 

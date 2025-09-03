@@ -28,12 +28,6 @@ def get_token():
     url = f"{BASE_URL}/tokenized/checkout/token/grant"
     id_token = cache.get('id_token')
     
-    print(f"""
-          {BKASH_APP_KEY}
-          {BKASH_APP_SECRET}
-          {BKASH_USERNAME}
-          {BKASH_PASSWORD}
-          """)
     if id_token: 
         return {'id_token':id_token}
     headers = {
@@ -55,24 +49,32 @@ def get_token():
     return response.json()
 
 
-def create_payment(request,name,order_id):
+def create_payment(request,name,order_id,amount=150):
     token_data = get_token()
     id_token = token_data.get("id_token")
 
     if not id_token:
         return JsonResponse({"error": "Could not fetch token"}, status=400)
+    
+    order = Order.objects.filter(id = order_id).first()
+    
+    if not order:
+        messages.error(request, "Order is not found, Some error occured!")
+        return redirect('checkout')
 
     headers = {
         "Accept": "application/json",
         "Authorization": id_token,
         "X-App-Key": BKASH_APP_KEY,
     }
+    
 
     body = {
         "mode": "0011",   # For checkout
         "payerReference": name,
-        "callbackURL": "https://longgfashion.onrender.com/bkash/execute-payment/",
-        "amount": "1",
+        # "callbackURL": "https://longgfashion.onrender.com/bkash/execute-payment/",
+        "callbackURL": "http://127.0.0.1:8000/bkash/execute-payment/",
+        "amount": amount,
         "currency": "BDT",
         "intent": "sale",
         "merchantInvoiceNumber": f'{order_id}'
@@ -83,7 +85,6 @@ def create_payment(request,name,order_id):
     
     request.session['paymentID'] = data.get("paymentID")
     
-    print(response)
     try:
         
         return redirect(data.get("bkashURL"))
@@ -97,8 +98,8 @@ def execute_payment(request):
     paymentID = request.session.get("paymentID")
 
     if not paymentID or not id_token:
-        # return JsonResponse({"error": "Missing paymentID or token"}, status=400)
-        return JsonResponse({"error": "Some error occurred"}, status=400)
+        messages.error(request, "Payment faild, Some error occurred!")
+        return redirect('checkout')
 
     headers = {
         "Accept": "application/json",
@@ -124,7 +125,8 @@ def execute_payment(request):
             with transaction.atomic():
                 order = Order.objects.filter(id=order_id).first()
                 if not order:
-                    return JsonResponse()
+                    messages.error(request, "Payment completed but somehow order is not completed! please contact with us with your transaction id.")
+                    return redirect('checkout')
                 order.complete = True
                 order.paid = response_data.get("amount", 0)
                 order.save()
@@ -148,11 +150,11 @@ def execute_payment(request):
                 request.session.pop('shipping_address', None)
                 
                 messages.success(request, "Payment successful and order completed.")
-                return redirect('order_success', pk=completed_order.id)
+                return redirect('order_success', pk=order.id)
        
         except Exception as e:
-            print('some error occured', e)
-            return JsonResponse({"error": "Order not found"}, status=404)
+            messages.error(request, "Payment completed but somehow order is not completed! please contact with us with your transaction id.")
+            return redirect('checkout')
     
     elif response_data.get("transactionStatus") == "Failed":
         messages.error(request, "Transaction Faild")
@@ -165,7 +167,6 @@ def execute_payment(request):
         
     
     messages.error(request,"Payment failed. Please try again.")  
-    print(response.json())
         
     return redirect('checkout')
         

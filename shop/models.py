@@ -258,7 +258,7 @@ class Order(models.Model):
     complete=models.BooleanField(default=False,blank=True)
     location = models.CharField(max_length=20, choices=LOCATION_CHOICES, null=True, blank=True)
     totalbill= models.PositiveIntegerField(default=0)
-    delivary_charge = models.PositiveIntegerField(default=False)
+    delivary_charge = models.PositiveIntegerField(default=150)
     promo = models.ForeignKey('PromoCode', on_delete=models.SET_NULL, related_name='promo',null=True, blank=True)
     paid = models.PositiveIntegerField(default=0)
 

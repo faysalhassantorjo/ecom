@@ -57,8 +57,5 @@ def home_query():
         'top_rated_product': top_rated_products,
         'heroCollections': hero_collections,
         'collectionsets': collection_sets,
-        # 'discount_products': discount_products,
         'all_categories': all_categories,
-        # 'new_arrivals': new_arrivals,
-        # 'popular_category': popular_category,
     }
