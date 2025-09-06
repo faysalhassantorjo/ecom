@@ -22,7 +22,7 @@ def home_query():
     # Hero collections
     hero_collections = cache.get('hero_collections')
     if hero_collections is None:
-        hero_collections = CollectionSet.objects.filter(hero=True).only('id')
+        hero_collections = CollectionSet.objects.filter(hero=True).only('id').order_by('-id') 
         cache.set('hero_collections', hero_collections, cache_time)
 
     # Non-hero collections
