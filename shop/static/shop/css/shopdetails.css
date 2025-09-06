@@ -101,7 +101,7 @@
         }
 
         .btn-danger {
-            background-color: #c13c03;
+            background-color: #f74f06;
             border: none;
             padding: 12px 30px;
             font-size: 16px;
@@ -110,7 +110,7 @@
         }
 
         .btn-danger:hover {
-            background-color: #f74f06;
+            background-color: #f74e06b2;
         }
 
         .review-section,

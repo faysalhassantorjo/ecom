@@ -164,6 +164,8 @@ class Product(models.Model):
     in_stock=models.BooleanField(default=True,blank=True)
     ratting = models.FloatField(default=0)
     customization_possible =  models.BooleanField(default=False, blank=True, null=True)
+    
+    addon = models.ManyToManyField('AddOn',blank=True)
     def __str__(self):
         return str(f'{self.name} ')
 
@@ -317,6 +319,10 @@ class CompletedOrder(models.Model):
         return f"Completed Order {self.id}"
 
 
+class AddOn(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.PositiveIntegerField(default=0, null=0)
+    size = models.CharField(max_length=20, null=True,blank=True)
 
 class OrderItem(models.Model):
     product=models.ForeignKey(Product,on_delete=models.SET_NULL,null=True,blank=True)
@@ -326,12 +332,16 @@ class OrderItem(models.Model):
     is_stitched = models.BooleanField(default=True)
     customization_note = models.TextField(null=True, blank=True)
     product_price = models.PositiveIntegerField(default=0)
+    addon = models.ManyToManyField(AddOn,blank=True)
     @property
     def item_total(self):
         # add_on = self.add_on_product.all()
         # total_add_on = sum(add_pro.price for add_pro in add_on)
         if  self.is_stitched:
             total=self.product_price*self.quantity
+            if self.addon:
+                for addon in self.addon.all():
+                    total += addon.price
         else:  
             total=self.product.unstitched_price*self.quantity
         # return total+(total_add_on*self.quantity)
@@ -451,4 +461,4 @@ class Payment(models.Model):
     
 
     def __str__(self):
-        return f"Bkash Payment for Order {self.order.id} - {self.transaction_status}"
+        return f"Bkash Payment for Order - {self.payment_id}"

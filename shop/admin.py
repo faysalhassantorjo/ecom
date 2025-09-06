@@ -18,6 +18,7 @@ admin.site.register(UserProfile)
 admin.site.register(OrderItem)
 admin.site.register(Payment)
 admin.site.register(CompletedOrder)
+admin.site.register(AddOn)
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
       list_display = [field.name for field in Order._meta.fields]

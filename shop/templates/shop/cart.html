@@ -57,13 +57,13 @@
                     </li>
                 </ul>
                 <!-- Add-on Product -->
-                <!-- <ul class="cart-item-details add-on-product">
-                    {% for add_on in item.add_on_product.all %}
+                <ul class="cart-item-details add-on-product">
+                    {% for add_on in item.addon.all %}
 
                     <li><em>+ Add-on: {{ add_on.name }} qty({{item.quantity}}) size: {{add_on.size}} (<i
                                 class="fa-solid fa-bangladeshi-taka-sign"></i>{{add_on.price}})</em></li>
                     {% endfor %}
-                </ul> -->
+                </ul>
             </div>
             <div class="col-md-3 d-flex flex-column justify-content-between">
                 <div class="qty d-flex justify-content-center">

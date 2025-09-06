@@ -29,7 +29,7 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = False
-ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1',"*"]
+ALLOWED_HOSTS = ['longgfashion.com', 'www.longgfashion.com', 'longgfashion.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

@@ -1,3 +1,49 @@
+<style>
+    @media print {
+        /* Hide elements with these classes */
+        .no-print, 
+        .print_btn,
+        .nav-pills,
+        .alert-secondary {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        /* Reset body for printing */
+        body {
+            visibility: visible;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Show only the card content */
+        .card {
+            visibility: visible;
+            position: relative;
+            width: 100%;
+            box-shadow: none !important;
+            border: 1px solid #000 !important;
+            page-break-inside: avoid;
+        }
+        
+        /* Improve table printing */
+        table {
+            page-break-inside: avoid;
+        }
+        
+        /* Ensure images print correctly */
+        img {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+    }
+</style>
+
+<!-- Rest of your HTML remains the same -->
 <div class="container-fluid mt-2">
     <!-- Navigation Tabs -->
     <div class="card shadow-sm mb-4 no-print">
@@ -41,6 +87,8 @@
             </ul>
         </div>
     </div>
+    
+
 
     <!-- Tab Content -->
     <div class="tab-content">
@@ -57,7 +105,7 @@
             {% endif %}
 
             {% for completed_order in completed_orders %}
-            <div class="card shadow-sm mb-4" id="{{ completed_order.order.id }}">
+            <div class="card shadow-sm mb-4" id="{{ completed_order.id }}">
                 <!-- Order Header -->
                 <div class="card-header bg-light">
                     <div class="row align-items-center">
@@ -336,7 +384,7 @@
                         </div> -->
 
                     <!-- Print Button -->
-                    <div class="text-center no-print">
+                    <div class="text-center no-print print_btn">
                         <button class="btn btn-secondary " onclick="printDiv('{{ completed_order.id }}')">
                             <i class="fas fa-print me-2"></i>Print Order
                         </button>
@@ -349,3 +397,18 @@
 </div>
 <!-- MDB -->
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.1.0/mdb.umd.min.js"></script>
+
+<script>
+function printDiv(divId) {
+            let printContents = document.getElementById(divId).innerHTML;
+            let originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            // Force a page reload to restore functionality
+            window.location.reload();
+        }
+</script>
+
