@@ -372,7 +372,7 @@ def checkout(request):
     if order.total_items == 0:
         return render(request, 'shop/404.html', {'e': "Your cart is empty. Add products to your cart."})
 
-    subtotal = order.get_total + order.delivary_charge
+    
     items = OrderItem.objects.filter(order=order)
     total = items.count()
 
@@ -400,7 +400,7 @@ def checkout(request):
         'items': items,
         'order': order,
         'form': form,
-        'subtotal': subtotal
+        'subtotal': order.subtotal
     }
 
     return render(request, 'shop/checkout.html', context)

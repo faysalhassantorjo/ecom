@@ -266,9 +266,11 @@ class Order(models.Model):
 
     @property
     def due(self):
-        return self.totalbill - self.paid
+        return self.subtotal - self.paid
 
-
+    @property
+    def subtotal(self):
+        return self.get_total + self.delivary_charge
     def __str__(self):
         return str(f'{self.user} order')
     
